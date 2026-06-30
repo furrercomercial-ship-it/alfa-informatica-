@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carrinho — Alfa Informática</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#030303;--card:#0B0B0F;--card2:#121218;--bord:rgba(40,120,255,.2);--blue:#1E6BFF;--txt2:#8A93A5;--green:#22C55E;--trans:.22s;}
+body{background:var(--bg);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+.hdr{background:#030303;border-bottom:1px solid rgba(40,120,255,.1);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;position:sticky;top:0;z-index:100;}
+.hdr-back{display:flex;align-items:center;gap:8px;color:var(--txt2);font-size:13px;font-weight:600;transition:color .2s;}
+.hdr-back:hover{color:#fff;}
+.hdr-logo{font-size:16px;font-weight:900;}
+.layout{max-width:1280px;margin:0 auto;padding:32px 28px 60px;display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start;}
+/* LEFT */
+.cart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.cart-title{font-size:22px;font-weight:800;}
+.btn-selall{padding:6px 14px;background:rgba(40,120,255,.08);border:1px solid var(--bord);border-radius:7px;color:var(--txt2);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-selall:hover{background:rgba(40,120,255,.18);color:#fff;}
+.cart-item{display:grid;grid-template-columns:28px 80px 1fr auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:16px;margin-bottom:10px;transition:border-color .2s;}
+.cart-item:hover{border-color:rgba(40,120,255,.35);}
+.cart-chk{width:17px;height:17px;accent-color:var(--blue);cursor:pointer;}
+.cart-img{width:80px;height:80px;background:#0a0a12;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#1a1a2e;border:1px solid rgba(40,120,255,.08);}
+.cart-info{min-width:0;}
+.cart-brand{font-size:9.5px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px;}
+.cart-name{font-size:13.5px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:8px;}
+.cart-price{font-size:18px;font-weight:400;color:var(--green);}
+.cart-old{font-size:11px;color:var(--txt2);text-decoration:line-through;margin-right:6px;}
+.qty-wrap{display:flex;align-items:center;gap:0;}
+.qty-btn{width:30px;height:30px;background:rgba(40,120,255,.08);border:1px solid var(--bord);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.qty-btn:first-child{border-radius:7px 0 0 7px;}
+.qty-btn:last-child{border-radius:0 7px 7px 0;}
+.qty-btn:hover{background:rgba(40,120,255,.2);}
+.qty-val{width:36px;height:30px;background:#030303;border:1px solid var(--bord);border-left:none;border-right:none;text-align:center;color:#fff;font-size:13px;font-weight:600;}
+.cart-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.item-total{font-size:15px;font-weight:700;color:#fff;white-space:nowrap;}
+.btn-remove{background:none;border:none;color:rgba(255,80,80,.5);cursor:pointer;font-size:11px;font-weight:600;transition:color .2s;}
+.btn-remove:hover{color:#ff6b6b;}
+/* RIGHT SUMMARY */
+.summary{background:var(--card);border:1px solid var(--bord);border-radius:14px;padding:24px;position:sticky;top:80px;}
+.sum-title{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.6);margin-bottom:18px;}
+.sum-selected{font-size:12px;color:var(--txt2);margin-bottom:16px;}
+.sum-row{display:flex;justify-content:space-between;font-size:13px;color:var(--txt2);margin-bottom:10px;}
+.sum-row.total{font-size:17px;color:#fff;font-weight:700;border-top:1px solid rgba(255,255,255,.06);padding-top:14px;margin-top:4px;}
+.sum-row.total span:last-child{color:var(--green);}
+.coupon-field{display:flex;gap:8px;margin:16px 0;}
+.coupon-field input{flex:1;background:#030303;border:1px solid var(--bord);border-radius:8px;padding:10px 12px;color:#fff;font-size:12.5px;font-family:inherit;outline:none;}
+.coupon-field input:focus{border-color:var(--blue);}
+.coupon-field button{padding:0 14px;background:rgba(40,120,255,.12);border:1px solid var(--bord);border-radius:8px;color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.coupon-field button:hover{background:rgba(40,120,255,.25);color:#fff;}
+.cep-row{display:flex;gap:8px;margin-bottom:16px;}
+.cep-row input{flex:1;background:#030303;border:1px solid var(--bord);border-radius:8px;padding:10px 12px;color:#fff;font-size:12.5px;font-family:inherit;outline:none;}
+.cep-row input:focus{border-color:var(--blue);}
+.cep-row button{padding:0 14px;background:rgba(40,120,255,.12);border:1px solid var(--bord);border-radius:8px;color:var(--txt2);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.cep-row button:hover{background:rgba(40,120,255,.25);color:#fff;}
+.btn-checkout{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;letter-spacing:.5px;cursor:pointer;margin-top:6px;transition:background .2s,transform .15s;}
+.btn-checkout:hover{background:#2255ff;}
+.btn-checkout:active{transform:scale(.98);}
+.btn-checkout:disabled{background:rgba(40,120,255,.2);color:rgba(255,255,255,.3);cursor:not-allowed;}
+.empty{text-align:center;padding:100px 0;color:var(--txt2);grid-column:1/-1;}
+.empty-icon{font-size:64px;margin-bottom:20px;opacity:.3;}
+.empty h2{font-size:20px;color:rgba(255,255,255,.6);margin-bottom:10px;}
+.empty p{font-size:14px;margin-bottom:28px;}
+.btn-home{display:inline-block;padding:12px 28px;background:var(--blue);color:#fff;border-radius:10px;font-size:13px;font-weight:700;}
+@media(max-width:820px){.layout{grid-template-columns:1fr;}.summary{position:static;}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <a href="alfa-replica.html" class="hdr-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Continuar comprando
+  </a>
+  <div class="hdr-logo">ALFA INFORMÁTICA</div>
+  <a href="favoritos.html" style="color:var(--txt2);font-size:13px;font-weight:600;">♡ Favoritos</a>
+</header>
+
+<div class="layout" id="layout">
+  <div id="leftCol"></div>
+  <div id="rightCol"></div>
+</div>
+
+<script src="store.js"></script>
+<script>
+function render() {
+  const cart = Store.getCart();
+  const layout = document.getElementById('layout');
+
+  if (!cart.length) {
+    layout.innerHTML = `<div class="empty">
+      <div class="empty-icon">🛒</div>
+      <h2>Seu carrinho está vazio</h2>
+      <p>Adicione produtos ao carrinho para continuar.</p>
+      <a href="alfa-replica.html" class="btn-home">Ver produtos</a>
+    </div>`;
+    return;
+  }
+
+  const selected = cart.filter(i => i.selected);
+  const subtotal = selected.reduce((s,i) => s + i.price * i.qty, 0);
+  const allSel = cart.every(i => i.selected);
+
+  document.getElementById('leftCol').innerHTML = `
+    <div class="cart-head">
+      <h1 class="cart-title">Carrinho (${cart.length})</h1>
+      <button class="btn-selall" onclick="Store.selectAll(${!allSel});render()">${allSel ? 'Desmarcar todos' : 'Selecionar todos'}</button>
+    </div>
+    ${cart.map(item => `
+    <div class="cart-item">
+      <input type="checkbox" class="cart-chk" ${item.selected?'checked':''} onchange="Store.toggleSelected('${item.id}');render()">
+      <div class="cart-img">?</div>
+      <div class="cart-info">
+        <div class="cart-brand">${item.brand||''}</div>
+        <div class="cart-name">${item.name}</div>
+        <div>
+          ${item.old ? `<span class="cart-old">R$ ${(item.old).toLocaleString('pt-BR')},00</span>` : ''}
+          <span class="cart-price">R$ ${item.price.toLocaleString('pt-BR')},00</span>
+        </div>
+      </div>
+      <div class="cart-side">
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="Store.updateQty('${item.id}',${item.qty-1});render()">−</button>
+          <input type="number" class="qty-val" value="${item.qty}" min="1" onchange="Store.updateQty('${item.id}',+this.value);render()">
+          <button class="qty-btn" onclick="Store.updateQty('${item.id}',${item.qty+1});render()">+</button>
+        </div>
+        <div class="item-total">R$ ${(item.price*item.qty).toLocaleString('pt-BR')},00</div>
+        <button class="btn-remove" onclick="Store.removeFromCart('${item.id}');render()">✕ Remover</button>
+      </div>
+    </div>`).join('')}`;
+
+  document.getElementById('rightCol').innerHTML = `
+    <div class="summary">
+      <div class="sum-title">Resumo do pedido</div>
+      <div class="sum-selected">${selected.length} de ${cart.length} item(ns) selecionado(s)</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Cupom de desconto</div>
+      <div class="coupon-field">
+        <input type="text" id="couponInput" placeholder="Código do cupom">
+        <button onclick="applyCoupon()">Aplicar</button>
+      </div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Calcular frete</div>
+      <div class="cep-row">
+        <input type="text" id="cepInput" placeholder="00000-000" maxlength="9">
+        <button onclick="calcFrete()">Calcular</button>
+      </div>
+      <div id="freteOptions"></div>
+      <div class="sum-row"><span>Subtotal (selecionados)</span><span>R$ ${subtotal.toLocaleString('pt-BR')},00</span></div>
+      <div class="sum-row" id="discountRow" style="display:none;color:#22C55E;"><span>Desconto</span><span id="discountVal"></span></div>
+      <div class="sum-row"><span>Frete</span><span id="freteVal">A calcular</span></div>
+      <div class="sum-row total"><span>Total</span><span id="totalVal">R$ ${subtotal.toLocaleString('pt-BR')},00</span></div>
+      <button class="btn-checkout" ${!selected.length?'disabled':''} onclick="goCheckout()">
+        ${!selected.length ? 'Selecione ao menos 1 item' : `FINALIZAR COMPRA (${selected.length} item${selected.length>1?'s':''})`}
+      </button>
+    </div>`;
+}
+
+function applyCoupon() {
+  const code = document.getElementById('couponInput')?.value.trim().toUpperCase();
+  if (code === 'ALFA10') {
+    document.getElementById('discountRow').style.display = 'flex';
+    document.getElementById('discountVal').textContent = '-10%';
+    showToast('Cupom ALFA10 aplicado! 10% de desconto.');
+  } else {
+    showToast('Cupom inválido.');
+  }
+}
+
+function calcFrete() {
+  const cep = document.getElementById('cepInput')?.value.replace(/\D/g,'');
+  if (cep.length < 8) { showToast('CEP inválido.'); return; }
+  document.getElementById('freteOptions').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+      ${[['Econômico','R$ 18,90','7-10 dias úteis'],['Expresso','R$ 34,90','3-5 dias úteis'],['Retirada na loja','Grátis','A partir de 1h']].map(([n,p,d],i)=>`
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#030303;border:1px solid rgba(40,120,255,.15);border-radius:8px;cursor:pointer;font-size:12.5px;transition:border-color .15s;">
+        <input type="radio" name="frete" value="${p}" style="accent-color:#1E6BFF;" ${i===0?'checked':''} onchange="updateFrete('${p}')">
+        <span style="flex:1">${n}</span><span style="color:#22C55E;font-weight:700;">${p}</span><span style="color:#8A93A5;font-size:10.5px;">${d}</span>
+      </label>`).join('')}
+    </div>`;
+  document.getElementById('freteVal').textContent = 'R$ 18,90';
+}
+
+function updateFrete(price) {
+  document.getElementById('freteVal').textContent = price === 'Grátis' ? 'Grátis' : price;
+}
+
+function goCheckout() {
+  const selected = Store.getCart().filter(i => i.selected);
+  if (!selected.length) return;
+  Store.setCheckoutItems(selected);
+  location.href = 'checkout.html';
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:28px;right:28px;background:#0d1a2e;border:1px solid rgba(40,120,255,.3);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:9999;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+render();
+</script>
+</body>
+</html>

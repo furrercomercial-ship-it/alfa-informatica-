@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meus Favoritos — Alfa Informática</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#030303;--card:#0B0B0F;--bord:rgba(40,120,255,.2);--blue:#1E6BFF;--txt2:#8A93A5;--trans:.22s cubic-bezier(.4,0,.2,1);}
+body{background:var(--bg);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+.hdr{background:#030303;border-bottom:1px solid rgba(40,120,255,.1);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;}
+.hdr-left{display:flex;align-items:center;gap:16px;}
+.hdr-back{display:flex;align-items:center;gap:8px;color:var(--txt2);font-size:13px;font-weight:600;transition:color .2s;}
+.hdr-back:hover{color:#fff;}
+.hdr-logo{font-size:16px;font-weight:900;color:#fff;}
+.hdr-right{display:flex;align-items:center;gap:12px;}
+.hdr-btn{padding:8px 18px;background:rgba(40,120,255,.08);border:1px solid var(--bord);border-radius:8px;color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.hdr-btn:hover{background:rgba(40,120,255,.16);color:#fff;}
+.page{max-width:1300px;margin:0 auto;padding:36px 28px 60px;}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.page-title{font-size:24px;font-weight:800;}
+.page-count{font-size:13px;color:var(--txt2);margin-top:4px;}
+.btn-clear{padding:8px 18px;background:transparent;border:1px solid rgba(255,80,80,.25);border-radius:8px;color:rgba(255,100,100,.7);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-clear:hover{border-color:rgba(255,80,80,.5);color:#ff6b6b;}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
+.prod-card{background:var(--card);border:1px solid var(--bord);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;}
+.prod-card:hover{border-color:rgba(40,120,255,.45);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.4);}
+.prod-img{height:160px;background:#0B0B0F;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:900;color:#1a1a2e;border-bottom:1px solid rgba(40,120,255,.08);position:relative;}
+.fav-remove{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.fav-remove:hover{background:rgba(220,30,30,.6);}
+.fav-remove svg{stroke:#ff6b6b;}
+.prod-body{padding:14px;display:flex;flex-direction:column;gap:5px;flex:1;}
+.prod-brand{font-size:9.5px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;}
+.prod-name{font-size:13px;font-weight:600;color:#fff;line-height:1.4;}
+.prod-price{font-size:20px;font-weight:400;color:#22C55E;margin-top:auto;padding-top:10px;}
+.prod-old{font-size:11px;color:var(--txt2);text-decoration:line-through;}
+.prod-actions{display:flex;gap:8px;padding:0 14px 14px;}
+.btn-buy{flex:1;padding:9px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;}
+.btn-buy:hover{background:#2255ff;}
+.btn-cart{width:38px;height:38px;background:rgba(40,120,255,.08);border:1px solid var(--bord);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.btn-cart:hover{background:rgba(40,120,255,.18);border-color:rgba(40,120,255,.4);}
+.empty{text-align:center;padding:100px 0;color:var(--txt2);}
+.empty-icon{font-size:64px;margin-bottom:20px;opacity:.3;}
+.empty h2{font-size:20px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:10px;}
+.empty p{font-size:14px;margin-bottom:28px;line-height:1.6;}
+.btn-home{display:inline-block;padding:12px 28px;background:var(--blue);color:#fff;border-radius:10px;font-size:13px;font-weight:700;}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-left">
+    <a href="alfa-replica.html" class="hdr-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Continuar comprando
+    </a>
+  </div>
+  <div class="hdr-logo">ALFA INFORMÁTICA</div>
+  <div class="hdr-right">
+    <a href="carrinho.html"><button class="hdr-btn">🛒 Carrinho <span id="cartBadge"></span></button></a>
+  </div>
+</header>
+
+<div class="page">
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Meus Favoritos</h1>
+      <div class="page-count" id="favCount"></div>
+    </div>
+    <button class="btn-clear" onclick="clearAll()">Limpar tudo</button>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script src="store.js"></script>
+<script>
+function extractPrice(p) {
+  return typeof p.price === 'number' ? p.price : parseFloat((p.price||'0').toString().replace(/[^\d,]/g,'').replace(',','.')) || 0;
+}
+
+function render() {
+  const favs = Store.getFavorites();
+  const count = document.getElementById('favCount');
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = Store.cartCount() > 0 ? `(${Store.cartCount()})` : '';
+  count.textContent = `${favs.length} produto${favs.length !== 1 ? 's' : ''} favoritado${favs.length !== 1 ? 's' : ''}`;
+
+  if (!favs.length) {
+    document.getElementById('content').innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">♡</div>
+        <h2>Nenhum favorito ainda</h2>
+        <p>Explore nossos produtos e salve os que você mais gostou.</p>
+        <a href="alfa-replica.html" class="btn-home">Explorar produtos</a>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('content').innerHTML = `<div class="prod-grid">${favs.map(p => {
+    const price = extractPrice(p);
+    const old = p.old || p.oldPrice || null;
+    return `<div class="prod-card">
+      <div class="prod-img">
+        ?
+        <button class="fav-remove" onclick="removeFav('${p.id}')" title="Remover dos favoritos">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="prod-body">
+        <div class="prod-brand">${p.brand || ''}</div>
+        <div class="prod-name">${p.name}</div>
+        ${old ? `<div class="prod-old">R$ ${(typeof old==='number'?old:parseFloat(old)).toLocaleString('pt-BR')},00</div>` : ''}
+        <div class="prod-price">R$ ${price.toLocaleString('pt-BR')},00</div>
+      </div>
+      <div class="prod-actions">
+        <button class="btn-buy" onclick="buyNow('${p.id}')">Comprar</button>
+        <button class="btn-cart" onclick="addCart('${p.id}')" title="Adicionar ao carrinho">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function removeFav(id) {
+  const favs = Store.getFavorites();
+  const p = favs.find(f => String(f.id) === String(id));
+  if (p) Store.toggleFavorite(p);
+  render();
+}
+function addCart(id) {
+  const p = Store.getFavorites().find(f => String(f.id) === String(id));
+  if (p) { Store.addToCart(p); showToast('Adicionado ao carrinho!'); render(); }
+}
+function buyNow(id) {
+  const p = Store.getFavorites().find(f => String(f.id) === String(id));
+  if (p) { Store.addToCart(p); Store.setCheckoutItems([{...p, qty:1, selected:true}]); location.href = 'checkout.html'; }
+}
+function clearAll() {
+  if (confirm('Remover todos os favoritos?')) {
+    Store.getFavorites().forEach(p => Store.toggleFavorite(p));
+    render();
+  }
+}
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:28px;right:28px;background:#0d1a2e;border:1px solid rgba(40,120,255,.3);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:9999;animation:fadeIn .25s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone *)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\Users\\\\User\\\\Desktop\\\\alfa informatica\\\\MazyOS\\\\saidas\\\\alfa-informatica\")",
+      "Bash(Out-Null)",
+      "PowerShell(Start-Process \"c:\\\\Users\\\\User\\\\Desktop\\\\alfa informatica\\\\MazyOS\\\\saidas\\\\alfa-informatica\\\\index.html\")",
+      "WebSearch",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\User\\\\Desktop\\\\alfa informatica\\\\\" | Where-Object { $_.Extension -match '\\\\.\\(png|jpg|jpeg|webp\\)' } | Sort-Object LastWriteTime -Descending | Select-Object Name, LastWriteTime | Format-Table -AutoSize)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"c:\\\\Users\\\\User\\\\Desktop\\\\alfa informatica\\\\Design sem nome.png\"\\); Write-Host \"$\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))",
+      "PowerShell([System.Text.Encoding]::Default.EncodingName; $bytes = [System.IO.File]::ReadAllBytes\\(\"c:\\\\Users\\\\User\\\\Desktop\\\\alfa informatica\\\\alfa-replica.html\"\\); \"{0:X2} {1:X2} {2:X2}\" -f $bytes[0],$bytes[1],$bytes[2])"
+    ]
+  }
+}
