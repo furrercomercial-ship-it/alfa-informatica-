@@ -7,7 +7,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#F0F4FF;line-height:1.5;overflow-x:hidden;background-color:#030303;background-image:radial-gradient(ellipse 140% 55% at 50% -5%,rgba(14,42,130,.1) 0%,transparent 58%),radial-gradient(ellipse 50% 80% at -4% 50%,rgba(14,42,130,.045) 0%,transparent 65%),radial-gradient(ellipse 50% 80% at 104% 50%,rgba(14,42,130,.045) 0%,transparent 65%),url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><g opacity='.055'><path d='M0 65L45 65L45 95L80 95' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='45' cy='65' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M150 0L150 45L175 45L175 80' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='150' cy='45' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M260 170L215 170L215 140L185 140' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='215' cy='170' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M95 260L95 215L65 215L65 185' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='95' cy='215' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='0' cy='0' r='1.5' fill='%231e6bff'/><circle cx='130' cy='130' r='1.5' fill='%231e6bff'/><circle cx='260' cy='0' r='1.5' fill='%231e6bff'/><circle cx='0' cy='260' r='1.5' fill='%231e6bff'/><circle cx='260' cy='260' r='1.5' fill='%231e6bff'/><circle cx='65' cy='0' r='1' fill='%231e6bff'/><circle cx='195' cy='260' r='1' fill='%231e6bff'/><polygon points='230,12 238.7,17 238.7,27 230,32 221.3,27 221.3,17' stroke='%231e6bff' fill='none' stroke-width='.55'/><polygon points='28,218 36.7,223 36.7,233 28,238 19.3,233 19.3,223' stroke='%231e6bff' fill='none' stroke-width='.55'/></g></svg>");background-size:auto,auto,auto,260px 260px;background-attachment:scroll,scroll,scroll,fixed;background-repeat:no-repeat,no-repeat,no-repeat,repeat;}
+body{margin:0;padding:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#F0F4FF;line-height:1.5;overflow-x:hidden;background-color:#030303;background-image:radial-gradient(ellipse 140% 55% at 50% -5%,rgba(14,42,130,.1) 0%,transparent 58%),radial-gradient(ellipse 50% 80% at -4% 50%,rgba(14,42,130,.045) 0%,transparent 65%),radial-gradient(ellipse 50% 80% at 104% 50%,rgba(14,42,130,.045) 0%,transparent 65%),url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><g opacity='.055'><path d='M8 65L45 65L45 95L80 95' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='45' cy='65' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M150 0L150 45L175 45L175 80' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='150' cy='45' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M260 170L215 170L215 140L185 140' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='215' cy='170' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M95 260L95 215L65 215L65 185' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='95' cy='215' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='8' cy='8' r='1.5' fill='%231e6bff'/><circle cx='130' cy='130' r='1.5' fill='%231e6bff'/><circle cx='260' cy='0' r='1.5' fill='%231e6bff'/><circle cx='8' cy='252' r='1.5' fill='%231e6bff'/><circle cx='260' cy='260' r='1.5' fill='%231e6bff'/><circle cx='65' cy='0' r='1' fill='%231e6bff'/><circle cx='195' cy='260' r='1' fill='%231e6bff'/><polygon points='230,12 238.7,17 238.7,27 230,32 221.3,27 221.3,17' stroke='%231e6bff' fill='none' stroke-width='.55'/><polygon points='28,218 36.7,223 36.7,233 28,238 19.3,233 19.3,223' stroke='%231e6bff' fill='none' stroke-width='.55'/></g></svg>");background-size:auto,auto,auto,260px 260px;background-attachment:scroll,scroll,scroll,scroll;background-repeat:no-repeat,no-repeat,no-repeat,repeat;}
 a{text-decoration:none;color:inherit;}
 img{display:block;max-width:100%;}
 button{font-family:inherit;cursor:pointer;}
@@ -17,7 +17,7 @@ button{font-family:inherit;cursor:pointer;}
   --txt:#FFFFFF;--txt2:#8A93A5;--blue:#1E6BFF;--blue2:#1E6BFF;--cyan:#38d9ff;
   --green:#22C55E;--rad:10px;--trans:.26s cubic-bezier(.4,0,.2,1);
 }
-.sec-wrap{max-width:1650px;margin:0 auto;padding:0 32px;}
+.sec-wrap{max-width:1650px;margin:0 auto;padding:0 20px;}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:30px;gap:20px;}
 .sec-head-left{display:flex;align-items:flex-start;gap:14px;}
 .sec-head-accent{width:3px;height:44px;flex-shrink:0;background:linear-gradient(180deg,#2563FF 0%,rgba(37,99,255,0) 100%);border-radius:2px;margin-top:2px;}
@@ -26,43 +26,51 @@ button{font-family:inherit;cursor:pointer;}
 .sec-link{flex-shrink:0;font-size:12px;color:var(--txt2);display:inline-flex;align-items:center;gap:5px;border:1px solid var(--bord);border-radius:6px;padding:7px 14px;transition:color var(--trans),border-color var(--trans),background var(--trans);white-space:nowrap;}
 .sec-link:hover{color:#fff;border-color:var(--blue2);background:rgba(37,99,255,.08);}
 /* HEADER */
-.hdr{background:rgba(3,3,3,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(37,99,255,.12);position:sticky;top:0;z-index:100;}
-.hdr-top{display:flex;align-items:center;gap:14px;padding:0 32px;height:74px;}
-.hdr-logo{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0;margin-right:22px;}
-.hdr-logo img{height:82px;width:auto;object-fit:contain;}
-.hdr-cat{display:flex;align-items:center;gap:8px;padding:0 16px;height:40px;background:rgba(37,99,255,.05);border:1px solid rgba(37,99,255,.22);border-radius:7px;color:#8ab0d8;font-size:11.5px;font-weight:700;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;margin-left:6px;transition:background var(--trans),border-color var(--trans),color var(--trans);}
-.hdr-cat:hover{background:rgba(37,99,255,.12);border-color:rgba(37,99,255,.4);color:#fff;}
-.hdr-search{flex:1;display:flex;height:38px;border:1px solid rgba(37,99,255,.18);border-radius:8px;overflow:hidden;background:rgba(255,255,255,.025);transition:border-color var(--trans),box-shadow var(--trans);}
-.hdr-search:focus-within{border-color:rgba(37,99,255,.52);box-shadow:0 0 0 4px rgba(37,99,255,.09),0 0 18px rgba(37,99,255,.08);}
-.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 22px;font-size:14px;font-family:inherit;color:#b0c0d8;outline:none;height:100%;}
-.hdr-search-in::placeholder{color:#2a3a4e;}
-.hdr-search-btn{display:flex;align-items:center;gap:10px;background:#1a44ff;color:#fff;border:none;padding:0 28px;font-size:12px;font-weight:500;letter-spacing:.6px;cursor:pointer;transition:background var(--trans);flex-shrink:0;height:100%;}
-.hdr-search-btn:hover{background:#2255ff;}
-.hdr-search-btn svg{width:17px;height:17px;}
-.hdr-acts{display:flex;align-items:center;flex-shrink:0;margin-left:24px;}
-.hdr-act{display:flex;flex-direction:column;align-items:center;gap:3px;color:#3a5878;text-decoration:none;padding:0 13px;height:74px;justify-content:center;transition:color var(--trans);position:relative;}
-.hdr-act:hover{color:#d0e4f8;}
-.hdr-act-lbl{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;}
-.hdr-badge{position:absolute;top:13px;right:5px;min-width:17px;height:17px;padding:0 4px;background:#2563FF;color:#fff;font-size:9px;font-weight:900;border-radius:9px;display:flex;align-items:center;justify-content:center;line-height:1;}
-.hdr-nav{background:#050505;border-top:1px solid rgba(37,99,255,.06);}
-.hdr-nav-inner{display:flex;align-items:center;padding:0 28px;height:40px;overflow-x:auto;scrollbar-width:none;}
+.hdr{background:#030303;border-bottom:none;position:sticky;top:0;z-index:100;}
+.hdr-top{display:grid;grid-template-columns:15fr 53fr 33fr;align-items:center;height:96px;border-bottom:1px solid rgba(37,99,255,.16);}
+.hdr-logo{display:flex;align-items:center;justify-content:center;padding:0 16px;height:100%;text-decoration:none;}
+.hdr-logo img{height:108px;width:auto;object-fit:contain;max-width:100%;}
+.hdr-search{display:flex;height:47px;margin:0 40px;border:1px solid rgba(255,255,255,.1);border-radius:6px;overflow:hidden;background:#1a1a1f;transition:border-color var(--trans),box-shadow var(--trans);}
+.hdr-search:focus-within{border-color:rgba(37,99,255,.55);box-shadow:0 0 0 3px rgba(37,99,255,.08);}
+.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 16px;font-size:14px;font-family:inherit;color:#a8bcd4;outline:none;height:100%;}
+.hdr-search-in::placeholder{color:rgba(255,255,255,.45);}
+.hdr-search-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#1D4ED8;color:#fff;border:none;width:130px;flex-shrink:0;font-size:13px;font-weight:700;letter-spacing:.3px;cursor:pointer;transition:background var(--trans);height:100%;}
+.hdr-search-btn:hover{background:#2563eb;}
+.hdr-acts-group{display:flex;align-items:stretch;justify-content:flex-end;height:100%;}
+.hdr-act{display:flex;align-items:center;gap:26px;text-decoration:none;height:100%;padding:0 20px 0 44px;transition:background var(--trans);}
+.hdr-act:hover{background:rgba(255,255,255,.03);}
+.hdr-act-cart{padding:0 28px;gap:18px;position:relative;}
+.hdr-act-cart::before{content:'';position:absolute;left:0;top:20px;bottom:20px;width:1px;background:rgba(255,255,255,.18);}
+.hdr-act-icon{color:#fff;flex-shrink:0;transition:color var(--trans);}
+.hdr-act:hover .hdr-act-icon{color:rgba(255,255,255,.8);}
+.hdr-act-text{display:flex;flex-direction:column;gap:4px;}
+.hdr-act-line1{font-size:13px;font-weight:700;color:#fff;line-height:1.25;white-space:nowrap;}
+.hdr-act-line2{font-size:11px;color:rgba(255,255,255,.6);line-height:1.25;white-space:nowrap;}
+.hdr-cart-icon-wrap{position:relative;flex-shrink:0;}
+.hdr-badge{position:absolute;top:-8px;right:-10px;min-width:19px;height:19px;padding:0 5px;background:#1E6BFF;color:#fff;font-size:9px;font-weight:900;border-radius:10px;display:flex;align-items:center;justify-content:center;line-height:1;border:2px solid #030303;}
+.hdr-nav{background:#030303;border-bottom:1px solid rgba(37,99,255,.1);}
+.hdr-nav-inner{display:flex;align-items:stretch;justify-content:space-between;padding:0 12px;height:40px;}
 .hdr-nav-inner::-webkit-scrollbar{display:none;}
-.hdr-nav-inner a{font-size:10.5px;font-weight:700;letter-spacing:.5px;color:#2e4460;padding:0 14px;height:100%;display:flex;align-items:center;text-transform:uppercase;border-right:1px solid rgba(37,99,255,.05);transition:color var(--trans),background var(--trans);white-space:nowrap;flex-shrink:0;}
-.hdr-nav-inner a:last-child{border-right:none;}
-.hdr-nav-inner a:hover{color:#8ab8d8;background:rgba(37,99,255,.04);}
-.hdr-nav-inner a.nav-ofertas{color:#ff2d78;font-weight:800;}
-.hdr-nav-inner a.nav-ofertas:hover{color:#ff5599;background:rgba(255,45,120,.04);}
-/* HERO */
-#hero{padding:0;margin:0;}
+.hdr-nav-inner a{font-size:12.5px;font-weight:600;color:#b0bec8;padding:0 18px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.35px;transition:color var(--trans),background var(--trans);white-space:nowrap;flex-shrink:0;}
+.hdr-nav-inner a:hover{color:#fff;background:rgba(37,99,255,.06);}
+.hdr-nav-inner a.nav-ativo{color:#fff;font-weight:700;background:#1E6BFF;padding:0 26px;}
+.hdr-nav-inner a.nav-ativo:hover{background:#2a78ff;color:#fff;}
+.hdr-nav-inner a.nav-promo{color:#b0bec8;font-weight:600;}
+.hdr-nav-inner a.nav-promo:hover{color:#fff;background:rgba(37,99,255,.06);}
+.hdr-nav-inner a.nav-atend{color:#22c55e;}
+.hdr-nav-inner a.nav-atend:hover{color:#4ade80;background:rgba(34,197,94,.06);}
+.hdr-nav-inner a.nav-atend::before{content:'';width:7px;height:7px;min-width:7px;background:#22c55e;border-radius:50%;animation:dot-blink 1.4s ease-in-out infinite;}
+@keyframes dot-blink{0%,100%{opacity:1;}50%{opacity:0;}}
+#hero{padding:0;margin:0 0 0 -20px;background:#000;overflow:hidden;width:calc(100% + 20px);}
 .hero-wrap{width:100%;margin:0;}
-.hero-slider{position:relative;aspect-ratio:4/1;border-radius:0;overflow:hidden;background:transparent;transition:box-shadow .3s ease;}
+.hero-slider{position:relative;aspect-ratio:4/1;border-radius:0;overflow:hidden;background:#000;transition:box-shadow .3s ease;}
 .hero-slider:hover{box-shadow:0 0 50px rgba(37,99,255,.14);}
 .hero-ratio{display:none;}
 .hero-track{position:absolute;inset:0;}
-.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 500ms ease;pointer-events:none;background-size:cover;background-position:center center;background-repeat:no-repeat;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 500ms ease;pointer-events:none;}
 .hero-slide.active{opacity:1;pointer-events:auto;}
-.hero-slide img{display:none;}
-.hero-slide a{position:absolute;inset:0;display:block;}
+.hero-slide img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center;display:block;}
+.hero-slide a{position:absolute;inset:0;display:block;z-index:1;}
 .hero-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:40px;height:40px;border-radius:50%;background:rgba(3,5,15,.72);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .22s,box-shadow .22s;}
 .hero-arrow:hover{background:rgba(37,99,255,.65);box-shadow:0 0 18px rgba(37,99,255,.4);}
 .hero-arrow.prev{left:18px;}
@@ -107,19 +115,19 @@ button{font-family:inherit;cursor:pointer;}
 .hover-act:hover{border-color:var(--blue2);color:var(--blue2);background:rgba(37,99,255,.12);}
 .img-ph{width:100%;height:100%;background:#0B0B0F;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:900;color:#111e2e;user-select:none;}
 /* CATEGORIES */
-.cat-section{background:transparent;padding:10px 0 22px;}
-.cat-grid{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:nowrap;width:100%;}
-.cat-card{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;background:transparent;border:none;text-decoration:none;cursor:pointer;padding:4px 2px;}
-.cat-img-wrap{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,#0C1828 0%,#060810 80%);border:1px solid rgba(40,120,255,.18);box-shadow:0 0 12px rgba(0,102,255,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s cubic-bezier(.4,0,.2,1),border-color .28s cubic-bezier(.4,0,.2,1);}
-.cat-card:hover .cat-img-wrap{transform:translateY(-4px);box-shadow:0 10px 24px rgba(0,0,0,.4),0 0 26px rgba(0,102,255,.18);border-color:rgba(40,120,255,.45);}
-.cat-img{width:76px;height:76px;object-fit:contain;display:block;mix-blend-mode:screen;transition:transform .28s cubic-bezier(.4,0,.2,1);}
-.cat-card:hover .cat-img{transform:scale(1.06);}
-.cat-text{display:flex;flex-direction:column;align-items:center;}
-.cat-name{display:block;font-size:11.5px;font-weight:600;color:rgba(255,255,255,.82);text-transform:uppercase;letter-spacing:.35px;line-height:1.3;text-align:center;max-width:84px;transition:color .28s;}
-.cat-card:hover .cat-name{color:#3B82F6;}
-.cat-text::after{content:"";display:block;width:0;height:1.5px;background:#3B82F6;border-radius:1px;margin-top:3px;transition:width .28s cubic-bezier(.4,0,.2,1);}
-.cat-card:hover .cat-text::after{width:60%;}
-.cat-sub{display:none;}
+.cat-section{background:transparent;padding:14px 0 0;}
+.cat-benefits{display:grid;grid-template-columns:repeat(4,1fr);background:#000;}
+.cat-benefit-item{display:flex;align-items:center;gap:14px;padding:16px 22px;background:#000;}
+.cat-benefit-icon{flex-shrink:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:rgba(37,99,255,.1);border:1px solid rgba(37,99,255,.22);border-radius:9px;}
+.cat-benefit-txt b{font-size:11.5px;font-weight:700;color:#fff;display:block;text-transform:uppercase;letter-spacing:.3px;line-height:1.3;}
+.cat-benefit-txt span{font-size:10.5px;color:rgba(255,255,255,.65);display:block;margin-top:2px;}
+.cat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:0;padding:4px 0;}
+.cat-hcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px 8px;background:#0C0C10;text-decoration:none;transition:background var(--trans);min-height:160px;}
+.cat-hcard:last-child{border-right:none;}
+.cat-hcard:hover{background:#13131c;}
+.cat-hcard-img{width:95%;max-width:100%;height:auto;object-fit:contain;mix-blend-mode:screen;}
+.cat-hcard-name{font-size:16px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.35px;line-height:1.3;display:block;text-align:center;}
+.cat-hcard-sub{font-size:13px;color:rgba(255,255,255,.45);display:block;margin-top:5px;line-height:1.35;text-align:center;}
 /* BANNERS */
 .banner-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
 .banner-subs{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:14px;}
@@ -133,19 +141,24 @@ button{font-family:inherit;cursor:pointer;}
 .banner-sub .banner-h{font-size:15px;}
 .banner-p{font-size:12px;color:var(--txt2);line-height:1.5;}
 .banner-cta{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--blue2);text-transform:uppercase;}
-/* BRANDS */
-.brands-track-wrap{overflow:visible;padding:24px 0;-webkit-mask:linear-gradient(90deg,transparent 0%,#000 8%,#000 92%,transparent 100%);mask:linear-gradient(90deg,transparent 0%,#000 8%,#000 92%,transparent 100%);}
-.brands-track{display:flex;align-items:center;animation:bs 32s linear infinite;width:max-content;}
-.brands-track-wrap:hover .brands-track{animation-play-state:paused;}
-@keyframes bs{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-.brand-item{flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:14px 36px;margin:0 6px;background:#030303;border:1px solid rgba(255,255,255,.05);border-radius:10px;position:relative;overflow:visible;transition:transform .35s cubic-bezier(.4,0,.2,1);cursor:pointer;}
-.brand-item:hover{transform:translateY(-4px);}
-.brand-name{font-size:12px;font-weight:800;letter-spacing:2.5px;color:rgba(255,255,255,.42);text-transform:uppercase;position:relative;z-index:2;white-space:nowrap;transition:color .35s;}
-.brand-name::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:160%;height:280%;background:var(--g,rgba(0,102,255,.3));border-radius:50%;filter:blur(26px);z-index:-1;opacity:.45;pointer-events:none;transition:opacity .35s,transform .35s;}
-.brand-item:hover .brand-name{color:#ffffff;}
-.brand-item:hover .brand-name::before{opacity:.88;transform:translate(-50%,-50%) scale(1.15);}
-.brand-sub{font-size:9px;font-weight:500;letter-spacing:1.5px;color:rgba(255,255,255,.16);text-transform:uppercase;white-space:nowrap;transition:color .35s;}
-.brand-item:hover .brand-sub{color:rgba(255,255,255,.38);}
+/* BRANDS GRID */
+.brands-section{background:#000;padding:60px 0;}
+.brands-eyebrow{text-align:center;font-size:11px;font-weight:700;letter-spacing:2.5px;color:#1E6BFF;text-transform:uppercase;margin-bottom:14px;}
+.brands-title{text-align:center;font-size:32px;font-weight:600;color:#fff;text-transform:uppercase;letter-spacing:2px;margin-bottom:44px;line-height:1.2;}
+.brands-title span{color:#1E6BFF;}
+.brands-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px 24px;max-width:860px;margin:0 auto;}
+.brand-card{background:transparent;border:none;border-radius:0;padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+.brand-card-name{font-size:17px;font-weight:600;letter-spacing:1.5px;color:rgba(255,255,255,.45);text-transform:uppercase;font-family:'Segoe UI',system-ui,sans-serif;transition:color .3s ease,text-shadow .3s ease;}
+.brand-card-sub{font-size:9px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.18);text-transform:uppercase;transition:color .3s ease;}
+.brand-card:hover .brand-card-sub{color:rgba(255,255,255,.5);}
+.brand-card.nvidia:hover .brand-card-name{color:#00ff55;text-shadow:0 0 8px rgba(0,255,80,.9),0 0 22px rgba(0,255,80,.5);}
+.brand-card.amd:hover .brand-card-name{color:#ff3333;text-shadow:0 0 8px rgba(255,30,30,.9),0 0 22px rgba(255,30,30,.5);}
+.brand-card.asus:hover .brand-card-name{color:#4d8fff;text-shadow:0 0 8px rgba(30,107,255,.9),0 0 22px rgba(30,107,255,.5);}
+.brand-card.msi:hover .brand-card-name{color:#ff3333;text-shadow:0 0 8px rgba(255,30,30,.9),0 0 22px rgba(255,30,30,.5);}
+.brand-card.corsair:hover .brand-card-name{color:#ffd700;text-shadow:0 0 8px rgba(255,210,0,.9),0 0 22px rgba(255,210,0,.5);}
+.brand-card.hyperx:hover .brand-card-name{color:#ff3333;text-shadow:0 0 8px rgba(255,30,30,.9),0 0 22px rgba(255,30,30,.5);}
+.brand-card.logitech:hover .brand-card-name{color:#00ccff;text-shadow:0 0 8px rgba(0,200,255,.9),0 0 22px rgba(0,200,255,.5);}
+.brand-card.redragon:hover .brand-card-name{color:#ff3333;text-shadow:0 0 8px rgba(255,30,30,.9),0 0 22px rgba(255,30,30,.5);}
 /* BENEFITS */
 .benefit-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(37,99,255,.07);border:1px solid rgba(37,99,255,.1);border-radius:12px;overflow:hidden;}
 .benefit-item{display:flex;align-items:center;gap:13px;padding:20px 18px;background:var(--card);transition:background var(--trans);}
@@ -202,23 +215,108 @@ button{font-family:inherit;cursor:pointer;}
 @media(max-width:1200px){.prod-grid{grid-template-columns:repeat(3,1fr);}.hl{flex:0 0 40%;}}
 @media(max-width:960px){.prod-grid{grid-template-columns:repeat(2,1fr);}.cat-grid{grid-template-columns:repeat(4,1fr);}.banner-grid{grid-template-columns:1fr;}.benefit-bar{grid-template-columns:repeat(2,1fr);}.hl{flex:0 0 100%;}.hr{display:none;}.ft2-grid{grid-template-columns:repeat(2,1fr);gap:40px;}.ft2-about{max-width:100%;}}
 @media(max-width:580px){.prod-grid{grid-template-columns:1fr;}.cat-grid{grid-template-columns:repeat(2,1fr);}.sec-wrap{padding:0 14px;}.banner-subs{grid-template-columns:1fr;}.ft2-grid{grid-template-columns:1fr;padding:48px 0 40px;text-align:center;}.ft2-about{max-width:100%;}.ft2-col-h{justify-content:center;}.ft2-col-h::after{display:none;}.ft2-link:hover{transform:none;}.ft2-pay-grid{justify-content:center;}.ft2-seal-list{align-items:center;}.ft2-insta{display:inline-flex;}.ft2-bottom{flex-direction:column;align-items:center;}.wpp-box{flex-direction:column;padding:36px 28px;text-align:center;}.wpp-sub{max-width:100%;}.wpp-btn{width:100%;justify-content:center;}.benefit-bar{grid-template-columns:1fr;}}
+.hdr-cat{display:flex;align-items:center;gap:8px;padding:0 16px;height:40px;background:rgba(37,99,255,.05);border:1px solid rgba(37,99,255,.22);border-radius:7px;color:#8ab0d8;font-size:11.5px;font-weight:700;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;margin-left:6px;cursor:pointer;transition:background var(--trans),border-color var(--trans),color var(--trans);}
+.hdr-cat:hover{background:rgba(37,99,255,.12);border-color:rgba(37,99,255,.4);color:#fff;}
 /* MEGA MENU */
-@keyframes megaIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-.cat-wrap{position:relative;display:inline-flex;}
-.megamenu{display:none;position:absolute;top:100%;left:0;width:740px;padding-top:8px;background:transparent;z-index:500;flex-direction:column;}
-.megamenu-inner{display:flex;flex-direction:row;background:#060609;border:1px solid rgba(40,120,255,.2);border-radius:14px;overflow:hidden;box-shadow:0 28px 60px rgba(0,0,0,.88),0 0 0 1px rgba(255,255,255,.03);animation:megaIn .18s ease both;}
-.mega-left{width:210px;flex-shrink:0;border-right:1px solid rgba(255,255,255,.05);padding:10px 0;overflow-y:auto;}
-.mega-cat{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.48);text-decoration:none;text-transform:uppercase;letter-spacing:.55px;border-left:2px solid transparent;white-space:nowrap;transition:background .15s,color .15s,border-color .15s;cursor:pointer;}
-.mega-cat:hover,.mega-cat.mm-active{background:rgba(40,120,255,.09);color:#fff;border-left-color:#1E6BFF;}
-.mega-cat svg{opacity:.5;flex-shrink:0;}
-.mega-cat:hover svg,.mega-cat.mm-active svg{opacity:1;}
-.mega-right{flex:1;padding:20px 24px;min-height:320px;overflow-y:auto;}
+@keyframes megaIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.cat-wrap{position:relative;display:flex;align-items:stretch;flex-shrink:0;}
+.megamenu{display:none;position:absolute;top:100%;left:0;width:860px;padding-top:6px;background:transparent;z-index:500;flex-direction:column;}
+.megamenu-inner{
+  display:flex;flex-direction:row;
+  background:linear-gradient(160deg,#07090f 0%,#060810 100%);
+  border:1px solid rgba(37,99,255,.22);
+  border-top:2px solid #1E6BFF;
+  border-radius:0 0 16px 16px;
+  overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.03),0 0 40px rgba(37,99,255,.06);
+  animation:megaIn .2s ease both;
+}
+.mega-left{
+  width:240px;flex-shrink:0;
+  background:linear-gradient(180deg,rgba(5,8,20,.95) 0%,rgba(3,5,14,.98) 100%);
+  border-right:1px solid rgba(37,99,255,.1);
+  padding:8px 0 14px;overflow-y:auto;
+}
+.mega-left-head{
+  padding:14px 20px 10px;
+  font-size:9px;font-weight:800;letter-spacing:2px;
+  color:rgba(255,255,255,.22);text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  margin-bottom:6px;
+}
+.mega-cat{
+  display:flex;align-items:center;gap:13px;
+  padding:11px 20px 11px 16px;
+  font-size:12px;font-weight:600;
+  color:rgba(255,255,255,.5);
+  text-decoration:none;text-transform:uppercase;letter-spacing:.5px;
+  border-left:3px solid transparent;
+  white-space:nowrap;
+  transition:all .16s ease;
+  cursor:pointer;position:relative;
+}
+.mega-cat:hover{
+  background:rgba(37,99,255,.08);
+  color:rgba(255,255,255,.85);
+  border-left-color:rgba(37,99,255,.5);
+}
+.mega-cat.mm-active{
+  background:linear-gradient(90deg,rgba(37,99,255,.18) 0%,rgba(37,99,255,.06) 100%);
+  color:#fff;font-weight:700;
+  border-left-color:#1E6BFF;
+}
+.mega-cat-icon{
+  width:30px;height:30px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:8px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  transition:all .16s ease;
+  color:rgba(255,255,255,.35);
+}
+.mega-cat:hover .mega-cat-icon{
+  background:rgba(37,99,255,.12);
+  border-color:rgba(37,99,255,.3);
+  color:#60a5fa;
+}
+.mega-cat.mm-active .mega-cat-icon{
+  background:rgba(37,99,255,.2);
+  border-color:rgba(37,99,255,.45);
+  color:#3b82f6;
+  box-shadow:0 0 12px rgba(37,99,255,.25);
+}
+.mega-cat-arrow{
+  margin-left:auto;opacity:0;
+  color:rgba(37,99,255,.6);
+  transition:opacity .16s,transform .16s;
+  font-size:14px;
+}
+.mega-cat:hover .mega-cat-arrow,.mega-cat.mm-active .mega-cat-arrow{opacity:1;}
+.mega-cat.mm-active .mega-cat-arrow{transform:translateX(2px);color:#3b82f6;}
+.mega-right{flex:1;padding:28px 32px;min-height:380px;overflow-y:auto;}
 .mega-subs{display:none;}
-.mega-subs.mm-active{display:block;}
-.mega-sub-title{font-size:9px;font-weight:800;color:#1E6BFF;letter-spacing:1.2px;text-transform:uppercase;margin:0 0 10px;padding:0;}
-.mega-sub-links{display:grid;grid-template-columns:repeat(2,1fr);gap:1px 12px;margin-bottom:20px;}
-.mega-sub-links a{display:block;padding:7px 10px;font-size:12px;color:rgba(255,255,255,.5);text-decoration:none;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap;}
-.mega-sub-links a:hover{color:#fff;background:rgba(40,120,255,.09);}
+.mega-subs.mm-active{display:block;animation:megaIn .18s ease both;}
+.mega-sub-title{
+  font-size:10px;font-weight:800;color:#3b82f6;
+  letter-spacing:1.8px;text-transform:uppercase;
+  margin:0 0 16px;padding:0 0 10px;
+  border-bottom:1px solid rgba(37,99,255,.2);
+}
+.mega-sub-links{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:2px 16px;margin-bottom:24px;
+}
+.mega-sub-links a{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;
+  font-size:13px;color:rgba(255,255,255,.52);
+  text-decoration:none;border-radius:8px;
+  transition:color .15s,background .15s;white-space:nowrap;
+  font-weight:500;
+}
+.mega-sub-links a::before{content:'›';color:rgba(37,99,255,.4);font-size:16px;transition:color .15s;}
+.mega-sub-links a:hover{color:#fff;background:rgba(37,99,255,.1);}
+.mega-sub-links a:hover::before{color:#3b82f6;}
 
 /* ═══ PREMIUM VISUAL UPGRADE ═══ */
 
@@ -235,13 +333,10 @@ button{font-family:inherit;cursor:pointer;}
 .sec-link:hover{background:rgba(37,99,255,.1);border-color:rgba(37,99,255,.5);color:#fff;box-shadow:0 0 14px rgba(37,99,255,.16);}
 
 /* Categories */
-.cat-section{padding:32px 0 42px;}
-.cat-img-wrap{width:88px;height:88px;border:1.5px solid rgba(40,120,255,.22);box-shadow:0 0 18px rgba(0,102,255,.1),inset 0 0 14px rgba(0,102,255,.04);}
-.cat-img{width:82px;height:82px;}
-.cat-card:hover .cat-img-wrap{border-color:rgba(56,145,255,.68);box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 36px rgba(37,99,255,.28),inset 0 0 16px rgba(37,99,255,.05);}
-.cat-card:hover .cat-img{transform:scale(1.09);}
-.cat-card:hover .cat-name{color:#60a5fa;text-shadow:0 0 12px rgba(96,165,250,.35);}
-.cat-text::after{background:linear-gradient(90deg,#2563FF,#38d9ff);}
+.cat-section{padding:20px 0 0;}
+.cat-benefit-item{padding:14px 16px;}
+.cat-hcard{min-height:140px;padding:8px 6px;}
+.cat-hcard-img{width:95%;}
 
 /* Products */
 .prod-img-wrap{background:linear-gradient(145deg,#0C0C16 0%,#08080F 100%);border:1px solid rgba(255,255,255,.05);box-shadow:inset 0 0 24px rgba(0,0,0,.35);}
@@ -612,62 +707,74 @@ button{font-family:inherit;cursor:pointer;}
 <header class="hdr">
 <div class="hdr-top">
   <a href="#" class="hdr-logo"><img src="logo.png" alt="Alfa Informática"></a>
-  <div class="cat-wrap">
-  <button class="hdr-cat">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    CATEGORIAS
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-  </button>
-  <nav class="megamenu"><div class="megamenu-inner">
-    <div class="mega-left">
-      <a class="mega-cat" data-cat="computadores" href="categoria.html?cat=computadores"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Computadores</a>
-      <a class="mega-cat" data-cat="hardware" href="categoria.html?cat=hardware"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="14" x2="4" y2="14"/></svg>Hardware</a>
-      <a class="mega-cat" data-cat="perifericos" href="categoria.html?cat=perifericos"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9 L7 15 L17 15 L18 9 Z"/><path d="M5 5 L19 5 L18 9 L6 9 Z"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg>Perif&#233;ricos</a>
-      <a class="mega-cat" data-cat="monitores" href="categoria.html?cat=monitores"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Monitores</a>
-      <a class="mega-cat" data-cat="celulares" href="categoria.html?cat=celulares"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Celulares</a>
-      <a class="mega-cat" data-cat="redes" href="categoria.html?cat=redes"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 7.76a6 6 0 0 0 0 8.49"/><path d="M20.07 4.93a10 10 0 0 1 0 14.14"/><path d="M3.93 4.93a10 10 0 0 0 0 14.14"/></svg>Redes</a>
-      <a class="mega-cat" data-cat="impressao" href="categoria.html?cat=impressao"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Impress&#227;o</a>
-      <a class="mega-cat" data-cat="moveis" href="categoria.html?cat=moveis"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 9V6a2 2 0 00-2-2H6a2 2 0 00-2 2v3"/><path d="M2 11v5a2 2 0 002 2h16a2 2 0 002-2v-5a2 2 0 00-4 0v2H6v-2a2 2 0 00-4 0z"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/></svg>M&#243;veis</a>
-      <a class="mega-cat" data-cat="audio" href="categoria.html?cat=audio"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>&#193;udio</a>
-      <a class="mega-cat" data-cat="games" href="categoria.html?cat=games"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><path d="M17.32 5H6.68a4 4 0 00-3.978 3.59l-.99 8.5A4 4 0 005.69 21h.01a4 4 0 003.23-1.63l.68-1.01a2 2 0 011.62-.84h1.54a2 2 0 011.62.84l.68 1.01A4 4 0 0018.3 21h.01a4 4 0 003.978-3.91l-.99-8.5A4 4 0 0017.32 5z"/></svg>Games</a>
-      <a class="mega-cat" data-cat="outros" href="categoria.html?cat=outros"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Outros</a>
-    </div>
-    <div class="mega-right">
-      <div class="mega-subs" id="subs-computadores"><p class="mega-sub-title">Computadores</p><div class="mega-sub-links"><a href="categoria.html?cat=pc-gamer">PC Gamer</a><a href="categoria.html?cat=pc-office">PC Office</a><a href="categoria.html?cat=notebooks">Notebooks</a><a href="categoria.html?cat=servidores">Servidores</a><a href="categoria.html?cat=seminovos">Seminovos</a></div></div>
-      <div class="mega-subs" id="subs-hardware"><p class="mega-sub-title">Hardware</p><div class="mega-sub-links"><a href="categoria.html?cat=processadores">Processadores</a><a href="#">Placas-m&#227;e</a><a href="categoria.html?cat=placas-de-video">Placas de V&#237;deo</a><a href="categoria.html?cat=memorias-ram">Mem&#243;rias RAM</a><a href="categoria.html?cat=ssd-hd">SSD / HD</a><a href="categoria.html?cat=fontes">Fontes</a><a href="categoria.html?cat=gabinetes">Gabinetes</a><a href="categoria.html?cat=coolers-gabinete">Coolers p/ Gabinete</a><a href="categoria.html?cat=coolers-processador">Coolers p/ Processador</a><a href="categoria.html?cat=water-coolers">Water Coolers</a></div></div>
-      <div class="mega-subs" id="subs-perifericos"><p class="mega-sub-title">Perif&#233;ricos</p><div class="mega-sub-links"><a href="categoria.html?cat=mouse">Mouse</a><a href="categoria.html?cat=mousepad">Mousepad</a><a href="categoria.html?cat=teclados">Teclados</a><a href="categoria.html?cat=headsets">Headsets</a><a href="categoria.html?cat=fones">Fones de Ouvido</a><a href="categoria.html?cat=microfones">Microfones</a><a href="categoria.html?cat=webcam">Webcam</a></div></div>
-      <div class="mega-subs" id="subs-monitores"><p class="mega-sub-title">Monitores</p><div class="mega-sub-links"><a href="categoria.html?cat=monitores-gaming">Monitores</a><a href="categoria.html?cat=tvs">TVs</a></div></div>
-      <div class="mega-subs" id="subs-celulares"><p class="mega-sub-title">Celulares</p><div class="mega-sub-links"><a href="categoria.html?cat=celulares-smartphones">Celulares</a><a href="categoria.html?cat=cabos-celular">Cabos para Celular</a><a href="categoria.html?cat=adaptadores">Adaptadores</a></div></div>
-      <div class="mega-subs" id="subs-redes"><p class="mega-sub-title">Redes</p><div class="mega-sub-links"><a href="categoria.html?cat=switch">Switch</a><a href="categoria.html?cat=repetidores">Repetidores</a><a href="categoria.html?cat=placas-rede">Placas de Rede</a><a href="categoria.html?cat=cabos-rede">Cabos de Rede</a></div></div>
-      <div class="mega-subs" id="subs-impressao"><p class="mega-sub-title">Impress&#227;o</p><div class="mega-sub-links"><a href="categoria.html?cat=impressoras">Impressoras</a></div></div>
-      <div class="mega-subs" id="subs-moveis"><p class="mega-sub-title">M&#243;veis</p><div class="mega-sub-links"><a href="categoria.html?cat=cadeiras">Cadeiras</a><a href="categoria.html?cat=mesas">Mesas</a></div></div>
-      <div class="mega-subs" id="subs-audio"><p class="mega-sub-title">&#193;udio</p><div class="mega-sub-links"><a href="categoria.html?cat=caixas-de-som">Caixas de Som</a></div></div>
-      <div class="mega-subs" id="subs-games"><p class="mega-sub-title">Games</p><div class="mega-sub-links"><a href="categoria.html?cat=video-games">Video Games</a></div></div>
-      <div class="mega-subs" id="subs-outros"><p class="mega-sub-title">Outros</p><div class="mega-sub-links"><a href="categoria.html?cat=projetores">Projetores</a><a href="categoria.html?cat=eletronicos">Eletr&#244;nicos</a><a href="categoria.html?cat=licencas">Licen&#231;as</a><a href="categoria.html?cat=acessorios">Acess&#243;rios de Inform&#225;tica</a></div></div>
-    </div></div>
-  </nav>
-  </div>
   <div class="hdr-search">
     <input class="hdr-search-in" type="text" placeholder="Digite o que você procura...">
-    <button class="hdr-search-btn">BUSCAR <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    <button class="hdr-search-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> BUSCAR</button>
   </div>
-  <div class="hdr-acts">
-    <a href="auth.html" class="hdr-act" id="hdr-user-btn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="hdr-act-lbl" id="hdr-user-lbl">ENTRAR</span>
-    </a>
-    <a href="favoritos.html" class="hdr-act">
-      <div class="hdr-badge" id="fav-badge" style="display:none">0</div>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <span class="hdr-act-lbl">FAVORITOS</span>
-    </a>
-    <a href="carrinho.html" class="hdr-act">
+  <div class="hdr-acts-group">
+  <a href="auth.html" class="hdr-act" id="hdr-user-btn">
+    <svg class="hdr-act-icon" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <div class="hdr-act-text">
+      <span class="hdr-act-line1" id="hdr-user-lbl">Minha Conta</span>
+      <span class="hdr-act-line2">Entrar / Cadastrar</span>
+    </div>
+  </a>
+  <a href="carrinho.html" class="hdr-act hdr-act-cart">
+    <div class="hdr-cart-icon-wrap">
       <div class="hdr-badge" id="cart-badge" style="display:none">0</div>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <span class="hdr-act-lbl">CARRINHO</span>
-    </a>
+      <svg class="hdr-act-icon" width="43" height="43" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    </div>
+    <div class="hdr-act-text">
+      <span class="hdr-act-line1">Meu Carrinho</span>
+      <span class="hdr-act-line2" id="cart-total-lbl">0 Itens R$0,00</span>
+    </div>
+  </a>
   </div>
 </div>
+<nav class="hdr-nav">
+  <div class="hdr-nav-inner">
+    <div class="cat-wrap">
+      <a href="categoria.html" class="nav-ativo"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><rect width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="4.6" width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="9.2" width="14" height="1.8" rx=".9" fill="currentColor"/></svg>Todas Categorias<svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <nav class="megamenu"><div class="megamenu-inner">
+        <div class="mega-left">
+          <div class="mega-left-head">Departamentos</div>
+          <a class="mega-cat" data-cat="computadores" href="categoria.html?cat=computadores"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>Computadores<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="hardware" href="categoria.html?cat=hardware"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="14" x2="4" y2="14"/></svg></span>Hardware<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="perifericos" href="categoria.html?cat=perifericos"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9 L7 15 L17 15 L18 9 Z"/><path d="M5 5 L19 5 L18 9 L6 9 Z"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></span>Periféricos<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="monitores" href="categoria.html?cat=monitores"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>Monitores<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="celulares" href="categoria.html?cat=celulares"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>Celulares<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="redes" href="categoria.html?cat=redes"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 7.76a6 6 0 0 0 0 8.49"/><path d="M20.07 4.93a10 10 0 0 1 0 14.14"/><path d="M3.93 4.93a10 10 0 0 0 0 14.14"/></svg></span>Redes<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="impressao" href="categoria.html?cat=impressao"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span>Impressão<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="moveis" href="categoria.html?cat=moveis"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 9V6a2 2 0 00-2-2H6a2 2 0 00-2 2v3"/><path d="M2 11v5a2 2 0 002 2h16a2 2 0 002-2v-5a2 2 0 00-4 0v2H6v-2a2 2 0 00-4 0z"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/></svg></span>Móveis<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="audio" href="categoria.html?cat=audio"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>Áudio<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="games" href="categoria.html?cat=games"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><path d="M17.32 5H6.68a4 4 0 00-3.978 3.59l-.99 8.5A4 4 0 005.69 21h.01a4 4 0 003.23-1.63l.68-1.01a2 2 0 011.62-.84h1.54a2 2 0 011.62.84l.68 1.01A4 4 0 0018.3 21h.01a4 4 0 003.978-3.91l-.99-8.5A4 4 0 0017.32 5z"/></svg></span>Games<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="outros" href="categoria.html?cat=outros"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Outros<span class="mega-cat-arrow">›</span></a>
+        </div>
+        <div class="mega-right">
+          <div class="mega-subs" id="subs-computadores"><p class="mega-sub-title">Computadores</p><div class="mega-sub-links"><a href="categoria.html?cat=pc-gamer">PC Gamer</a><a href="categoria.html?cat=pc-office">PC Office</a><a href="categoria.html?cat=notebooks">Notebooks</a><a href="categoria.html?cat=servidores">Servidores</a><a href="categoria.html?cat=seminovos">Seminovos</a></div></div>
+          <div class="mega-subs" id="subs-hardware"><p class="mega-sub-title">Hardware</p><div class="mega-sub-links"><a href="categoria.html?cat=processadores">Processadores</a><a href="categoria.html?cat=placas-mae">Placas-mãe</a><a href="categoria.html?cat=placas-de-video">Placas de Vídeo</a><a href="categoria.html?cat=memorias-ram">Memórias RAM</a><a href="categoria.html?cat=ssd-hd">SSD / HD</a><a href="categoria.html?cat=fontes">Fontes</a><a href="categoria.html?cat=gabinetes">Gabinetes</a><a href="categoria.html?cat=coolers-gabinete">Coolers p/ Gabinete</a><a href="categoria.html?cat=coolers-processador">Coolers p/ Processador</a><a href="categoria.html?cat=water-coolers">Water Coolers</a></div></div>
+          <div class="mega-subs" id="subs-perifericos"><p class="mega-sub-title">Periféricos</p><div class="mega-sub-links"><a href="categoria.html?cat=mouse">Mouse</a><a href="categoria.html?cat=mousepad">Mousepad</a><a href="categoria.html?cat=teclados">Teclados</a><a href="categoria.html?cat=headsets">Headsets</a><a href="categoria.html?cat=fones">Fones de Ouvido</a><a href="categoria.html?cat=microfones">Microfones</a><a href="categoria.html?cat=webcam">Webcam</a></div></div>
+          <div class="mega-subs" id="subs-monitores"><p class="mega-sub-title">Monitores</p><div class="mega-sub-links"><a href="categoria.html?cat=monitores-gaming">Monitores</a><a href="categoria.html?cat=tvs">TVs</a></div></div>
+          <div class="mega-subs" id="subs-celulares"><p class="mega-sub-title">Celulares</p><div class="mega-sub-links"><a href="categoria.html?cat=celulares-smartphones">Celulares</a><a href="categoria.html?cat=cabos-celular">Cabos para Celular</a><a href="categoria.html?cat=adaptadores">Adaptadores</a></div></div>
+          <div class="mega-subs" id="subs-redes"><p class="mega-sub-title">Redes</p><div class="mega-sub-links"><a href="categoria.html?cat=switch">Switch</a><a href="categoria.html?cat=repetidores">Repetidores</a><a href="categoria.html?cat=placas-rede">Placas de Rede</a><a href="categoria.html?cat=cabos-rede">Cabos de Rede</a></div></div>
+          <div class="mega-subs" id="subs-impressao"><p class="mega-sub-title">Impressão</p><div class="mega-sub-links"><a href="categoria.html?cat=impressoras">Impressoras</a></div></div>
+          <div class="mega-subs" id="subs-moveis"><p class="mega-sub-title">Móveis</p><div class="mega-sub-links"><a href="categoria.html?cat=cadeiras">Cadeiras</a><a href="categoria.html?cat=mesas">Mesas</a></div></div>
+          <div class="mega-subs" id="subs-audio"><p class="mega-sub-title">Áudio</p><div class="mega-sub-links"><a href="categoria.html?cat=caixas-de-som">Caixas de Som</a></div></div>
+          <div class="mega-subs" id="subs-games"><p class="mega-sub-title">Games</p><div class="mega-sub-links"><a href="categoria.html?cat=video-games">Video Games</a></div></div>
+          <div class="mega-subs" id="subs-outros"><p class="mega-sub-title">Outros</p><div class="mega-sub-links"><a href="categoria.html?cat=projetores">Projetores</a><a href="categoria.html?cat=eletronicos">Eletrônicos</a><a href="categoria.html?cat=licencas">Licenças</a><a href="categoria.html?cat=acessorios">Acessórios de Informática</a></div></div>
+        </div>
+      </div></nav>
+    </div>
+    <a href="categoria.html?cat=promocoes" class="nav-promo">Promoções</a>
+    <a href="categoria.html?cat=pc-gamer">PC Gamer</a>
+    <a href="categoria.html?cat=hardware">Hardware</a>
+    <a href="categoria.html?cat=perifericos">Periféricos</a>
+    <a href="categoria.html?cat=monitores">Monitores</a>
+    <a href="categoria.html?cat=notebooks">Notebooks</a>
+    <a href="categoria.html?cat=cadeiras">Cadeiras</a>
+    <a href="https://wa.me/5565992655883" class="nav-atend" target="_blank" rel="noopener noreferrer">Atendimento Online</a>
+  </div>
+</nav>
 </header>
 
 <section id="hero">
@@ -675,7 +782,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="hero-slider">
 <div class="hero-ratio"></div>
 <div class="hero-track" id="heroTrack">
-<div class="hero-slide active" style="background-image:url('Design sem nome.png')"><img src="Design sem nome.png" alt="Alfa Informatica — Banner Principal" style="display:none"></div>
+<div class="hero-slide active"><img src="teste hero.png" alt="Alfa Informatica — Banner Principal"></div>
 </div>
 <button class="hero-arrow prev" id="heroPrev" aria-label="Anterior"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
 <button class="hero-arrow next" id="heroNext" aria-label="Proximo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -686,25 +793,58 @@ button{font-family:inherit;cursor:pointer;}
 
 
 
-<!-- ══ 01 — CATEGORIAS RÁPIDAS ══ -->
+<!-- ══ 01 — BENEFÍCIOS + CATEGORIAS ══ -->
 <section class="cat-section">
 <div class="sec-wrap">
-<div class="sec-head" style="margin-bottom:16px;">
-<div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Categorias</h2><p class="sec-sub">Navegue rapidamente pelos principais departamentos.</p></div></div>
+<!-- Barra de benefícios -->
+<div class="cat-benefits">
+  <div class="cat-benefit-item">
+    <div class="cat-benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+    <div class="cat-benefit-txt"><b>Frete Grátis</b><span>Acima de R$1.799,00</span></div>
+  </div>
+  <div class="cat-benefit-item">
+    <div class="cat-benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+    <div class="cat-benefit-txt"><b>Até 12x</b><span>No cartão de crédito</span></div>
+  </div>
+  <div class="cat-benefit-item">
+    <div class="cat-benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>
+    <div class="cat-benefit-txt"><b>Atendimento</b><span>Humanizado</span></div>
+  </div>
+  <div class="cat-benefit-item">
+    <div class="cat-benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+    <div class="cat-benefit-txt"><b>Garantia Total</b><span>Em todos os produtos</span></div>
+  </div>
 </div>
-<div class="cat-grid">
-<a href="categoria.html?cat=processadores" class="cat-card"><div class="cat-img-wrap"><img src="cat-processadores.png.png" class="cat-img" alt="Processadores"></div><div class="cat-text"><span class="cat-name">Processadores</span></div></a>
-<a href="categoria.html?cat=placas-de-video" class="cat-card"><div class="cat-img-wrap"><img src="cat-placas-video.png.png" class="cat-img" alt="Placas de V&iacute;deo"></div><div class="cat-text"><span class="cat-name">Placas de V&iacute;deo</span></div></a>
-<a href="categoria.html?cat=memorias-ram" class="cat-card"><div class="cat-img-wrap"><img src="cat-memoria-ram.png.png" class="cat-img" alt="Mem&oacute;ria RAM"></div><div class="cat-text"><span class="cat-name">Mem&oacute;ria RAM</span></div></a>
-<a href="categoria.html?cat=ssd-hd" class="cat-card"><div class="cat-img-wrap"><img src="cat-ssd-hd.png.png" class="cat-img" alt="SSD / HD"></div><div class="cat-text"><span class="cat-name">SSD / HD</span></div></a>
-<a href="categoria.html?cat=placas-mae" class="cat-card"><div class="cat-img-wrap"><img src="cat-placa-mae.png.png" class="cat-img" alt="Placa-M&atilde;e"></div><div class="cat-text"><span class="cat-name">Placa-M&atilde;e</span></div></a>
-<a href="categoria.html?cat=gabinetes" class="cat-card"><div class="cat-img-wrap"><img src="cat-gabinetes.png.png" class="cat-img" alt="Gabinetes"></div><div class="cat-text"><span class="cat-name">Gabinetes</span></div></a>
-<a href="categoria.html?cat=monitores-gaming" class="cat-card"><div class="cat-img-wrap"><img src="cat-monitores.png.png" class="cat-img" alt="Monitores"></div><div class="cat-text"><span class="cat-name">Monitores</span></div></a>
-<a href="categoria.html?cat=perifericos" class="cat-card"><div class="cat-img-wrap"><img src="cat-perifericos.png.png" class="cat-img" alt="Perif&eacute;ricos"></div><div class="cat-text"><span class="cat-name">Perif&eacute;ricos</span></div></a>
-<a href="categoria.html?cat=notebooks" class="cat-card"><div class="cat-img-wrap"><img src="cat-notebooks.png.png" class="cat-img" alt="Notebooks"></div><div class="cat-text"><span class="cat-name">Notebooks</span></div></a>
-<a href="categoria.html?cat=pc-gamer" class="cat-card"><div class="cat-img-wrap"><img src="cat-pc-gamer.png.png" class="cat-img" alt="PC Gamer"></div><div class="cat-text"><span class="cat-name">PC Gamer</span></div></a>
 </div>
+
+<!-- Cards de categorias horizontais -->
+<div class="cat-row">
+  <a href="categoria.html?cat=pc-gamer" class="cat-hcard">
+    <img src="pc gamer.png" class="cat-hcard-img" alt="PC Gamer">
+    <div><span class="cat-hcard-name">PC Gamer</span><span class="cat-hcard-sub">Desempenho Extremo</span></div>
+  </a>
+  <a href="categoria.html?cat=hardware" class="cat-hcard">
+    <img src="cat-placa-mae.png.png" class="cat-hcard-img" alt="Hardware">
+    <div><span class="cat-hcard-name">Hardware</span><span class="cat-hcard-sub">Peças e Componentes</span></div>
+  </a>
+  <a href="categoria.html?cat=perifericos" class="cat-hcard">
+    <img src="perifericos.png" class="cat-hcard-img" alt="Periféricos">
+    <div><span class="cat-hcard-name">Periféricos</span><span class="cat-hcard-sub">Teclado, Mouse e mais</span></div>
+  </a>
+  <a href="categoria.html?cat=monitores" class="cat-hcard">
+    <img src="monitor.png" class="cat-hcard-img" alt="Monitores">
+    <div><span class="cat-hcard-name">Monitores</span><span class="cat-hcard-sub">Alta performance</span></div>
+  </a>
+  <a href="categoria.html?cat=notebooks" class="cat-hcard">
+    <img src="notebok.png" class="cat-hcard-img" alt="Notebooks">
+    <div><span class="cat-hcard-name">Notebooks</span><span class="cat-hcard-sub">As melhores marcas</span></div>
+  </a>
+  <a href="categoria.html?cat=cadeiras" class="cat-hcard">
+    <img src="cadeira.png" class="cat-hcard-img" alt="Cadeiras">
+    <div><span class="cat-hcard-name">Cadeiras</span><span class="cat-hcard-sub">Conforto para jogar</span></div>
+  </a>
 </div>
+
 </section>
 <!-- ══ ESCOLHA SEU NÍVEL ══ -->
 <section class="nivel-section" style="background:var(--bg2);">
@@ -994,47 +1134,47 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 <!-- ══ 07 — MARCAS ══ -->
-<section style="background:transparent;padding:48px 0 52px;overflow:hidden;">
+<section class="brands-section">
 <div class="sec-wrap">
-<div class="sec-head">
-<div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">As Melhores Marcas</h2><p class="sec-sub">Produtos originais das principais fabricantes do mundo, com garantia.</p></div></div>
-</div>
-</div>
-<div class="brands-track-wrap">
-<div class="brands-track">
-<div class="brand-item" style="--g:rgba(0,115,255,.38)"><span class="brand-name">INTEL</span><span class="brand-sub">Core / Arc</span></div><div class="brand-item" style="--g:rgba(255,45,45,.36)"><span class="brand-name">AMD</span><span class="brand-sub">Ryzen / Radeon</span></div><div class="brand-item" style="--g:rgba(0,210,90,.36)"><span class="brand-name">NVIDIA</span><span class="brand-sub">GeForce / RTX</span></div><div class="brand-item" style="--g:rgba(255,90,0,.32)"><span class="brand-name">ASUS</span><span class="brand-sub">ROG / TUF</span></div><div class="brand-item" style="--g:rgba(255,110,0,.28)"><span class="brand-name">GIGABYTE</span><span class="brand-sub">AORUS / Vision</span></div><div class="brand-item" style="--g:rgba(210,210,210,.22)"><span class="brand-name">CORSAIR</span><span class="brand-sub">Gaming / Memory</span></div><div class="brand-item" style="--g:rgba(255,55,55,.32)"><span class="brand-name">KINGSTON</span><span class="brand-sub">Fury / Value</span></div><div class="brand-item" style="--g:rgba(0,160,255,.36)"><span class="brand-name">SAMSUNG</span><span class="brand-sub">Storage / DDR5</span></div><div class="brand-item" style="--g:rgba(255,30,30,.38)"><span class="brand-name">MSI</span><span class="brand-sub">Gaming / Creator</span></div><div class="brand-item" style="--g:rgba(0,160,255,.30)"><span class="brand-name">LOGITECH</span><span class="brand-sub">G Series</span></div><div class="brand-item" style="--g:rgba(255,35,35,.32)"><span class="brand-name">REDRAGON</span><span class="brand-sub">Gaming Gear</span></div><div class="brand-item" style="--g:rgba(155,0,255,.36)"><span class="brand-name">HYPERX</span><span class="brand-sub">Cloud / Fury</span></div>
-<div class="brand-item" style="--g:rgba(0,115,255,.38)"><span class="brand-name">INTEL</span><span class="brand-sub">Core / Arc</span></div><div class="brand-item" style="--g:rgba(255,45,45,.36)"><span class="brand-name">AMD</span><span class="brand-sub">Ryzen / Radeon</span></div><div class="brand-item" style="--g:rgba(0,210,90,.36)"><span class="brand-name">NVIDIA</span><span class="brand-sub">GeForce / RTX</span></div><div class="brand-item" style="--g:rgba(255,90,0,.32)"><span class="brand-name">ASUS</span><span class="brand-sub">ROG / TUF</span></div><div class="brand-item" style="--g:rgba(255,110,0,.28)"><span class="brand-name">GIGABYTE</span><span class="brand-sub">AORUS / Vision</span></div><div class="brand-item" style="--g:rgba(210,210,210,.22)"><span class="brand-name">CORSAIR</span><span class="brand-sub">Gaming / Memory</span></div><div class="brand-item" style="--g:rgba(255,55,55,.32)"><span class="brand-name">KINGSTON</span><span class="brand-sub">Fury / Value</span></div><div class="brand-item" style="--g:rgba(0,160,255,.36)"><span class="brand-name">SAMSUNG</span><span class="brand-sub">Storage / DDR5</span></div><div class="brand-item" style="--g:rgba(255,30,30,.38)"><span class="brand-name">MSI</span><span class="brand-sub">Gaming / Creator</span></div><div class="brand-item" style="--g:rgba(0,160,255,.30)"><span class="brand-name">LOGITECH</span><span class="brand-sub">G Series</span></div><div class="brand-item" style="--g:rgba(255,35,35,.32)"><span class="brand-name">REDRAGON</span><span class="brand-sub">Gaming Gear</span></div><div class="brand-item" style="--g:rgba(155,0,255,.36)"><span class="brand-name">HYPERX</span><span class="brand-sub">Cloud / Fury</span></div>
-</div>
+  <p class="brands-eyebrow">Parceiros &amp; Tecnologia</p>
+  <h2 class="brands-title">MARCAS E <span>TECNOLOGIAS</span> QUE TRABALHAMOS</h2>
+  <div class="brands-grid">
+    <div class="brand-card nvidia">
+      <span class="brand-card-name">NVIDIA</span>
+      <span class="brand-card-sub">GeForce / RTX</span>
+    </div>
+    <div class="brand-card amd">
+      <span class="brand-card-name">AMD</span>
+      <span class="brand-card-sub">Ryzen / Radeon</span>
+    </div>
+    <div class="brand-card asus">
+      <span class="brand-card-name">ASUS ROG</span>
+      <span class="brand-card-sub">Motherboards &amp; Gaming</span>
+    </div>
+    <div class="brand-card msi">
+      <span class="brand-card-name">MSI</span>
+      <span class="brand-card-sub">Gaming &amp; Creator</span>
+    </div>
+    <div class="brand-card corsair">
+      <span class="brand-card-name">CORSAIR</span>
+      <span class="brand-card-sub">Memory &amp; Cooling</span>
+    </div>
+    <div class="brand-card hyperx">
+      <span class="brand-card-name">HYPERX</span>
+      <span class="brand-card-sub">DDR &amp; Headsets</span>
+    </div>
+    <div class="brand-card logitech">
+      <span class="brand-card-name">LOGITECH G</span>
+      <span class="brand-card-sub">Periféricos Gamer</span>
+    </div>
+    <div class="brand-card redragon">
+      <span class="brand-card-name">REDRAGON</span>
+      <span class="brand-card-sub">Gaming Gear</span>
+    </div>
+  </div>
 </div>
 </section>
 
-<!-- ══ 08 — BENEFÍCIOS ══ -->
-<section style="background:var(--bg);padding:44px 0 48px;">
-<div class="sec-wrap">
-<div class="benefit-bar">
-<div class="benefit-item">
-<div class="benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563FF" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
-<div class="benefit-txt"><b>Produtos Originais</b><span>Garantia e proced&ecirc;ncia certificada</span></div>
-</div>
-<div class="benefit-item">
-<div class="benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563FF" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
-<div class="benefit-txt"><b>Envio R&aacute;pido</b><span>Para todo o Brasil em at&eacute; 48h</span></div>
-</div>
-<div class="benefit-item">
-<div class="benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563FF" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
-<div class="benefit-txt"><b>At&eacute; 12x</b><span>No cart&atilde;o nas principais bandeiras</span></div>
-</div>
-<div class="benefit-item">
-<div class="benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563FF" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-<div class="benefit-txt"><b>Suporte T&eacute;cnico</b><span>Atendimento seg. a s&aacute;b. das 9h&ndash;18h</span></div>
-</div>
-<div class="benefit-item">
-<div class="benefit-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563FF" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-<div class="benefit-txt"><b>Compra Segura</b><span>SSL e pagamento criptografado</span></div>
-</div>
-</div>
-</div>
-</section>
 
 <!-- ══ 09 — WHATSAPP CTA ══ -->
 <section style="background:var(--bg2);padding:56px 0 60px;">
@@ -1274,15 +1414,15 @@ Entrar no grupo do WhatsApp
 <script>
 // ── Header badges & user label ─────────────────────────
 function updateHdrBadges() {
-  const fc = Store.favCount();
   const cc = Store.cartCount();
-  const fb = document.getElementById('fav-badge');
+  const ct = Store.cartTotal ? Store.cartTotal() : 0;
   const cb = document.getElementById('cart-badge');
-  if (fb) { fb.textContent = fc; fb.style.display = fc > 0 ? 'flex' : 'none'; }
   if (cb) { cb.textContent = cc; cb.style.display = cc > 0 ? 'flex' : 'none'; }
-  const user = Store.getUser();
+  const tl = document.getElementById('cart-total-lbl');
+  if (tl) tl.textContent = cc + (cc === 1 ? ' Item ' : ' Itens ') + 'R$' + (ct || 0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const user = Store.getUser ? Store.getUser() : null;
   const lbl = document.getElementById('hdr-user-lbl');
-  if (lbl && user) lbl.textContent = user.name.split(' ')[0].toUpperCase();
+  if (lbl && user) lbl.textContent = user.name.split(' ')[0];
 }
 Store.on('cart', updateHdrBadges);
 Store.on('favorites', updateHdrBadges);
