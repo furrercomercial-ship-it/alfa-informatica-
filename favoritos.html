@@ -6,10 +6,10 @@
 <title>Meus Favoritos — Alfa Informática</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#030303;--card:#0B0B0F;--bord:rgba(40,120,255,.2);--blue:#1E6BFF;--txt2:#8A93A5;--trans:.22s cubic-bezier(.4,0,.2,1);}
-body{background:var(--bg);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+:root{--bg:#0D0F14;--card:#171C28;--bord:rgba(255,255,255,.06);--blue:#2563EB;--txt2:#9CA3AF;--trans:.22s cubic-bezier(.4,0,.2,1);}
+body{background:var(--bg);color:#F5F5F5;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
 a{color:inherit;text-decoration:none;}
-.hdr{background:#030303;border-bottom:1px solid rgba(40,120,255,.1);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;}
+.hdr{background:#11141B;border-bottom:1px solid rgba(255,255,255,.05);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;}
 .hdr-left{display:flex;align-items:center;gap:16px;}
 .hdr-back{display:flex;align-items:center;gap:8px;color:var(--txt2);font-size:13px;font-weight:600;transition:color .2s;}
 .hdr-back:hover{color:#fff;}
@@ -24,10 +24,10 @@ a{color:inherit;text-decoration:none;}
 .btn-clear{padding:8px 18px;background:transparent;border:1px solid rgba(255,80,80,.25);border-radius:8px;color:rgba(255,100,100,.7);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
 .btn-clear:hover{border-color:rgba(255,80,80,.5);color:#ff6b6b;}
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
-.prod-card{background:var(--card);border:1px solid var(--bord);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;}
-.prod-card:hover{border-color:rgba(40,120,255,.45);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.4);}
-.prod-img{height:160px;background:#0B0B0F;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:900;color:#1a1a2e;border-bottom:1px solid rgba(40,120,255,.08);position:relative;}
-.fav-remove{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.65);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.prod-card{background:var(--card);border:1px solid var(--bord);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,transform .2s,box-shadow .2s,background .2s;position:relative;}
+.prod-card:hover{background:#1C2230;border-color:rgba(37,99,235,.35);transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,.35);}
+.prod-img{height:160px;background:#141820;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:900;color:#1C2230;border-bottom:1px solid rgba(255,255,255,.05);position:relative;}
+.fav-remove{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(13,15,20,.8);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
 .fav-remove:hover{background:rgba(220,30,30,.6);}
 .fav-remove svg{stroke:#ff6b6b;}
 .prod-body{padding:14px;display:flex;flex-direction:column;gap:5px;flex:1;}
