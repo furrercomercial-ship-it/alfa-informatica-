@@ -1,47 +1,58 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Alfa Informática — Hardware, Periféricos e Componentes Gamer</title>
+<script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{margin:0;padding:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#FFFFFF;line-height:1.5;overflow-x:hidden;background-color:#3A3A3A;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><g opacity='.025'><path d='M8 65L45 65L45 95L80 95' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='45' cy='65' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M150 0L150 45L175 45L175 80' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='150' cy='45' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M260 170L215 170L215 140L185 140' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='215' cy='170' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M95 260L95 215L65 215L65 185' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='95' cy='215' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='8' cy='8' r='1.5' fill='%231e6bff'/><circle cx='130' cy='130' r='1.5' fill='%231e6bff'/><circle cx='260' cy='0' r='1.5' fill='%231e6bff'/><circle cx='8' cy='252' r='1.5' fill='%231e6bff'/><circle cx='260' cy='260' r='1.5' fill='%231e6bff'/><circle cx='65' cy='0' r='1' fill='%231e6bff'/><circle cx='195' cy='260' r='1' fill='%231e6bff'/><polygon points='230,12 238.7,17 238.7,27 230,32 221.3,27 221.3,17' stroke='%231e6bff' fill='none' stroke-width='.55'/><polygon points='28,218 36.7,223 36.7,233 28,238 19.3,233 19.3,223' stroke='%231e6bff' fill='none' stroke-width='.55'/></g></svg>");background-size:260px 260px;background-attachment:scroll;background-repeat:repeat;}
+body{margin:0;padding:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text-main);line-height:1.5;overflow-x:hidden;background-color:var(--bg-main);background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><g opacity='.025'><path d='M8 65L45 65L45 95L80 95' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='45' cy='65' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M150 0L150 45L175 45L175 80' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='150' cy='45' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M260 170L215 170L215 140L185 140' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='215' cy='170' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><path d='M95 260L95 215L65 215L65 185' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='95' cy='215' r='2.5' stroke='%231e6bff' fill='none' stroke-width='.7'/><circle cx='8' cy='8' r='1.5' fill='%231e6bff'/><circle cx='130' cy='130' r='1.5' fill='%231e6bff'/><circle cx='260' cy='0' r='1.5' fill='%231e6bff'/><circle cx='8' cy='252' r='1.5' fill='%231e6bff'/><circle cx='260' cy='260' r='1.5' fill='%231e6bff'/><circle cx='65' cy='0' r='1' fill='%231e6bff'/><circle cx='195' cy='260' r='1' fill='%231e6bff'/><polygon points='230,12 238.7,17 238.7,27 230,32 221.3,27 221.3,17' stroke='%231e6bff' fill='none' stroke-width='.55'/><polygon points='28,218 36.7,223 36.7,233 28,238 19.3,233 19.3,223' stroke='%231e6bff' fill='none' stroke-width='.55'/></g></svg>");background-size:260px 260px;background-attachment:scroll;background-repeat:repeat;}
 a{text-decoration:none;color:inherit;}
 img{display:block;max-width:100%;}
 button{font-family:inherit;cursor:pointer;}
 :root{
-  --bg:#3A3A3A;--bg2:#303030;--card:#2F2F2F;--card2:#353535;
-  --bord:rgba(255,255,255,.08);--bord2:rgba(37,99,235,.35);
-  --txt:#FFFFFF;--txt2:#CCCCCC;--blue:#1E6BFF;--blue2:#2563EB;--cyan:#38d9ff;
-  --green:#22C55E;--rad:10px;--trans:.26s cubic-bezier(.4,0,.2,1);
+  --bg-main:#202020; --bg-section:#2B2B2B; --bg-card:#303030;
+  --bg-header:#1F1F1F; --bg-menu:#0052CC;
+  --text-main:#FFFFFF; --text-secondary:#D1D5DB; --text-muted:#9CA3AF;
+  --border-color:#404040;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+  --cyan:#38d9ff;
+  --rad:10px; --trans:.26s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="light"]{
+  --bg-main:#F5F7FA; --bg-section:#FFFFFF; --bg-card:#FFFFFF;
+  --bg-header:#FFFFFF; --bg-menu:#0066FF;
+  --text-main:#111827; --text-secondary:#4B5563; --text-muted:#6B7280;
+  --border-color:#E5E7EB;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
 }
 .sec-wrap{max-width:1650px;margin:0 auto;padding:0 20px;}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:30px;gap:20px;}
 .sec-head-left{display:flex;align-items:flex-start;gap:14px;}
 .sec-head-accent{width:3px;height:44px;flex-shrink:0;background:linear-gradient(180deg,#2563FF 0%,rgba(37,99,255,0) 100%);border-radius:2px;margin-top:2px;}
-.sec-h2{margin:0 0 5px;font-size:20px;font-weight:800;color:#fff;letter-spacing:-.3px;}
-.sec-sub{margin:0;font-size:12.5px;color:var(--txt2);line-height:1.5;}
-.sec-link{flex-shrink:0;font-size:12px;color:var(--txt2);display:inline-flex;align-items:center;gap:5px;border:1px solid var(--bord);border-radius:6px;padding:7px 14px;transition:color var(--trans),border-color var(--trans),background var(--trans);white-space:nowrap;}
-.sec-link:hover{color:#fff;border-color:var(--blue2);background:rgba(37,99,255,.08);}
+.sec-h2{margin:0 0 5px;font-size:20px;font-weight:800;color:var(--text-main);letter-spacing:-.3px;}
+.sec-sub{margin:0;font-size:12.5px;color:var(--text-secondary);line-height:1.5;}
+.sec-link{flex-shrink:0;font-size:12px;color:var(--text-secondary);display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border-color);border-radius:6px;padding:7px 14px;transition:color var(--trans),border-color var(--trans),background var(--trans);white-space:nowrap;}
+.sec-link:hover{color:var(--text-main);border-color:var(--primary);background:rgba(37,99,255,.08);}
 /* HEADER */
-.hdr{background:#2B2B2B;border-bottom:none;position:sticky;top:0;z-index:100;}
-.hdr-top{display:grid;grid-template-columns:15fr 53fr 33fr;align-items:center;height:96px;border-bottom:1px solid rgba(255,255,255,.08);}
+.hdr{background:var(--bg-header);border-bottom:none;position:sticky;top:0;z-index:100;}
+.hdr-top{display:grid;grid-template-columns:15fr 53fr 33fr;align-items:center;height:96px;border-bottom:1px solid var(--border-color);}
 .hdr-logo{display:flex;align-items:center;justify-content:center;padding:0 16px;height:100%;text-decoration:none;}
 .hdr-logo img{height:108px;width:auto;object-fit:contain;max-width:100%;}
 .search-wrap{position:relative;flex:1;margin:0 40px;}
-.hdr-search{display:flex;height:47px;border:1px solid rgba(255,255,255,.12);border-radius:6px;overflow:hidden;background:#252525;transition:border-color var(--trans),box-shadow var(--trans);}
+.hdr-search{display:flex;height:47px;border:1px solid var(--border-color);border-radius:6px;overflow:hidden;background:var(--bg-card);transition:border-color var(--trans),box-shadow var(--trans);}
 .hdr-search:focus-within{border-color:rgba(37,99,255,.55);box-shadow:0 0 0 3px rgba(37,99,255,.08);}
-.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 16px;font-size:14px;font-family:inherit;color:#a8bcd4;outline:none;height:100%;}
-.hdr-search-in::placeholder{color:rgba(255,255,255,.45);}
+.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 16px;font-size:14px;font-family:inherit;color:var(--text-main);outline:none;height:100%;}
+.hdr-search-in::placeholder{color:var(--text-muted);}
 .hdr-search-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#1D4ED8;color:#fff;border:none;width:130px;flex-shrink:0;font-size:13px;font-weight:700;letter-spacing:.3px;cursor:pointer;transition:background var(--trans);height:100%;}
 .hdr-search-btn:hover{background:#2563eb;}
 /* Search dropdown */
 .search-drop{
   display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:600;
-  background:linear-gradient(160deg,#2B2B2B 0%,#252525 100%);
-  border:1px solid rgba(255,255,255,.12);
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
   border-top:2px solid #1d4ed8;
   border-radius:0 0 14px 14px;
   box-shadow:0 28px 70px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.03),0 0 40px rgba(37,99,255,.06);
@@ -51,9 +62,9 @@ button{font-family:inherit;cursor:pointer;}
 .search-drop-head{
   padding:11px 18px 9px;
   font-size:9px;font-weight:800;letter-spacing:2px;
-  color:rgba(255,255,255,.25);text-transform:uppercase;
-  background:rgba(0,0,0,.3);
-  border-bottom:1px solid rgba(255,255,255,.05);
+  color:var(--text-muted);text-transform:uppercase;
+  background:var(--bg-section);
+  border-bottom:1px solid var(--border-color);
   display:flex;align-items:center;gap:8px;
 }
 .search-drop-head::before{
@@ -64,7 +75,7 @@ button{font-family:inherit;cursor:pointer;}
   display:flex;align-items:center;gap:14px;
   padding:11px 18px;cursor:pointer;
   transition:background .15s;
-  border-bottom:1px solid rgba(255,255,255,.04);
+  border-bottom:1px solid var(--border-color);
   text-decoration:none;position:relative;
 }
 .search-item:last-child{border-bottom:none;}
@@ -76,8 +87,8 @@ button{font-family:inherit;cursor:pointer;}
 .search-item:hover,.search-item.active{background:rgba(37,99,255,.09);}
 .search-item-img{
   width:52px;height:52px;flex-shrink:0;border-radius:10px;
-  background:#2F2F2F;
-  border:1px solid rgba(255,255,255,.1);
+  background:var(--bg-section);
+  border:1px solid var(--border-color);
   display:flex;align-items:center;justify-content:center;overflow:hidden;
   transition:border-color .15s;
 }
@@ -90,12 +101,12 @@ button{font-family:inherit;cursor:pointer;}
   text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;
 }
 .search-item-name{
-  font-size:13px;font-weight:600;color:#dde5f0;
+  font-size:13px;font-weight:600;color:var(--text-main);
   line-height:1.38;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .search-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
 .search-item-price{
-  font-size:14px;font-weight:800;color:#22c55e;white-space:nowrap;
+  font-size:14px;font-weight:800;color:var(--success);white-space:nowrap;
 }
 .search-item-arrow{
   font-size:13px;color:rgba(37,99,255,.4);opacity:0;
@@ -106,40 +117,47 @@ button{font-family:inherit;cursor:pointer;}
 }
 .search-none{
   padding:28px 18px;text-align:center;
-  font-size:13px;color:rgba(255,255,255,.28);
+  font-size:13px;color:var(--text-muted);
 }
-.search-none b{color:rgba(255,255,255,.5);}
+.search-none b{color:var(--text-secondary);}
 .search-drop::-webkit-scrollbar{width:4px;}
 .search-drop::-webkit-scrollbar-track{background:transparent;}
 .search-drop::-webkit-scrollbar-thumb{background:rgba(37,99,255,.35);border-radius:4px;}
 .hdr-acts-group{display:flex;align-items:stretch;justify-content:flex-end;height:100%;}
+.theme-toggle{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 10px;border-radius:8px;transition:background .15s;margin:auto 6px;}
+.theme-toggle:hover{background:rgba(128,128,128,.12);}
+.theme-toggle-track{width:38px;height:20px;border-radius:10px;background:var(--border-color);position:relative;flex-shrink:0;transition:background .2s;}
+.theme-toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+.theme-toggle.is-dark .theme-toggle-track{background:var(--primary);}
+.theme-toggle.is-dark .theme-toggle-knob{left:20px;}
+.theme-toggle-label{font-size:12.5px;font-weight:700;color:var(--text-secondary);white-space:nowrap;}
 .hdr-act{display:flex;align-items:center;gap:26px;text-decoration:none;height:100%;padding:0 20px 0 44px;transition:background var(--trans);}
-.hdr-act:hover{background:rgba(255,255,255,.03);}
+.hdr-act:hover{background:rgba(128,128,128,.1);}
 .hdr-act-cart{padding:0 28px;gap:18px;position:relative;}
-.hdr-act-cart::before{content:'';position:absolute;left:0;top:20px;bottom:20px;width:1px;background:rgba(255,255,255,.18);}
-.hdr-act-icon{color:#fff;flex-shrink:0;transition:color var(--trans);}
-.hdr-act:hover .hdr-act-icon{color:rgba(255,255,255,.8);}
+.hdr-act-cart::before{content:'';position:absolute;left:0;top:20px;bottom:20px;width:1px;background:var(--border-color);}
+.hdr-act-icon{color:var(--text-main);flex-shrink:0;transition:color var(--trans);}
+.hdr-act:hover .hdr-act-icon{color:var(--text-main);}
 .hdr-act-text{display:flex;flex-direction:column;gap:4px;}
-.hdr-act-line1{font-size:13px;font-weight:700;color:#fff;line-height:1.25;white-space:nowrap;}
-.hdr-act-line2{font-size:11px;color:rgba(255,255,255,.6);line-height:1.25;white-space:nowrap;}
+.hdr-act-line1{font-size:13px;font-weight:700;color:var(--text-main);line-height:1.25;white-space:nowrap;}
+.hdr-act-line2{font-size:11px;color:var(--text-muted);line-height:1.25;white-space:nowrap;}
 .hdr-cart-icon-wrap{position:relative;flex-shrink:0;}
-.hdr-badge{position:absolute;top:-8px;right:-10px;min-width:19px;height:19px;padding:0 5px;background:#1E6BFF;color:#fff;font-size:9px;font-weight:900;border-radius:10px;display:flex;align-items:center;justify-content:center;line-height:1;border:2px solid #2B2B2B;}
-.hdr-nav{background:#2B2B2B;border-bottom:1px solid rgba(255,255,255,.08);}
+.hdr-badge{position:absolute;top:-8px;right:-10px;min-width:19px;height:19px;padding:0 5px;background:#1E6BFF;color:#fff;font-size:9px;font-weight:900;border-radius:10px;display:flex;align-items:center;justify-content:center;line-height:1;border:2px solid var(--bg-header);}
+.hdr-nav{background:var(--bg-header);border-bottom:1px solid var(--border-color);}
 .hdr-nav-inner{display:flex;align-items:stretch;justify-content:space-between;padding:0 12px;height:40px;}
 .hdr-nav-inner::-webkit-scrollbar{display:none;}
-.hdr-nav-inner a{font-size:12.5px;font-weight:600;color:#CCCCCC;padding:0 18px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.35px;transition:color var(--trans),background var(--trans);white-space:nowrap;flex-shrink:0;}
-.hdr-nav-inner a:hover{color:#fff;background:rgba(37,99,255,.06);}
+.hdr-nav-inner a{font-size:12.5px;font-weight:600;color:var(--text-secondary);padding:0 18px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.35px;transition:color var(--trans),background var(--trans);white-space:nowrap;flex-shrink:0;}
+.hdr-nav-inner a:hover{color:var(--text-main);background:rgba(37,99,255,.06);}
 .hdr-nav-inner a.nav-ativo{color:#fff;font-weight:700;background:#1E6BFF;padding:0 26px;}
 .hdr-nav-inner a.nav-ativo:hover{background:#2a78ff;color:#fff;}
-.hdr-nav-inner a.nav-promo{color:#b0bec8;font-weight:600;}
-.hdr-nav-inner a.nav-promo:hover{color:#fff;background:rgba(37,99,255,.06);}
-.hdr-nav-inner a.nav-atend{color:#22c55e;}
+.hdr-nav-inner a.nav-promo{color:var(--text-secondary);font-weight:600;}
+.hdr-nav-inner a.nav-promo:hover{color:var(--text-main);background:rgba(37,99,255,.06);}
+.hdr-nav-inner a.nav-atend{color:var(--success);}
 .hdr-nav-inner a.nav-atend:hover{color:#4ade80;background:rgba(34,197,94,.06);}
-.hdr-nav-inner a.nav-atend::before{content:'';width:7px;height:7px;min-width:7px;background:#22c55e;border-radius:50%;animation:dot-blink 1.4s ease-in-out infinite;}
+.hdr-nav-inner a.nav-atend::before{content:'';width:7px;height:7px;min-width:7px;background:var(--success);border-radius:50%;animation:dot-blink 1.4s ease-in-out infinite;}
 @keyframes dot-blink{0%,100%{opacity:1;}50%{opacity:0;}}
-#hero{padding:0;margin:0 0 0 -20px;background:#3A3A3A;overflow:hidden;width:calc(100% + 20px);}
+#hero{padding:0;margin:0 0 0 -20px;background:var(--bg-main);overflow:hidden;width:calc(100% + 20px);}
 .hero-wrap{width:100%;margin:0;}
-.hero-slider{position:relative;aspect-ratio:4/1;border-radius:0;overflow:hidden;background:#3A3A3A;transition:box-shadow .3s ease;}
+.hero-slider{position:relative;aspect-ratio:4/1;border-radius:0;overflow:hidden;background:var(--bg-main);transition:box-shadow .3s ease;}
 .hero-slider:hover{box-shadow:0 0 50px rgba(37,99,255,.14);}
 .hero-ratio{display:none;}
 .hero-track{position:absolute;inset:0;}
@@ -159,74 +177,74 @@ button{font-family:inherit;cursor:pointer;}
 .prod-carousel-wrap{position:relative;padding:0 4px;}
 .prod-track{display:flex;gap:14px;overflow-x:scroll;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:4px 2px 8px;}
 .prod-track::-webkit-scrollbar{display:none;}
-.prod-card{flex:0 0 220px;background:#2F2F2F;border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:visible;padding:6px 6px 0;display:flex;flex-direction:column;position:relative;transition:transform var(--trans),border-color var(--trans),box-shadow var(--trans),background var(--trans);}
-.prod-card:hover{transform:translateY(-4px);background:#353535;border-color:rgba(37,99,235,.4);box-shadow:0 10px 30px rgba(0,0,0,.3);}
-.prod-badge{position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:5px;text-transform:uppercase;z-index:5;background:rgba(0,0,0,.58);color:#22C55E;border:1px solid rgba(34,197,94,.35);}
+.prod-card{flex:0 0 220px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;overflow:visible;padding:6px 6px 0;display:flex;flex-direction:column;position:relative;transition:transform var(--trans),border-color var(--trans),box-shadow var(--trans),background var(--trans);}
+.prod-card:hover{transform:translateY(-4px);background:var(--bg-card);border-color:rgba(37,99,235,.4);box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.prod-badge{position:absolute;top:10px;right:10px;font-size:9.5px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:5px;text-transform:uppercase;z-index:5;background:rgba(0,0,0,.58);color:var(--success);border:1px solid rgba(34,197,94,.35);}
 .prod-img-wrap{width:100%;height:180px;overflow:hidden;background:#262626;border-radius:10px;display:flex;align-items:center;justify-content:center;position:relative;transition:box-shadow var(--trans);}
 .prod-card:hover .prod-img-wrap{box-shadow:0 14px 40px rgba(0,0,0,.6),0 0 30px rgba(37,99,255,.1);}
 .prod-img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease;}
 .prod-card:hover .prod-img{transform:scale(1.06);}
 .prod-info{padding:11px 2px 8px;flex:1;display:flex;flex-direction:column;gap:4px;}
-.prod-brand{font-size:9.5px;font-weight:800;color:var(--blue2);text-transform:uppercase;letter-spacing:.8px;}
-.prod-name{font-size:12px;font-weight:600;color:#fff;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-.prod-old{font-size:10px;color:rgba(255,255,255,.32);text-decoration:line-through;margin-top:5px;}
-.prod-price{font-size:21px;font-weight:400;color:#22c55e;line-height:1;letter-spacing:-.5px;}
-.prod-pix{font-size:10px;font-weight:700;color:#22c55e;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.16);padding:3px 8px;border-radius:4px;width:fit-content;}
-.prod-install{font-size:10px;color:var(--txt2);}
+.prod-brand{font-size:9.5px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;}
+.prod-name{font-size:12px;font-weight:600;color:var(--text-main);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.prod-old{font-size:10px;color:var(--text-muted);text-decoration:line-through;margin-top:5px;}
+.prod-price{font-size:21px;font-weight:400;color:var(--success);line-height:1;letter-spacing:-.5px;}
+.prod-pix{font-size:10px;font-weight:700;color:var(--success);background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.16);padding:3px 8px;border-radius:4px;width:fit-content;}
+.prod-install{font-size:10px;color:var(--text-secondary);}
 .prod-stars{display:flex;align-items:center;gap:3px;margin-top:2px;}
 .prod-actions{display:flex;gap:8px;padding:4px 0 10px;}
-.prod-btn{flex:none;background:transparent;color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.1);padding:7px 16px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:border-color var(--trans),color var(--trans),background var(--trans);cursor:pointer;}
-.prod-btn:hover{border-color:rgba(37,99,255,.45);color:#fff;background:rgba(37,99,255,.09);}
-.prod-cart{width:34px;flex-shrink:0;border:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.35);border-radius:6px;display:flex;align-items:center;justify-content:center;transition:border-color var(--trans),color var(--trans),background var(--trans);cursor:pointer;}
-.prod-cart:hover{border-color:rgba(37,99,255,.4);color:var(--blue2);background:rgba(37,99,255,.08);}
+.prod-btn{flex:none;background:transparent;color:var(--text-muted);border:1px solid var(--border-color);padding:7px 16px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:border-color var(--trans),color var(--trans),background var(--trans);cursor:pointer;}
+.prod-btn:hover{border-color:rgba(37,99,255,.45);color:var(--text-main);background:rgba(37,99,255,.09);}
+.prod-cart{width:34px;flex-shrink:0;border:1px solid var(--border-color);background:transparent;color:var(--text-muted);border-radius:6px;display:flex;align-items:center;justify-content:center;transition:border-color var(--trans),color var(--trans),background var(--trans);cursor:pointer;}
+.prod-cart:hover{border-color:rgba(37,99,255,.4);color:var(--primary);background:rgba(37,99,255,.08);}
 .prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .prod-grid .prod-card{flex:none;width:100%;}
-.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(30,30,30,.92);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background var(--trans),border-color var(--trans),box-shadow var(--trans),transform var(--trans);box-shadow:0 4px 16px rgba(0,0,0,.4);}
-.carousel-btn:hover{background:var(--blue2);border-color:rgba(37,99,255,.6);box-shadow:0 6px 24px rgba(37,99,255,.35);transform:translateY(-50%) scale(1.1);}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(30,30,30,.92);border:1px solid var(--border-color);backdrop-filter:blur(12px);color:var(--text-main);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background var(--trans),border-color var(--trans),box-shadow var(--trans),transform var(--trans);box-shadow:0 4px 16px rgba(0,0,0,.4);}
+.carousel-btn:hover{background:var(--primary);border-color:rgba(37,99,255,.6);box-shadow:0 6px 24px rgba(37,99,255,.35);transform:translateY(-50%) scale(1.1);}
 .carousel-btn.prev{left:-20px;}
 .carousel-btn.next{right:-20px;}
 .prod-card .hover-acts{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;opacity:0;transform:translateX(10px);transition:opacity var(--trans),transform var(--trans);z-index:5;}
 .prod-card:hover .hover-acts{opacity:1;transform:translateX(0);}
-.hover-act{width:30px;height:30px;border-radius:7px;background:rgba(30,30,30,.92);border:1px solid rgba(37,99,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);transition:border-color var(--trans),color var(--trans),background var(--trans);}
-.hover-act:hover{border-color:var(--blue2);color:var(--blue2);background:rgba(37,99,255,.12);}
+.hover-act{width:30px;height:30px;border-radius:7px;background:rgba(30,30,30,.92);border:1px solid rgba(37,99,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);transition:border-color var(--trans),color var(--trans),background var(--trans);}
+.hover-act:hover{border-color:var(--primary);color:var(--primary);background:rgba(37,99,255,.12);}
 .img-ph{width:100%;height:100%;background:#262626;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:900;color:#3A3A3A;user-select:none;}
 /* CATEGORIES */
 .cat-section{background:transparent;padding:14px 0 0;}
-.cat-benefits{display:grid;grid-template-columns:repeat(4,1fr);background:#1A1F2B;}
-.cat-benefit-item{display:flex;align-items:center;gap:14px;padding:16px 22px;background:#1A1F2B;}
+.cat-benefits{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg-section);}
+.cat-benefit-item{display:flex;align-items:center;gap:14px;padding:16px 22px;background:var(--bg-section);}
 .cat-benefit-icon{flex-shrink:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:rgba(37,99,255,.1);border:1px solid rgba(37,99,255,.22);border-radius:9px;}
-.cat-benefit-txt b{font-size:11.5px;font-weight:700;color:#fff;display:block;text-transform:uppercase;letter-spacing:.3px;line-height:1.3;}
-.cat-benefit-txt span{font-size:10.5px;color:rgba(255,255,255,.65);display:block;margin-top:2px;}
+.cat-benefit-txt b{font-size:11.5px;font-weight:700;color:var(--text-main);display:block;text-transform:uppercase;letter-spacing:.3px;line-height:1.3;}
+.cat-benefit-txt span{font-size:10.5px;color:var(--text-secondary);display:block;margin-top:2px;}
 .cat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:0;padding:4px 0;}
-.cat-hcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px 8px;background:#1A1F2B;text-decoration:none;transition:background var(--trans),box-shadow var(--trans);min-height:160px;}
+.cat-hcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px 8px;background:var(--bg-section);border:1px solid var(--border-color);text-decoration:none;transition:background var(--trans),box-shadow var(--trans);min-height:160px;}
 .cat-hcard:last-child{border-right:none;}
-.cat-hcard:hover{background:#1E2436;}
-.cat-hcard-img{width:95%;max-width:100%;height:auto;object-fit:contain;mix-blend-mode:screen;}
-.cat-hcard-name{font-size:16px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.35px;line-height:1.3;display:block;text-align:center;}
-.cat-hcard-sub{font-size:13px;color:rgba(255,255,255,.45);display:block;margin-top:5px;line-height:1.35;text-align:center;}
+.cat-hcard:hover{background:var(--bg-card);}
+.cat-hcard-img{width:95%;max-width:100%;height:auto;object-fit:contain;}
+.cat-hcard-name{font-size:16px;font-weight:700;color:var(--text-main);text-transform:uppercase;letter-spacing:.35px;line-height:1.3;display:block;text-align:center;}
+.cat-hcard-sub{font-size:13px;color:var(--text-secondary);display:block;margin-top:5px;line-height:1.35;text-align:center;}
 /* BANNERS */
 .banner-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
 .banner-subs{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:14px;}
-.banner-main{background:linear-gradient(135deg,#0B0B0F 0%,#0F0F18 60%,#111120 100%);border:1px solid rgba(37,99,255,.2);border-radius:12px;padding:44px 36px;position:relative;overflow:hidden;cursor:pointer;text-decoration:none;display:block;transition:transform var(--trans),box-shadow var(--trans);}
+.banner-main{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-section) 60%,var(--bg-card) 100%);border:1px solid rgba(37,99,255,.2);border-radius:12px;padding:44px 36px;position:relative;overflow:hidden;cursor:pointer;text-decoration:none;display:block;transition:transform var(--trans),box-shadow var(--trans);}
 .banner-main:hover{transform:scale(1.016);box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 0 1px rgba(37,99,255,.3);}
 .banner-main::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,255,.14) 0%,transparent 65%);pointer-events:none;}
-.banner-sub{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:24px 22px;cursor:pointer;text-decoration:none;display:block;transition:transform var(--trans),border-color var(--trans),box-shadow var(--trans);}
-.banner-sub:hover{transform:translateY(-5px);border-color:var(--bord2);box-shadow:0 16px 40px rgba(0,0,0,.4);}
-.banner-tag{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--blue2);background:rgba(37,99,255,.15);padding:3px 9px;border-radius:3px;display:inline-block;margin-bottom:8px;}
-.banner-h{font-size:20px;font-weight:900;color:#fff;line-height:1.2;margin:0 0 6px;letter-spacing:-.3px;}
+.banner-sub{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:24px 22px;cursor:pointer;text-decoration:none;display:block;transition:transform var(--trans),border-color var(--trans),box-shadow var(--trans);}
+.banner-sub:hover{transform:translateY(-5px);border-color:var(--border-color);box-shadow:0 16px 40px rgba(0,0,0,.4);}
+.banner-tag{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--primary);background:rgba(37,99,255,.15);padding:3px 9px;border-radius:3px;display:inline-block;margin-bottom:8px;}
+.banner-h{font-size:20px;font-weight:900;color:var(--text-main);line-height:1.2;margin:0 0 6px;letter-spacing:-.3px;}
 .banner-sub .banner-h{font-size:15px;}
-.banner-p{font-size:12px;color:var(--txt2);line-height:1.5;}
-.banner-cta{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--blue2);text-transform:uppercase;}
+.banner-p{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+.banner-cta{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--primary);text-transform:uppercase;}
 /* BRANDS GRID */
-.brands-section{background:#303030;padding:60px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);}
+.brands-section{background:var(--bg-section);padding:60px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);}
 .brands-eyebrow{text-align:center;font-size:11px;font-weight:700;letter-spacing:2.5px;color:#1E6BFF;text-transform:uppercase;margin-bottom:14px;}
-.brands-title{text-align:center;font-size:32px;font-weight:600;color:#fff;text-transform:uppercase;letter-spacing:2px;margin-bottom:44px;line-height:1.2;}
+.brands-title{text-align:center;font-size:32px;font-weight:600;color:var(--text-main);text-transform:uppercase;letter-spacing:2px;margin-bottom:44px;line-height:1.2;}
 .brands-title span{color:#1E6BFF;}
 .brands-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px 24px;max-width:860px;margin:0 auto;}
 .brand-card{background:transparent;border:none;border-radius:0;padding:20px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
-.brand-card-name{font-size:17px;font-weight:600;letter-spacing:1.5px;color:rgba(255,255,255,.45);text-transform:uppercase;font-family:'Segoe UI',system-ui,sans-serif;transition:color .3s ease,text-shadow .3s ease;}
-.brand-card-sub{font-size:9px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.18);text-transform:uppercase;transition:color .3s ease;}
-.brand-card:hover .brand-card-sub{color:rgba(255,255,255,.5);}
+.brand-card-name{font-size:17px;font-weight:600;letter-spacing:1.5px;color:var(--text-secondary);text-transform:uppercase;font-family:'Segoe UI',system-ui,sans-serif;transition:color .3s ease,text-shadow .3s ease;}
+.brand-card-sub{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted);text-transform:uppercase;transition:color .3s ease;}
+.brand-card:hover .brand-card-sub{color:var(--text-secondary);}
 .brand-card.nvidia:hover .brand-card-name{color:#00ff55;text-shadow:0 0 8px rgba(0,255,80,.9),0 0 22px rgba(0,255,80,.5);}
 .brand-card.amd:hover .brand-card-name{color:#ff3333;text-shadow:0 0 8px rgba(255,30,30,.9),0 0 22px rgba(255,30,30,.5);}
 .brand-card.asus:hover .brand-card-name{color:#4d8fff;text-shadow:0 0 8px rgba(30,107,255,.9),0 0 22px rgba(30,107,255,.5);}
@@ -237,55 +255,61 @@ button{font-family:inherit;cursor:pointer;}
 .brand-card.redragon:hover .brand-card-name{color:#ff3333;text-shadow:0 0 8px rgba(255,30,30,.9),0 0 22px rgba(255,30,30,.5);}
 /* BENEFITS */
 .benefit-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;}
-.benefit-item{display:flex;align-items:center;gap:13px;padding:20px 18px;background:var(--card);transition:background var(--trans);}
-.benefit-item:hover{background:var(--card2);}
+.benefit-item{display:flex;align-items:center;gap:13px;padding:20px 18px;background:var(--bg-card);transition:background var(--trans);}
+.benefit-item:hover{background:var(--bg-card);}
 .benefit-icon{flex-shrink:0;width:42px;height:42px;border-radius:10px;background:rgba(37,99,255,.1);border:1px solid rgba(37,99,255,.18);display:flex;align-items:center;justify-content:center;}
-.benefit-txt b{display:block;font-size:12px;font-weight:700;color:#fff;}
-.benefit-txt span{font-size:10.5px;color:var(--txt2);margin-top:2px;display:block;}
+.benefit-txt b{display:block;font-size:12px;font-weight:700;color:var(--text-main);}
+.benefit-txt span{font-size:10.5px;color:var(--text-secondary);margin-top:2px;display:block;}
 /* WHATSAPP CTA */
-.wpp-box{background:linear-gradient(125deg,#2B2B2B 0%,#303030 48%,#2B2B2B 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:52px 64px;display:flex;align-items:center;justify-content:space-between;gap:48px;position:relative;overflow:hidden;}
+.wpp-box{background:linear-gradient(125deg,var(--bg-card) 0%,var(--bg-section) 48%,var(--bg-card) 100%);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:52px 64px;display:flex;align-items:center;justify-content:space-between;gap:48px;position:relative;overflow:hidden;}
 .wpp-box::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(37,99,255,.018) 0,transparent 1px,transparent 44px),repeating-linear-gradient(0deg,rgba(37,99,255,.018) 0,transparent 1px,transparent 44px);pointer-events:none;}
 .wpp-box::after{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(37,99,255,.8) 50%,transparent);pointer-events:none;}
 .wpp-glr{position:absolute;right:-100px;top:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,255,.12) 0%,transparent 65%);pointer-events:none;}
 .wpp-gll{position:absolute;left:-60px;bottom:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.07) 0%,transparent 65%);pointer-events:none;}
 .wpp-left{flex:1;min-width:0;position:relative;}
-.wpp-seal{display:inline-flex;align-items:center;gap:7px;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#22c55e;background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.25);border-radius:20px;padding:5px 14px;margin-bottom:18px;}
-.wpp-title{font-size:26px;font-weight:900;color:#fff;letter-spacing:-.4px;margin:0 0 10px;line-height:1.25;}
-.wpp-sub{font-size:13.5px;color:var(--txt2);line-height:1.65;max-width:520px;}
+.wpp-seal{display:inline-flex;align-items:center;gap:7px;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--success);background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.25);border-radius:20px;padding:5px 14px;margin-bottom:18px;}
+.wpp-title{font-size:26px;font-weight:900;color:var(--text-main);letter-spacing:-.4px;margin:0 0 10px;line-height:1.25;}
+.wpp-sub{font-size:13.5px;color:var(--text-secondary);line-height:1.65;max-width:520px;}
 .wpp-right{flex-shrink:0;position:relative;}
-.wpp-btn{display:inline-flex;align-items:center;gap:13px;background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);color:#fff;text-decoration:none;padding:18px 36px;border-radius:12px;font-size:15px;font-weight:800;letter-spacing:.01em;white-space:nowrap;transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s cubic-bezier(.4,0,.2,1),filter .25s;box-shadow:0 8px 32px rgba(34,197,94,.3),0 0 0 1px rgba(34,197,94,.15);}
+.wpp-btn{display:inline-flex;align-items:center;gap:13px;background:linear-gradient(135deg,var(--success-hover) 0%,var(--success) 100%);color:#fff;text-decoration:none;padding:18px 36px;border-radius:12px;font-size:15px;font-weight:800;letter-spacing:.01em;white-space:nowrap;transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s cubic-bezier(.4,0,.2,1),filter .25s;box-shadow:0 8px 32px rgba(34,197,94,.3),0 0 0 1px rgba(34,197,94,.15);}
 .wpp-btn:hover{transform:translateY(-3px) scale(1.025);box-shadow:0 18px 50px rgba(34,197,94,.46),0 0 0 1px rgba(34,197,94,.3),0 0 38px rgba(34,197,94,.15);filter:brightness(1.07);}
 /* FOOTER */
-.ft2-main{background:#2B2B2B;border-top:1px solid rgba(255,255,255,.08);position:relative;}
+.ft2-main{background:var(--bg-section);border-top:1px solid var(--border-color);position:relative;}
 .ft2-main::before{content:'';position:absolute;top:-1px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(37,99,255,.52) 50%,transparent);pointer-events:none;}
 .ft2-grid{display:grid;grid-template-columns:2fr 1.3fr 1.3fr 1.6fr;gap:56px;padding:72px 0 60px;}
 .ft2-logo{height:44px;width:auto;display:block;margin-bottom:14px;}
 .ft2-tag{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#1E6BFF;margin-bottom:16px;display:block;}
-.ft2-about{font-size:12.5px;color:#888888;line-height:1.78;margin:0 0 22px;max-width:268px;}
-.ft2-phone{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:#888888;text-decoration:none;margin-bottom:16px;transition:color .2s;}
+.ft2-about{font-size:12.5px;color:var(--text-secondary);line-height:1.78;margin:0 0 22px;max-width:268px;}
+.ft2-phone{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--text-secondary);text-decoration:none;margin-bottom:16px;transition:color .2s;}
 .ft2-phone:hover{color:#8aaabf;}
-.ft2-insta{display:inline-flex;align-items:center;gap:12px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:11px 18px;text-decoration:none;transition:border-color .25s,box-shadow .25s,background .25s;}
+.ft2-insta{display:inline-flex;align-items:center;gap:12px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:11px 18px;text-decoration:none;transition:border-color .25s,box-shadow .25s,background .25s;}
 .ft2-insta:hover{border-color:rgba(37,99,255,.28);box-shadow:0 0 22px rgba(37,99,255,.1);background:rgba(37,99,255,.04);}
 .ft2-insta-txt{display:flex;flex-direction:column;}
-.ft2-insta-label{font-size:9px;color:#777777;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
-.ft2-insta-name{font-size:12.5px;font-weight:800;color:#999999;transition:color .25s;}
+.ft2-insta-label{font-size:9px;color:var(--text-muted);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
+.ft2-insta-name{font-size:12.5px;font-weight:800;color:var(--text-secondary);transition:color .25s;}
 .ft2-insta:hover .ft2-insta-name{color:#90a8bc;}
-.ft2-col-h{font-size:9.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);margin:0 0 22px;display:flex;align-items:center;gap:10px;}
-.ft2-col-h::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.055);}
-.ft2-link{font-size:13px;color:#888888;text-decoration:none;display:block;margin-bottom:12px;transition:color .2s,transform .2s;}
+.ft2-col-h{font-size:9.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin:0 0 22px;display:flex;align-items:center;gap:10px;}
+.ft2-col-h::after{content:'';flex:1;height:1px;background:var(--border-color);}
+.ft2-link{font-size:13px;color:var(--text-secondary);text-decoration:none;display:block;margin-bottom:12px;transition:color .2s,transform .2s;}
 .ft2-link:hover{color:#7a96aa;transform:translateX(4px);}
-.ft2-schedule{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:9px;padding:14px 18px;margin-top:22px;}
+.ft2-schedule{background:var(--bg-card);border:1px solid var(--border-color);border-radius:9px;padding:14px 18px;margin-top:22px;}
 .ft2-sched-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;padding:3px 0;}
-.ft2-sched-day{color:#888888;font-weight:600;}
-.ft2-sched-time{color:#888888;font-weight:700;}
-.ft2-sched-sep{height:1px;background:rgba(255,255,255,.04);margin:8px 0;}
+.ft2-sched-day{color:var(--text-secondary);font-weight:600;}
+.ft2-sched-time{color:var(--text-secondary);font-weight:700;}
+.ft2-sched-sep{height:1px;background:var(--border-color);margin:8px 0;}
 .ft2-pay-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px;}
-.ft2-pay-chip{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:7px 12px;height:36px;min-width:52px;transition:border-color .2s,background .2s;cursor:default;}
-.ft2-pay-chip:hover{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.06);}
+.ft2-pay-chip{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:#fff;border:1px solid rgba(0,0,0,.14);border-radius:6px;padding:0 11px;height:34px;min-width:50px;transition:transform .15s,box-shadow .15s;cursor:default;}
+.ft2-pay-chip:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.18);}
+.fpc-mc{gap:0;}
+.fpc-elo-logo{position:relative;width:28px;height:20px;}
+.fpc-elo-y{position:absolute;left:0;top:2px;width:13px;height:13px;border-radius:50%;background:#FFCB05;}
+.fpc-elo-c{position:absolute;left:6px;top:5px;width:13px;height:13px;border-radius:50%;background:#00A4E0;mix-blend-mode:multiply;}
+.fpc-elo-k{position:absolute;left:12px;top:1px;width:13px;height:13px;border-radius:50%;background:#000;mix-blend-mode:multiply;opacity:.85;}
+.fpc-boleto{background:#fff;gap:0;}
 .ft2-seal-list{display:flex;flex-direction:column;gap:9px;}
-.ft2-seal-item{display:flex;align-items:center;gap:9px;font-size:11.5px;color:#888888;font-weight:600;}
-.ft2-bottom{border-top:1px solid rgba(255,255,255,.05);padding:20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.ft2-bottom p{margin:0;font-size:11px;color:#666666;font-weight:500;}
+.ft2-seal-item{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--text-secondary);font-weight:600;}
+.ft2-bottom{border-top:1px solid var(--border-color);padding:20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.ft2-bottom p{margin:0;font-size:11px;color:var(--text-muted);font-weight:500;}
 /* RESPONSIVE */
 
 @media(max-width:1200px){.prod-grid{grid-template-columns:repeat(3,1fr);}.hl{flex:0 0 40%;}}
@@ -296,114 +320,142 @@ button{font-family:inherit;cursor:pointer;}
 /* MEGA MENU */
 @keyframes megaIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .cat-wrap{position:relative;display:flex;align-items:stretch;flex-shrink:0;}
-.megamenu{display:none;position:absolute;top:100%;left:0;width:860px;padding-top:6px;background:transparent;z-index:500;flex-direction:column;}
+.megamenu{display:none;position:absolute;top:100%;left:0;width:1280px;padding-top:10px;background:transparent;z-index:500;flex-direction:column;}
 .megamenu-inner{
   display:flex;flex-direction:row;
-  background:linear-gradient(160deg,#2B2B2B 0%,#252525 100%);
-  border:1px solid rgba(255,255,255,.1);
-  border-top:2px solid #1E6BFF;
-  border-radius:0 0 16px 16px;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:20px;
   overflow:hidden;
-  box-shadow:0 32px 80px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.03),0 0 40px rgba(37,99,255,.06);
-  animation:megaIn .2s ease both;
+  box-shadow:0 40px 90px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.02);
+  animation:megaSlide .25s cubic-bezier(.4,0,.2,1) both;
 }
+@keyframes megaSlide{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
 .mega-left{
-  width:240px;flex-shrink:0;
-  background:linear-gradient(180deg,rgba(43,43,43,.97) 0%,rgba(37,37,37,.99) 100%);
-  border-right:1px solid rgba(255,255,255,.08);
-  padding:8px 0 14px;overflow-y:auto;
+  width:300px;flex-shrink:0;
+  background:var(--bg-section);
+  border-right:1px solid var(--border-color);
+  padding:24px 16px;overflow-y:auto;
 }
 .mega-left-head{
-  padding:14px 20px 10px;
-  font-size:9px;font-weight:800;letter-spacing:2px;
-  color:rgba(255,255,255,.22);text-transform:uppercase;
-  border-bottom:1px solid rgba(255,255,255,.05);
-  margin-bottom:6px;
+  padding:4px 12px 18px;
+  font-size:10.5px;font-weight:800;letter-spacing:1.8px;
+  color:var(--text-muted);text-transform:uppercase;
 }
 .mega-cat{
-  display:flex;align-items:center;gap:13px;
-  padding:11px 20px 11px 16px;
-  font-size:12px;font-weight:600;
-  color:rgba(255,255,255,.5);
-  text-decoration:none;text-transform:uppercase;letter-spacing:.5px;
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;margin-bottom:6px;
+  font-size:13px;font-weight:700;
+  color:var(--text-secondary);
+  text-decoration:none;text-transform:uppercase;letter-spacing:.3px;
   border-left:3px solid transparent;
+  border-radius:12px;
   white-space:nowrap;
-  transition:all .16s ease;
+  transition:background .25s ease,color .25s ease,border-color .25s ease,transform .25s ease;
   cursor:pointer;position:relative;
 }
 .mega-cat:hover{
-  background:rgba(37,99,255,.08);
-  color:rgba(255,255,255,.85);
-  border-left-color:rgba(37,99,255,.5);
+  background:var(--bg-card);
+  color:var(--text-main);
+  transform:translateX(2px);
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
 }
 .mega-cat.mm-active{
-  background:linear-gradient(90deg,rgba(37,99,255,.18) 0%,rgba(37,99,255,.06) 100%);
-  color:#fff;font-weight:700;
-  border-left-color:#1E6BFF;
+  background:var(--bg-card);
+  color:var(--primary);font-weight:800;
+  border-left-color:var(--primary);
+  box-shadow:0 2px 12px rgba(0,102,255,.1);
 }
 .mega-cat-icon{
-  width:30px;height:30px;flex-shrink:0;
+  width:36px;height:36px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
-  border-radius:8px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.06);
-  transition:all .16s ease;
-  color:rgba(255,255,255,.35);
+  border-radius:0;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  transition:all .25s ease;
+  color:var(--text-muted);
 }
+.mega-cat-icon svg{width:18px;height:18px;}
 .mega-cat:hover .mega-cat-icon{
-  background:rgba(37,99,255,.12);
-  border-color:rgba(37,99,255,.3);
-  color:#60a5fa;
+  border-color:rgba(0,102,255,.35);
+  color:var(--primary);
 }
 .mega-cat.mm-active .mega-cat-icon{
-  background:rgba(37,99,255,.2);
-  border-color:rgba(37,99,255,.45);
-  color:#3b82f6;
-  box-shadow:0 0 12px rgba(37,99,255,.25);
+  background:var(--primary);
+  border-color:var(--primary);
+  color:#fff;
 }
 .mega-cat-arrow{
   margin-left:auto;opacity:0;
-  color:rgba(37,99,255,.6);
-  transition:opacity .16s,transform .16s;
-  font-size:14px;
+  color:var(--primary);
+  transition:opacity .2s,transform .2s;
+  font-size:15px;
 }
 .mega-cat:hover .mega-cat-arrow,.mega-cat.mm-active .mega-cat-arrow{opacity:1;}
-.mega-cat.mm-active .mega-cat-arrow{transform:translateX(2px);color:#3b82f6;}
-.mega-right{flex:1;padding:28px 32px;min-height:380px;overflow-y:auto;}
-.mega-subs{display:none;}
-.mega-subs.mm-active{display:block;animation:megaIn .18s ease both;}
+.mega-cat.mm-active .mega-cat-arrow{transform:translateX(2px);}
+.mega-right{flex:1;padding:36px 40px;min-height:460px;display:flex;flex-direction:column;background:var(--bg-main);}
+.mega-subs{display:none;flex:1;}
+.mega-subs.mm-active{display:flex;flex-direction:column;animation:megaIn .25s ease both;}
 .mega-sub-title{
-  font-size:10px;font-weight:800;color:#3b82f6;
-  letter-spacing:1.8px;text-transform:uppercase;
-  margin:0 0 16px;padding:0 0 10px;
-  border-bottom:1px solid rgba(37,99,255,.2);
+  font-size:29px;font-weight:800;color:var(--text-main);
+  letter-spacing:-.6px;
+  margin:0 0 26px;
 }
-.mega-sub-links{
-  display:grid;grid-template-columns:repeat(2,1fr);
-  gap:2px 16px;margin-bottom:24px;
+.mega-sub-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  align-content:start;
 }
-.mega-sub-links a{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 12px;
-  font-size:13px;color:rgba(255,255,255,.52);
-  text-decoration:none;border-radius:8px;
-  transition:color .15s,background .15s;white-space:nowrap;
-  font-weight:500;
+.mega-sub-card{
+  display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+  min-height:132px;
+  padding:24px;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:18px;
+  text-decoration:none;
+  position:relative;
+  box-shadow:0 2px 6px rgba(0,0,0,.03);
+  transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s cubic-bezier(.4,0,.2,1),border-color .28s ease;
 }
-.mega-sub-links a::before{content:'›';color:rgba(37,99,255,.4);font-size:16px;transition:color .15s;}
-.mega-sub-links a:hover{color:#fff;background:rgba(37,99,255,.1);}
-.mega-sub-links a:hover::before{color:#3b82f6;}
+.mega-sub-card:hover{
+  transform:translateY(-6px) scale(1.015);
+  border-color:var(--primary);
+  box-shadow:0 22px 44px rgba(0,102,255,.16);
+}
+.mega-sub-ico{
+  flex-shrink:0;width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,102,255,.08);color:var(--primary);
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+.mega-sub-ico svg{width:26px;height:26px;}
+.mega-sub-card:hover .mega-sub-ico{transform:scale(1.1);}
+.mega-sub-body{min-width:0;}
+.mega-sub-name{display:block;font-size:15.5px;font-weight:800;color:var(--text-main);letter-spacing:-.1px;margin-bottom:5px;}
+.mega-sub-desc{display:block;font-size:12.5px;color:var(--text-muted);line-height:1.45;}
+.mega-sub-go{position:absolute;top:22px;right:22px;color:var(--border-color);transition:color .25s,transform .25s;opacity:0;transform:translateX(-4px);}
+.mega-sub-go svg{width:16px;height:16px;}
+.mega-sub-card:hover .mega-sub-go{color:var(--primary);opacity:1;transform:translateX(0);}
+.mega-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  margin-top:28px;padding-top:20px;border-top:1px solid var(--border-color);
+}
+.mega-foot-item{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--text-muted);white-space:nowrap;}
+.mega-foot-item svg{width:15px;height:15px;color:var(--primary);flex-shrink:0;}
+@media(max-width:1400px){.megamenu{width:1040px;}.mega-sub-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:1150px){.megamenu{width:660px;}.mega-left{width:220px;}.mega-sub-grid{grid-template-columns:repeat(2,1fr);}.mega-cat span:not(.mega-cat-icon):not(.mega-cat-arrow){font-size:11.5px;}.mega-foot{display:none;}}
 
 /* ═══ PREMIUM VISUAL UPGRADE ═══ */
 
 /* Section depth separation */
 #hero{position:relative;}
-#hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:90px;background:linear-gradient(to bottom,transparent 0%,#3A3A3A 100%);pointer-events:none;z-index:6;}
+#hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:90px;background:linear-gradient(to bottom,transparent 0%,var(--bg-main) 100%);pointer-events:none;z-index:6;}
 
 /* Alternating section tones */
 .sec-wrap section,.sec-outer{background:transparent;}
 .brands-section .sec-wrap{max-width:100%;}
-.cat-section{background:#0D0F14;}
+.cat-section{background:var(--bg-section);}
 
 /* Hero arrow buttons — nova paleta */
 .hero-arrow{background:rgba(13,15,20,.82);}
@@ -420,7 +472,7 @@ button{font-family:inherit;cursor:pointer;}
 .sec-h2{font-size:22px;font-weight:900;letter-spacing:-.4px;}
 .sec-sub{font-size:13px;}
 .sec-link{background:rgba(37,99,255,.04);border-color:rgba(37,99,255,.2);}
-.sec-link:hover{background:rgba(37,99,255,.1);border-color:rgba(37,99,255,.5);color:#fff;box-shadow:0 0 14px rgba(37,99,255,.16);}
+.sec-link:hover{background:rgba(37,99,255,.1);border-color:rgba(37,99,255,.5);color:var(--text-main);box-shadow:0 0 14px rgba(37,99,255,.16);}
 
 /* Categories */
 .cat-section{padding:20px 0 0;}
@@ -442,7 +494,7 @@ button{font-family:inherit;cursor:pointer;}
 
 /* Buttons */
 .prod-btn{background:rgba(255,255,255,.025);}
-.prod-btn:hover{background:rgba(37,99,255,.1);border-color:rgba(37,99,255,.5);color:#fff;box-shadow:0 0 14px rgba(37,99,255,.15);}
+.prod-btn:hover{background:rgba(37,99,255,.1);border-color:rgba(37,99,255,.5);color:var(--text-main);box-shadow:0 0 14px rgba(37,99,255,.15);}
 .prod-cart:hover{background:rgba(37,99,255,.1);border-color:rgba(37,99,255,.45);box-shadow:0 0 10px rgba(37,99,255,.12);}
 .carousel-btn{width:44px;height:44px;border:1px solid rgba(37,99,255,.16);box-shadow:0 4px 20px rgba(0,0,0,.6);}
 .carousel-btn:hover{background:linear-gradient(135deg,#1a44ff,#2563ff);border-color:rgba(37,99,255,.65);box-shadow:0 8px 28px rgba(37,99,255,.42),0 0 18px rgba(37,99,255,.2);}
@@ -470,7 +522,7 @@ button{font-family:inherit;cursor:pointer;}
 
 /* Banner principal */
 .banner-main{
-  background:linear-gradient(135deg,#2B2B2B 0%,#303030 45%,#2F2F2F 100%);
+  background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-section) 45%,var(--bg-card) 100%);
   border:1px solid rgba(37,99,255,.28);
   box-shadow:0 8px 40px rgba(0,0,0,.55),0 0 0 1px rgba(37,99,255,.06),inset 0 0 80px rgba(0,0,0,.25);
   min-height:290px;
@@ -498,7 +550,7 @@ button{font-family:inherit;cursor:pointer;}
 
 /* Banner subs */
 .banner-sub{
-  background:linear-gradient(145deg,#303030 0%,#2F2F2F 100%);
+  background:linear-gradient(145deg,var(--bg-card) 0%,var(--bg-section) 100%);
   border:1px solid rgba(37,99,255,.2);
   box-shadow:0 4px 24px rgba(0,0,0,.45),inset 0 0 30px rgba(0,0,0,.2);
   position:relative;overflow:hidden;
@@ -541,7 +593,7 @@ button{font-family:inherit;cursor:pointer;}
   color:#7db8ff;font-size:11.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;
   transition:all .25s;
 }
-.banner-main:hover .banner-cta{background:rgba(37,99,255,.2);border-color:rgba(37,99,255,.55);box-shadow:0 0 16px rgba(37,99,255,.22);color:#fff;}
+.banner-main:hover .banner-cta{background:rgba(37,99,255,.2);border-color:rgba(37,99,255,.55);box-shadow:0 0 16px rgba(37,99,255,.22);color:var(--text-main);}
 
 /* Product img-ph — mais premium */
 .img-ph{
@@ -554,6 +606,73 @@ button{font-family:inherit;cursor:pointer;}
   background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(37,99,255,.07) 0%,transparent 70%);
   pointer-events:none;
 }
+
+/* ═══ REFACTOR COMPLETO — CARDS PICHAU-STYLE ═══ */
+
+/* Grid: 6 colunas desktop */
+.prod-grid{grid-template-columns:repeat(6,1fr)!important;gap:42px 24px!important;}
+
+/* Card: wrapper limpo, sem fundo, sem borda */
+.prod-card{background:transparent!important;border:none!important;box-shadow:none!important;padding:0!important;overflow:visible!important;cursor:pointer!important;}
+.prod-card:hover{background:transparent!important;border:none!important;box-shadow:none!important;transform:none!important;}
+.prod-grid .prod-card,.prod-track .prod-card{padding:0!important;}
+
+/* Área da imagem: cinza médio, radius mínimo */
+.prod-img-wrap{background:#CFCFCF!important;border:none!important;border-radius:4px!important;width:100%!important;height:240px!important;overflow:hidden!important;box-shadow:none!important;position:relative!important;transition:none!important;}
+.prod-card:hover .prod-img-wrap{box-shadow:none!important;}
+.prod-img-wrap::after{display:none!important;}
+
+/* Imagem: preenche o bloco, padding mínimo */
+.img-ph{background:url('img teste.jpg') center/contain no-repeat #CFCFCF!important;color:transparent!important;font-size:0!important;padding:8px!important;box-sizing:border-box!important;width:100%!important;height:100%!important;display:block!important;transition:transform .3s ease!important;}
+.prod-card:hover .img-ph{transform:scale(1.04)!important;}
+.img-ph::after{display:none!important;}
+
+/* Info: solta diretamente no fundo escuro */
+.prod-info{background:transparent!important;padding:10px 0 0!important;gap:0!important;}
+
+/* Marca */
+.prod-brand{color:#3B82F6!important;font-size:9px!important;font-weight:800!important;letter-spacing:1px!important;text-transform:uppercase!important;margin-bottom:4px!important;}
+
+/* Nome: branco, 15px, peso 600, máx 3 linhas */
+.prod-name{color:var(--text-main)!important;font-size:15px!important;font-weight:600!important;line-height:1.25!important;display:-webkit-box!important;-webkit-line-clamp:3!important;-webkit-box-orient:vertical!important;overflow:hidden!important;margin-bottom:8px!important;}
+
+/* Estrelas */
+.prod-stars{color:#F59E0B!important;font-size:11px!important;margin-bottom:8px!important;}
+.prod-stars span{color:#888!important;font-size:10px!important;}
+
+/* Preço antigo: vermelho tachado */
+.prod-old{color:#D71920!important;font-size:11px!important;text-decoration:line-through!important;margin-bottom:2px!important;margin-top:2px!important;}
+
+/* Preço atual: verde forte */
+.prod-price{color:var(--success)!important;font-size:20px!important;font-weight:800!important;line-height:1.1!important;margin-bottom:2px!important;letter-spacing:0!important;}
+
+/* À vista */
+.prod-av{color:var(--success)!important;font-size:11px!important;font-weight:400!important;margin-bottom:2px!important;display:block!important;}
+
+/* PIX: branco, sem caixa */
+.prod-pix{color:var(--text-main)!important;background:transparent!important;border:none!important;font-size:11px!important;font-weight:700!important;padding:0!important;width:auto!important;border-radius:0!important;margin-bottom:0!important;}
+
+/* Separador + área de parcelamento */
+.prod-install{color:var(--text-main)!important;font-size:10.5px!important;line-height:1.5!important;margin-top:0!important;}
+.prod-install::before{content:'';display:block;width:70px;height:1px;background:var(--border-color);margin:10px 0 8px;}
+.prod-inst-pix{color:var(--success)!important;font-size:18px!important;font-weight:800!important;display:block!important;line-height:1.1!important;margin-bottom:5px!important;}
+
+/* Estrelas: ocultar */
+.prod-stars{display:none!important;}
+
+/* Ações: ocultar tudo */
+.prod-actions{display:none!important;}
+
+/* Badge vermelho Pichau, canto superior esquerdo */
+.prod-badge{top:8px!important;left:8px!important;right:auto!important;background:#D71920!important;border:none!important;box-shadow:none!important;font-size:10px!important;font-weight:700!important;padding:3px 7px!important;border-radius:4px!important;color:#fff!important;}
+
+/* Hover acts: ocultar */
+.hover-acts{display:none!important;}
+.hover-act{display:none!important;}
+
+/* Responsivo */
+@media(max-width:960px){.prod-grid{grid-template-columns:repeat(3,1fr)!important;gap:32px 16px!important;}}
+@media(max-width:580px){.prod-grid{grid-template-columns:repeat(2,1fr)!important;gap:24px 12px!important;}}
 
 /* Badges de oferta */
 .prod-badge{
@@ -575,7 +694,7 @@ button{font-family:inherit;cursor:pointer;}
 .prod-btn:hover{
   background:linear-gradient(135deg,rgba(37,99,255,.28),rgba(30,82,255,.22));
   border-color:rgba(37,99,255,.65);
-  color:#fff;
+  color:var(--text-main);
   box-shadow:0 0 18px rgba(37,99,255,.22),inset 0 0 10px rgba(37,99,255,.08);
 }
 
@@ -664,6 +783,15 @@ button{font-family:inherit;cursor:pointer;}
 @keyframes aifIn{to{opacity:1;}}
 /* Respects reduced motion */
 @media(prefers-reduced-motion:reduce){#alfa-intro{display:none !important;}}
+
+/* ══ MODO CLARO — ajustes que não dá pra resolver só com variável ══ */
+[data-theme="light"] body{background-image:none;}
+
+/* ══ SUPORTE FLUTUANTE ══ */
+.wpp-float{position:fixed;bottom:26px;right:26px;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35);color:#fff;z-index:9999;transition:transform .2s,box-shadow .2s;}
+.wpp-float:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(0,0,0,.45);}
+.wpp-float svg{width:30px;height:30px;}
+@media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
 </head>
 <body>
@@ -805,6 +933,10 @@ button{font-family:inherit;cursor:pointer;}
     <div class="search-drop" id="searchDrop"></div>
   </div>
   <div class="hdr-acts-group">
+  <button class="theme-toggle" id="themeToggle" onclick="Store.toggleTheme()" type="button">
+    <span class="theme-toggle-track"><span class="theme-toggle-knob"></span></span>
+    <span class="theme-toggle-label">Modo Claro</span>
+  </button>
   <a href="auth.html" class="hdr-act" id="hdr-user-btn">
     <svg class="hdr-act-icon" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     <div class="hdr-act-text">
@@ -844,17 +976,85 @@ button{font-family:inherit;cursor:pointer;}
           <a class="mega-cat" data-cat="outros" href="categoria.html?cat=outros"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Outros<span class="mega-cat-arrow">›</span></a>
         </div>
         <div class="mega-right">
-          <div class="mega-subs" id="subs-computadores"><p class="mega-sub-title">Computadores</p><div class="mega-sub-links"><a href="categoria.html?cat=pc-gamer">PC Gamer</a><a href="categoria.html?cat=pc-office">PC Office</a><a href="categoria.html?cat=notebooks">Notebooks</a><a href="categoria.html?cat=servidores">Servidores</a><a href="categoria.html?cat=seminovos">Seminovos</a></div></div>
-          <div class="mega-subs" id="subs-hardware"><p class="mega-sub-title">Hardware</p><div class="mega-sub-links"><a href="categoria.html?cat=processadores">Processadores</a><a href="categoria.html?cat=placas-mae">Placas-mãe</a><a href="categoria.html?cat=placas-de-video">Placas de Vídeo</a><a href="categoria.html?cat=memorias-ram">Memórias RAM</a><a href="categoria.html?cat=ssd-hd">SSD / HD</a><a href="categoria.html?cat=fontes">Fontes</a><a href="categoria.html?cat=gabinetes">Gabinetes</a><a href="categoria.html?cat=coolers-gabinete">Coolers p/ Gabinete</a><a href="categoria.html?cat=coolers-processador">Coolers p/ Processador</a><a href="categoria.html?cat=water-coolers">Water Coolers</a></div></div>
-          <div class="mega-subs" id="subs-perifericos"><p class="mega-sub-title">Periféricos</p><div class="mega-sub-links"><a href="categoria.html?cat=mouse">Mouse</a><a href="categoria.html?cat=mousepad">Mousepad</a><a href="categoria.html?cat=teclados">Teclados</a><a href="categoria.html?cat=headsets">Headsets</a><a href="categoria.html?cat=fones">Fones de Ouvido</a><a href="categoria.html?cat=microfones">Microfones</a><a href="categoria.html?cat=webcam">Webcam</a></div></div>
-          <div class="mega-subs" id="subs-monitores"><p class="mega-sub-title">Monitores</p><div class="mega-sub-links"><a href="categoria.html?cat=monitores-gaming">Monitores</a><a href="categoria.html?cat=tvs">TVs</a></div></div>
-          <div class="mega-subs" id="subs-celulares"><p class="mega-sub-title">Celulares</p><div class="mega-sub-links"><a href="categoria.html?cat=celulares-smartphones">Celulares</a><a href="categoria.html?cat=cabos-celular">Cabos para Celular</a><a href="categoria.html?cat=adaptadores">Adaptadores</a></div></div>
-          <div class="mega-subs" id="subs-redes"><p class="mega-sub-title">Redes</p><div class="mega-sub-links"><a href="categoria.html?cat=switch">Switch</a><a href="categoria.html?cat=repetidores">Repetidores</a><a href="categoria.html?cat=placas-rede">Placas de Rede</a><a href="categoria.html?cat=cabos-rede">Cabos de Rede</a></div></div>
-          <div class="mega-subs" id="subs-impressao"><p class="mega-sub-title">Impressão</p><div class="mega-sub-links"><a href="categoria.html?cat=impressoras">Impressoras</a></div></div>
-          <div class="mega-subs" id="subs-moveis"><p class="mega-sub-title">Móveis</p><div class="mega-sub-links"><a href="categoria.html?cat=cadeiras">Cadeiras</a><a href="categoria.html?cat=mesas">Mesas</a></div></div>
-          <div class="mega-subs" id="subs-audio"><p class="mega-sub-title">Áudio</p><div class="mega-sub-links"><a href="categoria.html?cat=caixas-de-som">Caixas de Som</a></div></div>
-          <div class="mega-subs" id="subs-games"><p class="mega-sub-title">Games</p><div class="mega-sub-links"><a href="categoria.html?cat=video-games">Video Games</a></div></div>
-          <div class="mega-subs" id="subs-outros"><p class="mega-sub-title">Outros</p><div class="mega-sub-links"><a href="categoria.html?cat=projetores">Projetores</a><a href="categoria.html?cat=eletronicos">Eletrônicos</a><a href="categoria.html?cat=licencas">Licenças</a><a href="categoria.html?cat=acessorios">Acessórios de Informática</a></div></div>
+          <div class="mega-subs" id="subs-computadores"><p class="mega-sub-title">Computadores</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=pc-gamer"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="10" height="18" rx="1.5"/><circle cx="10" cy="7" r="1"/><line x1="7.5" y1="17" x2="12.5" y2="17"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">PC Gamer</span><span class="mega-sub-desc">Alta performance para jogar</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=pc-office"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">PC Office</span><span class="mega-sub-desc">Produtividade sem limites</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=notebooks"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="11" rx="1.5"/><path d="M1 18h22"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Notebooks</span><span class="mega-sub-desc">Mobilidade e desempenho</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=servidores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><line x1="7" y1="7.5" x2="7.01" y2="7.5"/><line x1="7" y1="16.5" x2="7.01" y2="16.5"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Servidores</span><span class="mega-sub-desc">Estabilidade para sua empresa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=seminovos"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Seminovos</span><span class="mega-sub-desc">Qualidade com preço menor</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-hardware"><p class="mega-sub-title">Hardware</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=processadores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="2" x2="9" y2="5"/><line x1="15" y1="2" x2="15" y2="5"/><line x1="9" y1="19" x2="9" y2="22"/><line x1="15" y1="19" x2="15" y2="22"/><line x1="19" y1="9" x2="22" y2="9"/><line x1="19" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="5" y2="9"/><line x1="2" y1="14" x2="5" y2="14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Processadores</span><span class="mega-sub-desc">O cérebro do seu setup</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=placas-mae"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M13 8h5"/><path d="M13 13h5"/><path d="M6 14v4h4"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas-mãe</span><span class="mega-sub-desc">A base de tudo</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=placas-de-video"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="1.5"/><circle cx="7" cy="12" r="2"/><line x1="13" y1="10" x2="18" y2="10"/><line x1="13" y1="14" x2="16" y2="14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas de Vídeo</span><span class="mega-sub-desc">Gráficos de alta performance</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=memorias-ram"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="7" rx="1"/><line x1="7" y1="9" x2="7" y2="6"/><line x1="11" y1="9" x2="11" y2="6"/><line x1="15" y1="9" x2="15" y2="6"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Memórias RAM</span><span class="mega-sub-desc">Mais velocidade multitarefa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=ssd-hd"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5"/><path d="M3 12a9 3 0 0018 0"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">SSD / HD</span><span class="mega-sub-desc">Armazenamento rápido e seguro</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=fontes"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Fontes</span><span class="mega-sub-desc">Energia estável pro seu PC</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=gabinetes"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="1.5"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Gabinetes</span><span class="mega-sub-desc">Estilo e ventilação</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=coolers-gabinete"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 12c0-3 2-5 4-5s2 2 0 4-4 1-4 1z"/><path d="M12 12c0 3-2 5-4 5s-2-2 0-4 4-1 4-1z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Coolers p/ Gabinete</span><span class="mega-sub-desc">Fluxo de ar eficiente</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=coolers-processador"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Coolers p/ Processador</span><span class="mega-sub-desc">Temperatura sob controle</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=water-coolers"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2s6 7 6 12a6 6 0 01-12 0c0-5 6-12 6-12z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Water Coolers</span><span class="mega-sub-desc">Refrigeração líquida silenciosa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-perifericos"><p class="mega-sub-title">Periféricos</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=mouse"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="5"/><line x1="12" y1="6" x2="12" y2="10"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mouse</span><span class="mega-sub-desc">Precisão em cada clique</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=mousepad"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mousepad</span><span class="mega-sub-desc">Conforto e deslize perfeito</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=teclados"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="6" y1="9" x2="6" y2="9.01"/><line x1="10" y1="9" x2="10" y2="9.01"/><line x1="14" y1="9" x2="14" y2="9.01"/><line x1="18" y1="9" x2="18" y2="9.01"/><line x1="6" y1="13" x2="18" y2="13.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Teclados</span><span class="mega-sub-desc">Mecânicos e membrana</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=headsets"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 14v-2a9 9 0 0118 0v2"/><rect x="1" y="14" width="6" height="7" rx="2"/><rect x="17" y="14" width="6" height="7" rx="2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Headsets</span><span class="mega-sub-desc">Áudio imersivo para jogos</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=fones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14v-3a8 8 0 0116 0v3"/><path d="M2 14a2 2 0 012-2 2 2 0 012 2v3a2 2 0 01-2 2 2 2 0 01-2-2z"/><path d="M22 14a2 2 0 00-2-2 2 2 0 00-2 2v3a2 2 0 002 2 2 2 0 002-2z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Fones de Ouvido</span><span class="mega-sub-desc">Para música e chamadas</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=microfones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Microfones</span><span class="mega-sub-desc">Voz clara para streaming</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=webcam"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M4 20c2-2 5-3 8-3s6 1 8 3"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Webcam</span><span class="mega-sub-desc">Imagem nítida em video calls</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-monitores"><p class="mega-sub-title">Monitores</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=monitores-gaming"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Monitores</span><span class="mega-sub-desc">Alta taxa de atualização</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=tvs"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="13" rx="2"/><polyline points="8 2 12 6 16 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">TVs</span><span class="mega-sub-desc">Entretenimento em grande tela</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-celulares"><p class="mega-sub-title">Celulares</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=celulares-smartphones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Celulares</span><span class="mega-sub-desc">Os últimos lançamentos</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=cabos-celular"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9a3 3 0 003 3h10a3 3 0 003-3"/><path d="M4 9V6a2 2 0 012-2"/><path d="M20 9V6a2 2 0 00-2-2"/><line x1="8" y1="15" x2="8" y2="21"/><line x1="16" y1="15" x2="16" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cabos para Celular</span><span class="mega-sub-desc">Carregamento rápido</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=adaptadores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="9" width="6" height="6"/><path d="M9 3v4"/><path d="M15 3v4"/><path d="M9 17v4"/><path d="M15 17v4"/><path d="M3 9h4"/><path d="M3 15h4"/><path d="M17 9h4"/><path d="M17 15h4"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Adaptadores</span><span class="mega-sub-desc">Compatibilidade total</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-redes"><p class="mega-sub-title">Redes</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=switch"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="8" width="20" height="8" rx="1.5"/><line x1="6" y1="12" x2="6.01" y2="12"/><line x1="10" y1="12" x2="10.01" y2="12"/><line x1="14" y1="12" x2="14.01" y2="12"/><line x1="18" y1="12" x2="18.01" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Switch</span><span class="mega-sub-desc">Rede cabeada estável</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=repetidores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M7.76 7.76a6 6 0 000 8.49"/><path d="M20.07 4.93a10 10 0 010 14.14"/><path d="M3.93 4.93a10 10 0 000 14.14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Repetidores</span><span class="mega-sub-desc">Wi-Fi em toda a casa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=placas-rede"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M8 8h4"/><path d="M8 16h6"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas de Rede</span><span class="mega-sub-desc">Mais velocidade de conexão</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=cabos-rede"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9a3 3 0 003 3h10a3 3 0 003-3"/><path d="M4 9V6a2 2 0 012-2"/><path d="M20 9V6a2 2 0 00-2-2"/><line x1="8" y1="15" x2="8" y2="21"/><line x1="16" y1="15" x2="16" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cabos de Rede</span><span class="mega-sub-desc">Conexão estável e rápida</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-impressao"><p class="mega-sub-title">Impressão</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=impressoras"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Impressoras</span><span class="mega-sub-desc">Para casa e escritório</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-moveis"><p class="mega-sub-title">Móveis</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=cadeiras"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 10V4a1 1 0 011-1h10a1 1 0 011 1v6"/><path d="M6 10h12v6H6z"/><line x1="7" y1="16" x2="6" y2="22"/><line x1="17" y1="16" x2="18" y2="22"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cadeiras</span><span class="mega-sub-desc">Conforto para longas sessões</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=mesas"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 8h20"/><path d="M4 8v13"/><path d="M20 8v13"/><path d="M2 8l2-5h16l2 5"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mesas</span><span class="mega-sub-desc">Setup organizado</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-audio"><p class="mega-sub-title">Áudio</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=caixas-de-som"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Caixas de Som</span><span class="mega-sub-desc">Som potente pro seu ambiente</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-games"><p class="mega-sub-title">Games</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=video-games"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><path d="M17.32 5H6.68a4 4 0 00-3.978 3.59l-.99 8.5A4 4 0 005.69 21h.01a4 4 0 003.23-1.63l.68-1.01a2 2 0 011.62-.84h1.54a2 2 0 011.62.84l.68 1.01A4 4 0 0018.3 21h.01a4 4 0 003.978-3.91l-.99-8.5A4 4 0 0017.32 5z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Video Games</span><span class="mega-sub-desc">Consoles e acessórios</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-outros"><p class="mega-sub-title">Outros</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=projetores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="9" cy="12" r="2.5"/><line x1="17" y1="10" x2="17" y2="10.01"/><line x1="17" y1="14" x2="17" y2="14.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Projetores</span><span class="mega-sub-desc">Telas grandes onde quiser</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=eletronicos"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Eletrônicos</span><span class="mega-sub-desc">Gadgets pro dia a dia</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=licencas"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M10.5 12.5L20 3"/><path d="M17 6l3 3"/><path d="M14 9l2 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Licenças</span><span class="mega-sub-desc">Softwares originais</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=acessorios"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Acessórios de Informática</span><span class="mega-sub-desc">Complementos essenciais</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-foot">
+            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Compra 100% Segura</div>
+            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Entrega para todo Brasil</div>
+            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Produtos Originais</div>
+            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 14v-3a9 9 0 0118 0v3"/><path d="M21 14a2 2 0 00-2-2 2 2 0 00-2 2v3a2 2 0 002 2 2 2 0 002-2z"/><path d="M3 14a2 2 0 012-2 2 2 0 012 2v3a2 2 0 01-2 2 2 2 0 01-2-2z"/></svg>Suporte Especializado</div>
+          </div>
         </div>
       </div></nav>
     </div>
@@ -940,7 +1140,7 @@ button{font-family:inherit;cursor:pointer;}
 
 </section>
 <!-- ══ ESCOLHA SEU NÍVEL ══ -->
-<section class="nivel-section" style="background:var(--bg2);">
+<section class="nivel-section" style="background:var(--bg-section);">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Escolha seu N&iacute;vel</h2><p class="sec-sub">Do computador ideal para estudos at&eacute; a m&aacute;quina definitiva para quem exige o m&aacute;ximo desempenho.</p></div></div>
@@ -955,7 +1155,7 @@ button{font-family:inherit;cursor:pointer;}
 </div>
 </section>
 <!-- ══ 02 — PRODUTOS EM DESTAQUE ══ -->
-<section style="background:var(--bg);padding:56px 0 60px;">
+<section style="background:var(--bg-main);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Produtos em Destaque</h2><p class="sec-sub">Os componentes mais buscados com as melhores condi&ccedil;&otilde;es do mercado.</p></div></div>
@@ -971,7 +1171,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-info">
 <div class="prod-brand">INTEL</div>
 <div class="prod-name">Core i9-14900K 24 N&uacute;cleos 6.0GHz Turbo LGA1700 Sem Cooler</div>
-<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(312)</span></div>
+<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(312)</span></div>
 <div class="prod-old">De: R$ 3.299,00</div>
 <div class="prod-price">R$ 2.899,00</div>
 <div class="prod-pix">R$ 2.754,05 no Pix &middot; 5% OFF</div>
@@ -988,7 +1188,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-info">
 <div class="prod-brand">AMD &middot; SAPPHIRE</div>
 <div class="prod-name">Radeon RX 7900 XTX 24GB GDDR6 Nitro+ Vapor-X</div>
-<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(187)</span></div>
+<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(187)</span></div>
 <div class="prod-old">De: R$ 6.199,00</div>
 <div class="prod-price">R$ 5.499,00</div>
 <div class="prod-pix">R$ 5.224,05 no Pix &middot; 5% OFF</div>
@@ -1005,7 +1205,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-info">
 <div class="prod-brand">CORSAIR</div>
 <div class="prod-name">Dominator Platinum DDR5 32GB 6000MHz Kit (2x16GB)</div>
-<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(241)</span></div>
+<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(241)</span></div>
 <div class="prod-old">De: R$ 789,00</div>
 <div class="prod-price">R$ 589,00</div>
 <div class="prod-pix">R$ 559,55 no Pix &middot; 5% OFF</div>
@@ -1022,7 +1222,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-info">
 <div class="prod-brand">SAMSUNG</div>
 <div class="prod-name">990 Pro 2TB NVMe PCIe 4.0 M.2 7450MB/s Leitura</div>
-<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(408)</span></div>
+<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(408)</span></div>
 <div class="prod-old">De: R$ 999,00</div>
 <div class="prod-price">R$ 799,00</div>
 <div class="prod-pix">R$ 759,05 no Pix &middot; 5% OFF</div>
@@ -1039,7 +1239,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-info">
 <div class="prod-brand">ASUS ROG</div>
 <div class="prod-name">Strix Z790-E Gaming WiFi 6E DDR5 ATX LGA1700</div>
-<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--txt2);font-size:10px;">(156)</span></div>
+<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(156)</span></div>
 <div class="prod-old">De: R$ 2.699,00</div>
 <div class="prod-price">R$ 2.199,00</div>
 <div class="prod-pix">R$ 2.089,05 no Pix &middot; 5% OFF</div>
@@ -1056,7 +1256,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-info">
 <div class="prod-brand">COOLER MASTER</div>
 <div class="prod-name">HAF 700 EVO Full Tower ARGB Vidro Temperado USB-C</div>
-<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(93)</span></div>
+<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(93)</span></div>
 <div class="prod-old">De: R$ 899,00</div>
 <div class="prod-price">R$ 699,00</div>
 <div class="prod-pix">R$ 664,05 no Pix &middot; 5% OFF</div>
@@ -1073,7 +1273,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-info">
 <div class="prod-brand">LG</div>
 <div class="prod-name">27GP850-B 27" Nano IPS QHD 180Hz 1ms G-Sync Compatible</div>
-<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(274)</span></div>
+<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(274)</span></div>
 <div class="prod-old">De: R$ 2.299,00</div>
 <div class="prod-price">R$ 1.799,00</div>
 <div class="prod-pix">R$ 1.709,05 no Pix &middot; 5% OFF</div>
@@ -1090,7 +1290,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-info">
 <div class="prod-brand">INTEL</div>
 <div class="prod-name">Core i5-14600K 14 N&uacute;cleos 5.3GHz Turbo LGA1700</div>
-<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(531)</span></div>
+<div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(531)</span></div>
 <div class="prod-old">De: R$ 1.699,00</div>
 <div class="prod-price">R$ 1.399,00</div>
 <div class="prod-pix">R$ 1.329,05 no Pix &middot; 5% OFF</div>
@@ -1104,7 +1304,7 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 <!-- ══ 03 — MAIS VENDIDOS (carrossel) ══ -->
-<section style="background:var(--bg2);padding:56px 0 60px;">
+<section style="background:var(--bg-section);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Mais Vendidos</h2><p class="sec-sub">Os favoritos dos clientes m&ecirc;s ap&oacute;s m&ecirc;s.</p></div></div>
@@ -1115,17 +1315,17 @@ button{font-family:inherit;cursor:pointer;}
 <button class="carousel-btn next" id="mv-next" aria-label="Pr&oacute;ximo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
 <div class="prod-track" id="mv-track">
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">LOGITECH</div><div class="prod-name">G305 Lightspeed Sem Fio 12000 DPI Hero Sensor</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(632)</span></div><div class="prod-old">De: R$ 299,00</div><div class="prod-price">R$ 239,00</div><div class="prod-pix">R$ 227,05 no Pix</div><div class="prod-install">12x de R$ 19,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">LOGITECH</div><div class="prod-name">G305 Lightspeed Sem Fio 12000 DPI Hero Sensor</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(632)</span></div><div class="prod-old">De: R$ 299,00</div><div class="prod-price">R$ 239,00</div><div class="prod-pix">R$ 227,05 no Pix</div><div class="prod-install">12x de R$ 19,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-23% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">REDRAGON</div><div class="prod-name">Kumara K552 Mec&acirc;nico RGB Switch Red TKL</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(487)</span></div><div class="prod-old">De: R$ 219,00</div><div class="prod-price">R$ 169,00</div><div class="prod-pix">R$ 160,55 no Pix</div><div class="prod-install">12x de R$ 14,08 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-23% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">REDRAGON</div><div class="prod-name">Kumara K552 Mec&acirc;nico RGB Switch Red TKL</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(487)</span></div><div class="prod-old">De: R$ 219,00</div><div class="prod-price">R$ 169,00</div><div class="prod-pix">R$ 160,55 no Pix</div><div class="prod-install">12x de R$ 14,08 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">HYPERX</div><div class="prod-name">Cloud II Wireless Headset 7.1 Surround RGB</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(278)</span></div><div class="prod-old">De: R$ 699,00</div><div class="prod-price">R$ 579,00</div><div class="prod-pix">R$ 550,05 no Pix</div><div class="prod-install">12x de R$ 48,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">HYPERX</div><div class="prod-name">Cloud II Wireless Headset 7.1 Surround RGB</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(278)</span></div><div class="prod-old">De: R$ 699,00</div><div class="prod-price">R$ 579,00</div><div class="prod-pix">R$ 550,05 no Pix</div><div class="prod-install">12x de R$ 48,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-25% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">WD BLACK</div><div class="prod-name">SN850X 1TB NVMe PCIe 4.0 M.2 7300MB/s</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(341)</span></div><div class="prod-old">De: R$ 799,00</div><div class="prod-price">R$ 599,00</div><div class="prod-pix">R$ 569,05 no Pix</div><div class="prod-install">12x de R$ 49,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-25% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">WD BLACK</div><div class="prod-name">SN850X 1TB NVMe PCIe 4.0 M.2 7300MB/s</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(341)</span></div><div class="prod-old">De: R$ 799,00</div><div class="prod-price">R$ 599,00</div><div class="prod-pix">R$ 569,05 no Pix</div><div class="prod-install">12x de R$ 49,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">Vengeance LPX 16GB DDR4 3200MHz CL16</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(912)</span></div><div class="prod-old">De: R$ 329,00</div><div class="prod-price">R$ 249,00</div><div class="prod-pix">R$ 236,55 no Pix</div><div class="prod-install">12x de R$ 20,75 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">Vengeance LPX 16GB DDR4 3200MHz CL16</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(912)</span></div><div class="prod-old">De: R$ 329,00</div><div class="prod-price">R$ 249,00</div><div class="prod-pix">R$ 236,55 no Pix</div><div class="prod-install">12x de R$ 20,75 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-25% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">DEEPCOOL</div><div class="prod-name">AK620 Cooler Dupla Torre 260W TDP 6 Heatpipes</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(216)</span></div><div class="prod-old">De: R$ 529,00</div><div class="prod-price">R$ 399,00</div><div class="prod-pix">R$ 379,05 no Pix</div><div class="prod-install">12x de R$ 33,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-25% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">DEEPCOOL</div><div class="prod-name">AK620 Cooler Dupla Torre 260W TDP 6 Heatpipes</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(216)</span></div><div class="prod-old">De: R$ 529,00</div><div class="prod-price">R$ 399,00</div><div class="prod-pix">R$ 379,05 no Pix</div><div class="prod-install">12x de R$ 33,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
 </div>
 </div>
@@ -1133,7 +1333,7 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 <!-- == 04 == OFERTAS EM DESTAQUE == -->
-<section style="background:var(--bg);padding:56px 0 64px;">
+<section style="background:var(--bg-main);padding:56px 0 64px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Ofertas em Destaque</h2><p class="sec-sub">As melhores promo&ccedil;&otilde;es da semana para montar ou atualizar seu setup.</p></div></div>
@@ -1169,7 +1369,7 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 <!-- ══ 05 — LANÇAMENTOS ══ -->
-<section style="background:var(--bg2);padding:56px 0 60px;">
+<section style="background:var(--bg-section);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Lan&ccedil;amentos</h2><p class="sec-sub">Novidades em hardware e tecnologia chegando primeiro aqui.</p></div></div>
@@ -1177,28 +1377,28 @@ button{font-family:inherit;cursor:pointer;}
 </div>
 <div class="prod-grid">
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">AMD</div><div class="prod-name">Ryzen 9 7950X3D 16-Core 5.7GHz AM5 3D V-Cache</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(89)</span></div><div class="prod-old">De: R$ 3.899,00</div><div class="prod-price">R$ 3.199,00</div><div class="prod-pix">R$ 3.039,05 no Pix</div><div class="prod-install">12x de R$ 266,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">AMD</div><div class="prod-name">Ryzen 9 7950X3D 16-Core 5.7GHz AM5 3D V-Cache</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(89)</span></div><div class="prod-old">De: R$ 3.899,00</div><div class="prod-price">R$ 3.199,00</div><div class="prod-pix">R$ 3.039,05 no Pix</div><div class="prod-install">12x de R$ 266,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">NVIDIA &middot; ASUS ROG</div><div class="prod-name">GeForce RTX 4090 24GB GDDR6X STRIX OC Gaming</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(124)</span></div><div class="prod-old">De: R$ 12.499,00</div><div class="prod-price">R$ 9.999,00</div><div class="prod-pix">R$ 9.499,05 no Pix</div><div class="prod-install">12x de R$ 833,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">NVIDIA &middot; ASUS ROG</div><div class="prod-name">GeForce RTX 4090 24GB GDDR6X STRIX OC Gaming</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(124)</span></div><div class="prod-old">De: R$ 12.499,00</div><div class="prod-price">R$ 9.999,00</div><div class="prod-pix">R$ 9.499,05 no Pix</div><div class="prod-install">12x de R$ 833,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-24% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">G.SKILL</div><div class="prod-name">Trident Z5 RGB DDR5 64GB 7200MHz Kit (2x32GB)</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--txt2);font-size:10px;">(47)</span></div><div class="prod-old">De: R$ 1.699,00</div><div class="prod-price">R$ 1.299,00</div><div class="prod-pix">R$ 1.234,05 no Pix</div><div class="prod-install">12x de R$ 108,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-24% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">G.SKILL</div><div class="prod-name">Trident Z5 RGB DDR5 64GB 7200MHz Kit (2x32GB)</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(47)</span></div><div class="prod-old">De: R$ 1.699,00</div><div class="prod-price">R$ 1.299,00</div><div class="prod-pix">R$ 1.234,05 no Pix</div><div class="prod-install">12x de R$ 108,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-16% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ASUS ROG</div><div class="prod-name">Swift Pro PG248QP 24.1" FHD 540Hz 0.2ms ULMB2</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(63)</span></div><div class="prod-old">De: R$ 4.299,00</div><div class="prod-price">R$ 3.599,00</div><div class="prod-pix">R$ 3.419,05 no Pix</div><div class="prod-install">12x de R$ 299,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-16% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ASUS ROG</div><div class="prod-name">Swift Pro PG248QP 24.1" FHD 540Hz 0.2ms ULMB2</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(63)</span></div><div class="prod-old">De: R$ 4.299,00</div><div class="prod-price">R$ 3.599,00</div><div class="prod-pix">R$ 3.419,05 no Pix</div><div class="prod-install">12x de R$ 299,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">MSI</div><div class="prod-name">MEG Z790 ACE WiFi 6E DDR5 E-ATX LGA1700</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--txt2);font-size:10px;">(38)</span></div><div class="prod-old">De: R$ 3.899,00</div><div class="prod-price">R$ 3.199,00</div><div class="prod-pix">R$ 3.039,05 no Pix</div><div class="prod-install">12x de R$ 266,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">MSI</div><div class="prod-name">MEG Z790 ACE WiFi 6E DDR5 E-ATX LGA1700</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(38)</span></div><div class="prod-old">De: R$ 3.899,00</div><div class="prod-price">R$ 3.199,00</div><div class="prod-pix">R$ 3.039,05 no Pix</div><div class="prod-install">12x de R$ 266,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-22% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">NZXT</div><div class="prod-name">H9 Elite Mid Tower Dual-Chamber ARGB Vidro</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(71)</span></div><div class="prod-old">De: R$ 1.799,00</div><div class="prod-price">R$ 1.399,00</div><div class="prod-pix">R$ 1.329,05 no Pix</div><div class="prod-install">12x de R$ 116,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-22% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">NZXT</div><div class="prod-name">H9 Elite Mid Tower Dual-Chamber ARGB Vidro</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(71)</span></div><div class="prod-old">De: R$ 1.799,00</div><div class="prod-price">R$ 1.399,00</div><div class="prod-pix">R$ 1.329,05 no Pix</div><div class="prod-install">12x de R$ 116,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">K100 RGB &Oacute;ptico Mec&acirc;nico OPX Switch 44-Zone iCUE</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(143)</span></div><div class="prod-old">De: R$ 1.499,00</div><div class="prod-price">R$ 1.199,00</div><div class="prod-pix">R$ 1.139,05 no Pix</div><div class="prod-install">12x de R$ 99,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">K100 RGB &Oacute;ptico Mec&acirc;nico OPX Switch 44-Zone iCUE</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(143)</span></div><div class="prod-old">De: R$ 1.499,00</div><div class="prod-price">R$ 1.199,00</div><div class="prod-pix">R$ 1.139,05 no Pix</div><div class="prod-install">12x de R$ 99,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-22% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">SAMSUNG</div><div class="prod-name">T7 Shield 2TB SSD Externo USB 3.2 Gen2 IP65</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(212)</span></div><div class="prod-old">De: R$ 899,00</div><div class="prod-price">R$ 699,00</div><div class="prod-pix">R$ 664,05 no Pix</div><div class="prod-install">12x de R$ 58,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-22% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">SAMSUNG</div><div class="prod-name">T7 Shield 2TB SSD Externo USB 3.2 Gen2 IP65</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(212)</span></div><div class="prod-old">De: R$ 899,00</div><div class="prod-price">R$ 699,00</div><div class="prod-pix">R$ 664,05 no Pix</div><div class="prod-install">12x de R$ 58,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
 </div>
 </div>
 </section>
 
 <!-- ══ 06 — PERIFÉRICOS EM ALTA (carrossel) ══ -->
-<section style="background:var(--bg);padding:56px 0 60px;">
+<section style="background:var(--bg-main);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Perif&eacute;ricos em Alta</h2><p class="sec-sub">Teclado, mouse, headset, mousepad, cadeiras e microfones top de linha.</p></div></div>
@@ -1209,17 +1409,17 @@ button{font-family:inherit;cursor:pointer;}
 <button class="carousel-btn next" id="peri-next" aria-label="Pr&oacute;ximo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
 <div class="prod-track" id="peri-track">
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">LOGITECH</div><div class="prod-name">MX Master 3S Mouse Sem Fio 8000 DPI MagSpeed</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(389)</span></div><div class="prod-old">De: R$ 799,00</div><div class="prod-price">R$ 679,00</div><div class="prod-pix">R$ 645,05 no Pix</div><div class="prod-install">12x de R$ 56,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">LOGITECH</div><div class="prod-name">MX Master 3S Mouse Sem Fio 8000 DPI MagSpeed</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(389)</span></div><div class="prod-old">De: R$ 799,00</div><div class="prod-price">R$ 679,00</div><div class="prod-pix">R$ 645,05 no Pix</div><div class="prod-install">12x de R$ 56,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ASUS ROG</div><div class="prod-name">Claymore II Mec&acirc;nico Sem Fio 100H ROG RX Red</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(112)</span></div><div class="prod-old">De: R$ 1.599,00</div><div class="prod-price">R$ 1.299,00</div><div class="prod-pix">R$ 1.234,05 no Pix</div><div class="prod-install">12x de R$ 108,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ASUS ROG</div><div class="prod-name">Claymore II Mec&acirc;nico Sem Fio 100H ROG RX Red</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(112)</span></div><div class="prod-old">De: R$ 1.599,00</div><div class="prod-price">R$ 1.299,00</div><div class="prod-pix">R$ 1.234,05 no Pix</div><div class="prod-install">12x de R$ 108,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#16a34a;">OFERTA</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">STEELSERIES</div><div class="prod-name">Arctis Nova Pro Wireless Hi-Fi DSP ANC</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(198)</span></div><div class="prod-old">De: R$ 1.899,00</div><div class="prod-price">R$ 1.499,00</div><div class="prod-pix">R$ 1.424,05 no Pix</div><div class="prod-install">12x de R$ 124,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#16a34a;">OFERTA</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">STEELSERIES</div><div class="prod-name">Arctis Nova Pro Wireless Hi-Fi DSP ANC</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(198)</span></div><div class="prod-old">De: R$ 1.899,00</div><div class="prod-price">R$ 1.499,00</div><div class="prod-pix">R$ 1.424,05 no Pix</div><div class="prod-install">12x de R$ 124,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">THUNDER X3</div><div class="prod-name">TC3 Cadeira Gamer Reclin&aacute;vel 175&deg; Couro PU RGB</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--txt2);font-size:10px;">(231)</span></div><div class="prod-old">De: R$ 1.199,00</div><div class="prod-price">R$ 879,00</div><div class="prod-pix">R$ 835,05 no Pix</div><div class="prod-install">12x de R$ 73,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">THUNDER X3</div><div class="prod-name">TC3 Cadeira Gamer Reclin&aacute;vel 175&deg; Couro PU RGB</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(231)</span></div><div class="prod-old">De: R$ 1.199,00</div><div class="prod-price">R$ 879,00</div><div class="prod-pix">R$ 835,05 no Pix</div><div class="prod-install">12x de R$ 73,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">MM350 Pro Extended XL Mousepad 930x400mm 4mm</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(447)</span></div><div class="prod-old">De: R$ 279,00</div><div class="prod-price">R$ 199,00</div><div class="prod-pix">R$ 189,05 no Pix</div><div class="prod-install">12x de R$ 16,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">MM350 Pro Extended XL Mousepad 930x400mm 4mm</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(447)</span></div><div class="prod-old">De: R$ 279,00</div><div class="prod-price">R$ 199,00</div><div class="prod-pix">R$ 189,05 no Pix</div><div class="prod-install">12x de R$ 16,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ELGATO</div><div class="prod-name">Wave:3 Microfone Condensador USB 24-bit 96kHz</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--txt2);font-size:10px;">(267)</span></div><div class="prod-old">De: R$ 999,00</div><div class="prod-price">R$ 799,00</div><div class="prod-pix">R$ 759,05 no Pix</div><div class="prod-install">12x de R$ 66,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ELGATO</div><div class="prod-name">Wave:3 Microfone Condensador USB 24-bit 96kHz</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(267)</span></div><div class="prod-old">De: R$ 999,00</div><div class="prod-price">R$ 799,00</div><div class="prod-pix">R$ 759,05 no Pix</div><div class="prod-install">12x de R$ 66,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
 </div>
 </div>
@@ -1270,7 +1470,7 @@ button{font-family:inherit;cursor:pointer;}
 
 
 <!-- ══ 09 — WHATSAPP CTA ══ -->
-<section style="background:var(--bg2);padding:56px 0 60px;">
+<section style="background:var(--bg-section);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="wpp-box">
 <div class="wpp-glr"></div>
@@ -1349,11 +1549,11 @@ Entrar no grupo do WhatsApp
 <div>
 <p class="ft2-col-h">Formas de Pagamento</p>
 <div class="ft2-pay-grid">
-<div class="ft2-pay-chip"><svg width="40" height="14" viewBox="0 0 40 14"><text x="1" y="13" font-family="'Times New Roman',Georgia,serif" font-style="italic" font-weight="900" font-size="17" fill="#1A1F71" letter-spacing="-1">VISA</text></svg></div>
-<div class="ft2-pay-chip"><svg width="32" height="20" viewBox="0 0 32 20"><circle cx="11" cy="10" r="10" fill="#EB001B"/><circle cx="21" cy="10" r="10" fill="#F79E1B" opacity=".88"/></svg></div>
-<div class="ft2-pay-chip"><svg width="28" height="15" viewBox="0 0 32 18"><text x="0" y="15" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="16" fill="#F5C518">elo</text></svg></div>
+<div class="ft2-pay-chip"><svg width="38" height="14" viewBox="0 0 40 14"><text x="1" y="13" font-family="Arial,Helvetica,sans-serif" font-style="italic" font-weight="900" font-size="16" fill="#1A1F71" letter-spacing="-1">VISA</text></svg></div>
+<div class="ft2-pay-chip fpc-mc"><svg width="30" height="20" viewBox="0 0 32 20"><circle cx="12" cy="10" r="9" fill="#EB001B"/><circle cx="20" cy="10" r="9" fill="#F79E1B" style="mix-blend-mode:multiply"/></svg></div>
+<div class="ft2-pay-chip"><div class="fpc-elo-logo"><div class="fpc-elo-y"></div><div class="fpc-elo-c"></div><div class="fpc-elo-k"></div></div></div>
 <div class="ft2-pay-chip"><svg width="46" height="14" viewBox="0 0 56 18" fill="none"><path d="M9 9L15 3L21 9L15 15Z" fill="#32BCAD"/><text x="27" y="14" font-family="Arial,sans-serif" font-weight="800" font-size="13" fill="#32BCAD" letter-spacing=".4">Pix</text></svg></div>
-<div class="ft2-pay-chip"><svg width="24" height="18" viewBox="0 0 24 18"><rect x="0" y="0" width="2" height="18" fill="#5a6a78"/><rect x="4" y="0" width="1" height="18" fill="#5a6a78"/><rect x="6.5" y="0" width="2" height="18" fill="#5a6a78"/><rect x="10" y="0" width="1.5" height="18" fill="#5a6a78"/><rect x="13" y="0" width="2" height="18" fill="#5a6a78"/><rect x="17" y="0" width="1" height="18" fill="#5a6a78"/><rect x="19.5" y="0" width="2" height="18" fill="#5a6a78"/><rect x="23" y="0" width="1" height="18" fill="#5a6a78"/></svg></div>
+<div class="ft2-pay-chip fpc-boleto"><svg width="24" height="18" viewBox="0 0 24 18"><rect x="0" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="4" y="0" width="1" height="18" fill="#1a1a1a"/><rect x="6.5" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="10" y="0" width="1.5" height="18" fill="#1a1a1a"/><rect x="13" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="17" y="0" width="1" height="18" fill="#1a1a1a"/><rect x="19.5" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="23" y="0" width="1" height="18" fill="#1a1a1a"/></svg></div>
 </div>
 <p class="ft2-col-h" style="margin-top:4px;">Segurança</p>
 <div class="ft2-seal-list">
@@ -1505,6 +1705,8 @@ Entrar no grupo do WhatsApp
 </script>
 <script src="store.js"></script>
 <script>
+Store.syncThemeUI();
+
 // ── Header badges & user label ─────────────────────────
 function updateHdrBadges() {
   const cc = Store.cartCount();
@@ -1536,7 +1738,7 @@ function extractProduct(card) {
 
 function showToast(msg, color) {
   const t = document.createElement('div');
-  t.style.cssText = `position:fixed;bottom:28px;right:28px;background:#0d1a2e;border:1px solid ${color||'rgba(40,120,255,.3)'};color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:9999;transition:opacity .3s;`;
+  t.style.cssText = `position:fixed;bottom:28px;right:28px;background:var(--bg-card);border:1px solid ${color||'rgba(40,120,255,.3)'};color:var(--text-main);padding:12px 20px;border-radius:10px;font-size:13px;z-index:9999;transition:opacity .3s;`;
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2200);
@@ -1574,7 +1776,7 @@ document.querySelectorAll('.prod-card').forEach((card, i) => {
     });
   }
 
-  // Botão Comprar (prod-btn)
+  // Botão Comprar (prod-btn) — ainda existe em modo não-Pichau
   const buyBtn = card.querySelector('.prod-btn');
   if (buyBtn) {
     buyBtn.addEventListener('click', () => {
@@ -1584,6 +1786,13 @@ document.querySelectorAll('.prod-card').forEach((card, i) => {
       location.href = 'checkout.html';
     });
   }
+
+  // Click no card → página de detalhes do produto
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('button')) return;
+    const name = card.querySelector('.prod-name')?.textContent?.trim() || '';
+    location.href = 'produto.html?q=' + encodeURIComponent(name);
+  });
 });
 
 </script>
@@ -1722,7 +1931,60 @@ document.querySelectorAll('.prod-card').forEach((card, i) => {
     if(q) location.href='categoria.html?q='+encodeURIComponent(q);
   };
 })();
+
+// ─── REFORMATA CARDS PARA LAYOUT PICHAU ─────────────────────────────────────
+(function reformatCards(){
+  function run(){
+    document.querySelectorAll('.prod-card').forEach(function(card){
+      if(card.dataset.reformatted) return;
+      card.dataset.reformatted='1';
+
+      // 1. Formata preço antigo: "De: R$ X,XX" → "de R$ X,XX por"
+      var oldEl=card.querySelector('.prod-old');
+      if(oldEl){
+        var t=oldEl.textContent.replace(/De:\s*/i,'').trim();
+        oldEl.textContent='de '+t+' por';
+      }
+
+      // 2. Extrai preço atual
+      var priceEl=card.querySelector('.prod-price');
+      var price=0;
+      if(priceEl){
+        price=parseFloat(priceEl.textContent.replace(/[R$\s.]/g,'').replace(',','.')) || 0;
+      }
+
+      // 3. Insere "à vista" depois do preço
+      if(priceEl && !card.querySelector('.prod-av')){
+        var av=document.createElement('div');
+        av.className='prod-av';
+        av.textContent='à vista';
+        priceEl.insertAdjacentElement('afterend',av);
+      }
+
+      // 4. Troca texto do PIX
+      var pixEl=card.querySelector('.prod-pix');
+      if(pixEl) pixEl.textContent='15% de desconto no PIX';
+
+      // 5. Monta bloco de parcelamento com preço PIX + parcelas
+      var installEl=card.querySelector('.prod-install');
+      if(installEl && price>0){
+        var pixPrice=price*0.85;
+        var inst=price/12;
+        var fmt=function(v){return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});};
+        installEl.innerHTML='<span class="prod-inst-pix">R$ '+fmt(pixPrice)+'</span>Em até 12x de R$ '+fmt(inst)+'<br>Sem juros no cartão';
+      }
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run);
+  else run();
+  // Roda de novo após carrosséis montarem
+  setTimeout(run,300);
+})();
 </script>
+
+<a href="https://wa.me/5565992655883" class="wpp-float" target="_blank" rel="noopener noreferrer" title="Fale conosco no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
 </body>
 </html>
 

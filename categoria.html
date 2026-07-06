@@ -4,149 +4,706 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Alfa Informática — Categoria</title>
+<script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
 <style>
+/* === RESET === */
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#3A3A3A;--card:#2F2F2F;--card2:#353535;--bord:rgba(255,255,255,.08);--txt:#FFFFFF;--txt2:#CCCCCC;--blue:#2563EB;--rad:10px;--trans:.22s cubic-bezier(.4,0,.2,1);}
-body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+
+:root{
+  --bg-main:#202020; --bg-section:#2B2B2B; --bg-card:#303030;
+  --bg-header:#1F1F1F; --bg-menu:#0052CC;
+  --text-main:#FFFFFF; --text-secondary:#D1D5DB; --text-muted:#9CA3AF;
+  --border-color:#404040;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+}
+[data-theme="light"]{
+  --bg-main:#F5F7FA; --bg-section:#FFFFFF; --bg-card:#FFFFFF;
+  --bg-header:#FFFFFF; --bg-menu:#0066FF;
+  --text-main:#111827; --text-secondary:#4B5563; --text-muted:#6B7280;
+  --border-color:#E5E7EB;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+}
+
+body{background:var(--bg-main);color:var(--text-main);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
 a{color:inherit;text-decoration:none;}
-/* HEADER */
-.hdr{background:#2B2B2B;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:100;}
-.hdr-top{display:flex;align-items:center;gap:14px;padding:0 28px;height:74px;}
-.hdr-logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0;margin-right:22px;}
-.hdr-logo img{height:68px;width:auto;object-fit:contain;}
-.hdr-logo-text{font-size:18px;font-weight:900;color:#fff;letter-spacing:-0.5px;}
-.hdr-logo-sub{font-size:9px;color:var(--blue);letter-spacing:2px;text-transform:uppercase;}
-.hdr-search{flex:1;display:flex;height:48px;border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;background:#252525;}
-.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 22px;font-size:14px;font-family:inherit;color:#b0c0d8;outline:none;}
-.hdr-search-in::placeholder{color:#2a3a4e;}
-.hdr-search-btn{display:flex;align-items:center;gap:9px;background:var(--blue);color:#fff;border:none;padding:0 24px;font-size:12px;font-weight:800;letter-spacing:.8px;cursor:pointer;}
-.hdr-back{display:flex;align-items:center;gap:8px;padding:0 14px;height:38px;background:rgba(40,120,255,.06);border:1px solid rgba(40,120,255,.2);border-radius:8px;font-size:11.5px;font-weight:700;color:var(--txt2);flex-shrink:0;transition:color var(--trans),border-color var(--trans);}
-.hdr-back:hover{color:#fff;border-color:var(--blue);}
-/* LAYOUT */
-.page-wrap{max-width:1380px;margin:0 auto;padding:28px 28px 60px;display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:start;}
-/* SIDEBAR */
-.sidebar{position:sticky;top:90px;}
-.filter-box{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:20px;margin-bottom:14px;}
-.filter-title{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--txt2);margin-bottom:14px;}
-.filter-item{display:flex;align-items:center;gap:10px;padding:5px 0;cursor:pointer;}
-.filter-item input{accent-color:var(--blue);width:14px;height:14px;cursor:pointer;flex-shrink:0;}
-.filter-item label{font-size:12.5px;color:rgba(255,255,255,.65);cursor:pointer;transition:color var(--trans);}
-.filter-item:hover label{color:#fff;}
-.price-range{margin-top:8px;}
-.price-inputs{display:flex;align-items:center;gap:8px;margin-top:10px;}
-.price-inputs input{flex:1;background:#252525;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;font-size:12px;color:#fff;font-family:inherit;outline:none;width:100%;}
-.price-inputs input:focus{border-color:var(--blue);}
-.price-sep{color:var(--txt2);font-size:12px;flex-shrink:0;}
-.filter-apply{width:100%;margin-top:12px;padding:9px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:background var(--trans);}
-.filter-apply:hover{background:#2255ff;}
-.filter-clear{width:100%;margin-top:6px;padding:8px;background:transparent;color:var(--txt2);border:1px solid rgba(255,255,255,.08);border-radius:8px;font-size:11.5px;cursor:pointer;transition:color var(--trans),border-color var(--trans);}
-.filter-clear:hover{color:#fff;border-color:rgba(255,255,255,.2);}
-/* MAIN */
-.cat-main{}
-.breadcrumb{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--txt2);margin-bottom:20px;flex-wrap:wrap;}
-.breadcrumb a{color:var(--txt2);transition:color var(--trans);}
-.breadcrumb a:hover{color:#fff;}
-.breadcrumb span{color:rgba(255,255,255,.25);}
-.breadcrumb strong{color:rgba(255,255,255,.75);}
-.cat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
-.cat-header-left h1{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.3px;}
-.cat-count{font-size:12px;color:var(--txt2);margin-top:3px;}
-.sort-wrap{display:flex;align-items:center;gap:10px;}
-.sort-label{font-size:11.5px;color:var(--txt2);}
-.sort-select{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#fff;padding:8px 32px 8px 12px;font-size:12.5px;font-family:inherit;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A93A5' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
-.sort-select:focus{border-color:var(--blue);}
-/* PRODUCT GRID */
-.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
-.prod-card{background:var(--card);border:1px solid var(--bord);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:border-color var(--trans),transform var(--trans),box-shadow var(--trans),background var(--trans);}
-.prod-card:hover{background:var(--card2);border-color:rgba(37,99,235,.35);transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,.35);}
-.prod-img{height:160px;background:#262626;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:900;color:#3A3A3A;border-bottom:1px solid rgba(255,255,255,.06);}
-.prod-body{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1;}
-.prod-brand{font-size:9.5px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;}
-.prod-name{font-size:13px;font-weight:600;color:#fff;line-height:1.4;}
-.prod-prices{margin-top:auto;padding-top:10px;}
-.prod-old{font-size:11px;color:var(--txt2);text-decoration:line-through;}
-.prod-price{font-size:20px;font-weight:400;color:#22C55E;letter-spacing:-.5px;}
-.prod-badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:9px;font-weight:800;letter-spacing:.5px;color:#fff;background:#cc0000;margin-bottom:6px;}
-.prod-btn{margin:12px 14px 14px;padding:9px;background:transparent;border:1px solid rgba(40,120,255,.35);border-radius:8px;color:rgba(255,255,255,.7);font-size:12px;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:background var(--trans),color var(--trans),border-color var(--trans);}
-.prod-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
-.empty-state{grid-column:1/-1;text-align:center;padding:80px 0;color:var(--txt2);}
-.empty-state svg{margin-bottom:16px;opacity:.3;}
-.empty-state h3{font-size:16px;margin-bottom:8px;}
+
+/* === HEADER === */
+.topbar{background:var(--bg-header);height:33px;border-bottom:1px solid var(--border-color);}
+.topbar-in{max-width:1600px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:100%;}
+.topbar-lk{font-size:11.5px;color:var(--text-muted);padding:0 12px;height:100%;display:flex;align-items:center;gap:5px;transition:color .15s;text-decoration:none;border-right:1px solid var(--border-color);}
+.topbar-lk:first-child{padding-left:0;}
+.topbar-lk:last-child{border-right:none;}
+.topbar-lk:hover{color:var(--text-main);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.theme-toggle{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 10px;border-radius:8px;transition:background .15s;}
+.theme-toggle:hover{background:rgba(128,128,128,.12);}
+.theme-toggle-track{width:38px;height:20px;border-radius:10px;background:var(--border-color);position:relative;flex-shrink:0;transition:background .2s;}
+.theme-toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+.theme-toggle.is-dark .theme-toggle-track{background:var(--primary);}
+.theme-toggle.is-dark .theme-toggle-knob{left:20px;}
+.theme-toggle-label{font-size:12.5px;font-weight:700;color:var(--text-secondary);white-space:nowrap;}
+.topbar-acct{font-size:11.5px;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .15s;}
+.topbar-acct:hover{color:var(--text-main);}
+.hdr{background:var(--bg-header);position:sticky;top:0;z-index:200;}
+.hdr-top{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:96px;align-items:center;gap:28px;height:96px;padding:0 24px 0 28px;}
+.hdr-logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
+.hdr-logo img{height:130px;width:auto;object-fit:contain;max-width:300px;}
+.search-wrap{position:relative;flex:1;}
+.hdr-search{display:flex;height:47px;border:1px solid var(--border-color);border-radius:6px;overflow:hidden;background:var(--bg-card);transition:border-color .2s,box-shadow .2s;}
+.hdr-search:focus-within{border-color:rgba(37,99,255,.55);box-shadow:0 0 0 3px rgba(37,99,255,.08);}
+.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 16px;font-size:14px;font-family:inherit;color:var(--text-main);outline:none;height:100%;}
+.hdr-search-in::placeholder{color:var(--text-muted);}
+.hdr-search-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#1D4ED8;color:#fff;border:none;width:130px;flex-shrink:0;font-size:13px;font-weight:700;letter-spacing:.3px;cursor:pointer;transition:background .18s;height:100%;}
+.hdr-search-btn:hover{background:#2563eb;}
+.search-drop{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:600;background:var(--bg-card);border:1px solid var(--border-color);border-top:2px solid #1d4ed8;border-radius:0 0 14px 14px;box-shadow:0 28px 70px rgba(0,0,0,.35);overflow:hidden;max-height:460px;overflow-y:auto;}
+.search-drop.open{display:block;}
+.search-drop-head{padding:11px 18px 9px;font-size:9px;font-weight:800;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;background:var(--bg-section);border-bottom:1px solid var(--border-color);display:flex;align-items:center;gap:8px;}
+.search-drop-head::before{content:'';width:6px;height:6px;border-radius:50%;background:#1d4ed8;flex-shrink:0;}
+.search-item{display:flex;align-items:center;gap:14px;padding:11px 18px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border-color);text-decoration:none;position:relative;}
+.search-item:last-child{border-bottom:none;}
+.search-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:#1d4ed8;opacity:0;transition:opacity .15s;}
+.search-item:hover::before,.search-item.active::before{opacity:1;}
+.search-item:hover,.search-item.active{background:rgba(37,99,255,.09);}
+.search-item-img{width:52px;height:52px;flex-shrink:0;border-radius:10px;background:var(--bg-section);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.search-item-img img{width:100%;height:100%;object-fit:contain;padding:5px;}
+.search-item-img-ph{font-size:22px;opacity:.15;}
+.search-item-info{flex:1;min-width:0;}
+.search-item-brand{font-size:9px;font-weight:800;color:#3b82f6;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;}
+.search-item-name{font-size:13px;font-weight:600;color:var(--text-main);line-height:1.38;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.search-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.search-item-price{font-size:14px;font-weight:800;color:#22c55e;white-space:nowrap;}
+.search-item-arrow{font-size:13px;color:rgba(37,99,255,.4);opacity:0;transition:opacity .15s,transform .15s;}
+.search-item:hover .search-item-arrow,.search-item.active .search-item-arrow{opacity:1;transform:translateX(3px);color:#3b82f6;}
+.search-none{padding:28px 18px;text-align:center;font-size:13px;color:var(--text-muted);}
+.search-none b{color:var(--text-secondary);}
+.search-drop::-webkit-scrollbar{width:4px;}
+.search-drop::-webkit-scrollbar-track{background:transparent;}
+.search-drop::-webkit-scrollbar-thumb{background:rgba(37,99,255,.35);border-radius:4px;}
+.hdr-acts-group{display:flex;align-items:center;gap:4px;}
+.hdr-act{display:flex;align-items:center;gap:10px;text-decoration:none;padding:8px 14px;border-radius:8px;transition:background .15s,color .15s;color:var(--text-secondary);}
+.hdr-act:hover{background:rgba(128,128,128,.1);color:var(--text-main);}
+.hdr-act-icon{color:currentColor;flex-shrink:0;}
+.hdr-act-text{display:flex;flex-direction:column;gap:2px;}
+.hdr-act-line1{font-size:12.5px;font-weight:700;color:inherit;line-height:1.2;white-space:nowrap;}
+.hdr-act-line2{font-size:10.5px;color:var(--text-muted);line-height:1.2;white-space:nowrap;}
+.hdr-act-cart{background:var(--primary);border-radius:10px;padding:0 22px;height:54px;gap:14px;color:#fff;flex-shrink:0;}
+.hdr-act-cart:hover{background:var(--primary-hover);color:#fff;}
+.hdr-act-cart .hdr-act-line1{font-size:14px;font-weight:800;letter-spacing:.5px;color:#fff;}
+.hdr-act-cart .hdr-act-line2{font-size:11px;color:rgba(255,255,255,.75);}
+.hdr-act-cart .hdr-act-icon{color:#fff;}
+.hdr-nav{background:var(--bg-menu);border:none;border-bottom:1px solid var(--border-color);}
+.hdr-nav-inner{display:flex;align-items:stretch;max-width:1600px;margin:0 auto;padding:0 28px;height:48px;overflow-x:auto;}
+.hdr-nav-inner::-webkit-scrollbar{display:none;}
+.hdr-nav-inner a{font-size:13px;font-weight:700;color:rgba(255,255,255,.9);padding:0 18px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.4px;transition:background .15s,color .15s;white-space:nowrap;flex-shrink:0;text-decoration:none;border-right:1px solid rgba(255,255,255,.18);}
+.hdr-nav-inner a:last-child{border-right:none;}
+.hdr-nav-inner a:hover{background:rgba(0,0,0,.18);color:#fff;}
+.hdr-nav-inner a.nav-cat{background:rgba(0,0,0,.22);font-weight:800;color:#fff;}
+.hdr-nav-inner a.nav-promo{color:#FFE14D;}
+.hdr-nav-inner a.nav-promo:hover{color:#FFE14D;background:rgba(0,0,0,.18);}
+.hdr-nav-inner a.nav-atend{color:rgba(255,255,255,.9);}
+.hdr-nav-inner a.nav-atend::before{content:'';width:7px;height:7px;min-width:7px;background:#4ade80;border-radius:50%;}
+
+/* ══ MEGA MENU (igual à home) ══ */
+.cat-wrap{position:relative;display:flex;align-items:stretch;flex-shrink:0;}
+.megamenu{display:none;position:fixed;top:0;left:0;width:1280px;padding-top:10px;background:transparent;z-index:500;flex-direction:column;}
+.megamenu-inner{
+  display:flex;flex-direction:row;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 40px 90px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.02);
+  animation:megaSlide .25s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes megaSlide{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes megaIn{from{opacity:0;}to{opacity:1;}}
+.mega-left{
+  width:300px;flex-shrink:0;
+  background:var(--bg-section);
+  border-right:1px solid var(--border-color);
+  padding:24px 16px;overflow-y:auto;
+}
+.mega-left-head{
+  padding:4px 12px 18px;
+  font-size:10.5px;font-weight:800;letter-spacing:1.8px;
+  color:var(--text-muted);text-transform:uppercase;
+}
+.mega-cat{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;margin-bottom:6px;
+  font-size:13px;font-weight:700;
+  color:var(--text-secondary);
+  text-decoration:none;text-transform:uppercase;letter-spacing:.3px;
+  border-left:3px solid transparent;
+  border-radius:12px;
+  white-space:nowrap;
+  transition:background .25s ease,color .25s ease,border-color .25s ease,transform .25s ease;
+  cursor:pointer;position:relative;
+}
+.mega-cat:hover{
+  background:var(--bg-card);
+  color:var(--text-main);
+  transform:translateX(2px);
+  box-shadow:0 2px 10px rgba(0,0,0,.04);
+}
+.mega-cat.mm-active{
+  background:var(--bg-card);
+  color:var(--primary);font-weight:800;
+  border-left-color:var(--primary);
+  box-shadow:0 2px 12px rgba(0,102,255,.1);
+}
+.mega-cat-icon{
+  width:36px;height:36px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:0;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  transition:all .25s ease;
+  color:var(--text-muted);
+}
+.mega-cat-icon svg{width:18px;height:18px;}
+.mega-cat:hover .mega-cat-icon{
+  border-color:rgba(0,102,255,.35);
+  color:var(--primary);
+}
+.mega-cat.mm-active .mega-cat-icon{
+  background:var(--primary);
+  border-color:var(--primary);
+  color:#fff;
+}
+.mega-cat-arrow{
+  margin-left:auto;opacity:0;
+  color:var(--primary);
+  transition:opacity .2s,transform .2s;
+  font-size:15px;
+}
+.mega-cat:hover .mega-cat-arrow,.mega-cat.mm-active .mega-cat-arrow{opacity:1;}
+.mega-cat.mm-active .mega-cat-arrow{transform:translateX(2px);}
+.mega-right{flex:1;padding:36px 40px;min-height:460px;display:flex;flex-direction:column;background:var(--bg-main);}
+.mega-subs{display:none;flex:1;}
+.mega-subs.mm-active{display:flex;flex-direction:column;animation:megaIn .25s ease both;}
+.mega-sub-title{
+  font-size:29px;font-weight:800;color:var(--text-main);
+  letter-spacing:-.6px;
+  margin:0 0 26px;
+}
+.mega-sub-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  align-content:start;
+}
+.mega-sub-card{
+  display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+  min-height:132px;
+  padding:24px;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:18px;
+  text-decoration:none;
+  position:relative;
+  box-shadow:0 2px 6px rgba(0,0,0,.03);
+  transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s cubic-bezier(.4,0,.2,1),border-color .28s ease;
+}
+.mega-sub-card:hover{
+  transform:translateY(-6px) scale(1.015);
+  border-color:var(--primary);
+  box-shadow:0 22px 44px rgba(0,102,255,.16);
+}
+.mega-sub-ico{
+  flex-shrink:0;width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,102,255,.08);color:var(--primary);
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+.mega-sub-ico svg{width:26px;height:26px;}
+.mega-sub-card:hover .mega-sub-ico{transform:scale(1.1);}
+.mega-sub-body{min-width:0;}
+.mega-sub-name{display:block;font-size:15.5px;font-weight:800;color:var(--text-main);letter-spacing:-.1px;margin-bottom:5px;}
+.mega-sub-desc{display:block;font-size:12.5px;color:var(--text-muted);line-height:1.45;}
+.mega-sub-go{position:absolute;top:22px;right:22px;color:var(--border-color);transition:color .25s,transform .25s;opacity:0;transform:translateX(-4px);}
+.mega-sub-go svg{width:16px;height:16px;}
+.mega-sub-card:hover .mega-sub-go{color:var(--primary);opacity:1;transform:translateX(0);}
+.mega-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  margin-top:28px;padding-top:20px;border-top:1px solid var(--border-color);
+}
+.mega-foot-item{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--text-muted);white-space:nowrap;}
+.mega-foot-item svg{width:15px;height:15px;color:var(--primary);flex-shrink:0;}
+@media(max-width:1400px){.megamenu{width:1040px;}.mega-sub-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:1150px){.megamenu{width:660px;}.mega-left{width:220px;}.mega-sub-grid{grid-template-columns:repeat(2,1fr);}.mega-cat span:not(.mega-cat-icon):not(.mega-cat-arrow){font-size:11.5px;}.mega-foot{display:none;}}
+
+/* === PAGE LAYOUT === */
+.page{max-width:1600px;margin:0 auto;padding:22px 24px 60px;display:grid;grid-template-columns:282px 1fr;gap:24px;align-items:start;}
+
+/* ═══════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════ */
+.sb{position:sticky;top:82px;width:282px;display:flex;flex-direction:column;gap:0;}
+
+/* Sidebar header: FILTROS + Limpar */
+.sb-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 2px;}
+.sb-ttl{font-size:22px;font-weight:700;color:var(--text-main);letter-spacing:-.2px;}
+.sb-clear-btn{background:transparent;border:none;color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:4px;transition:color .18s;}
+.sb-clear-btn:hover{color:var(--text-main);}
+
+/* Section box */
+.sb-box{background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;padding:0;margin-bottom:10px;overflow:hidden;}
+
+/* Accordion head */
+.sb-acc-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer;user-select:none;transition:background .15s;}
+.sb-acc-hd:hover{background:rgba(128,128,128,.08);}
+.sb-acc-ttl{font-size:14px;font-weight:600;color:var(--text-main);}
+.sb-arr{flex-shrink:0;transition:transform .25s ease;color:var(--text-muted);}
+.sb-acc-hd.open .sb-arr{transform:rotate(180deg);}
+
+/* Accordion body */
+.sb-acc-bd{max-height:0;overflow:hidden;transition:max-height .28s ease;}
+.sb-acc-bd-inner{padding:0 18px 18px;}
+
+/* === SEARCH === */
+.sb-search-wrap{background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;padding:14px 16px;margin-bottom:10px;}
+.sb-s-inner{position:relative;display:flex;align-items:center;}
+.sb-s-inner svg{position:absolute;left:14px;pointer-events:none;color:var(--text-muted);}
+.sb-s-inner input{width:100%;background:var(--bg-main);border:1px solid var(--border-color);border-radius:6px;height:50px;padding:0 14px 0 42px;color:var(--text-main);font-size:13px;font-family:inherit;outline:none;transition:border-color .18s;}
+.sb-s-inner input::placeholder{color:var(--text-muted);}
+.sb-s-inner input:focus{border-color:rgba(215,25,32,.5);}
+
+/* === DUAL RANGE SLIDER === */
+.range-cont{position:relative;padding:8px 0 4px;margin-bottom:14px;}
+.range-bar{position:relative;height:5px;background:var(--border-color);border-radius:3px;margin:10px 0;}
+.range-fill{position:absolute;top:0;height:100%;background:#D71920;border-radius:3px;pointer-events:none;}
+.range-inputs-wrap{position:relative;height:24px;}
+.r-inp{position:absolute;width:100%;top:50%;transform:translateY(-50%);height:5px;background:transparent;border:none;outline:none;-webkit-appearance:none;appearance:none;pointer-events:none;z-index:3;}
+.r-inp::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#D71920;border:2.5px solid #fff;cursor:pointer;pointer-events:all;box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .12s;}
+.r-inp::-webkit-slider-thumb:hover{transform:scale(1.12);}
+.r-inp::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#D71920;border:2.5px solid #fff;cursor:pointer;pointer-events:all;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.r-inp::-webkit-slider-runnable-track{background:transparent;}
+.r-inp::-moz-range-track{background:transparent;}
+
+/* Price inputs row */
+.pi-row{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.pi-box{flex:1;display:flex;align-items:center;background:var(--bg-main);border:1px solid var(--border-color);border-radius:5px;overflow:hidden;height:36px;}
+.pi-box span{padding:0 8px 0 10px;font-size:11px;color:var(--text-muted);flex-shrink:0;}
+.pi-box input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:var(--text-main);font-size:12.5px;font-family:inherit;padding:0 8px 0 0;}
+.pi-box input::placeholder{color:var(--text-muted);}
+.pi-sep{color:var(--text-muted);font-size:13px;flex-shrink:0;}
+
+/* === CHECKBOX ITEMS === */
+.sb-list{max-height:290px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent;}
+.sb-list::-webkit-scrollbar{width:3px;}
+.sb-list::-webkit-scrollbar-track{background:transparent;}
+.sb-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:2px;}
+
+.cb-item{display:flex;align-items:center;gap:10px;padding:6px 0;cursor:pointer;position:relative;}
+.cb-item:hover .cb-lbl{color:var(--text-main);}
+.cb-item:hover .cb-box{border-color:var(--text-muted);}
+
+/* Hidden real checkbox */
+.cb-inp{position:absolute;opacity:0;width:0;height:0;}
+
+/* Custom visual checkbox */
+.cb-box{width:17px;height:17px;border:1.5px solid var(--border-color);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .14s,border-color .14s;background:transparent;}
+.cb-chk{width:9px;height:7px;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:0;transition:opacity .12s;}
+.cb-inp:checked+.cb-box{background:#D71920;border-color:#D71920;}
+.cb-inp:checked+.cb-box .cb-chk{opacity:1;}
+
+.cb-lbl{font-size:12.5px;color:var(--text-secondary);flex:1;line-height:1.3;transition:color .14s;}
+.cb-cnt{font-size:11.5px;color:var(--text-muted);flex-shrink:0;font-weight:400;}
+
+/* === MAIN === */
+.cat-main{min-width:0;}
+
+/* Breadcrumb */
+.bc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);margin-bottom:18px;flex-wrap:wrap;}
+.bc a{color:var(--text-muted);transition:color .15s;}
+.bc a:hover{color:var(--text-main);}
+.bc-sep{color:var(--text-muted);}
+.bc-cur{color:var(--text-secondary);}
+
+/* Category title */
+.cat-hdr{margin-bottom:0;}
+.cat-title-wrap{display:inline-block;}
+.cat-ttl{font-size:30px;font-weight:700;color:var(--text-main);letter-spacing:-.4px;display:block;}
+.cat-ttl-line{display:block;height:3px;background:#D71920;margin-top:6px;border-radius:1px;}
+
+/* Meta bar */
+.cat-meta{display:flex;align-items:center;justify-content:space-between;margin-top:18px;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+.cat-count{font-size:13.5px;color:var(--text-secondary);font-weight:400;}
+.sort-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.sort-lbl{font-size:10px;color:var(--text-muted);letter-spacing:.3px;}
+.sort-sel{background:var(--bg-card);border:1px solid var(--border-color);border-radius:5px;color:var(--text-main);padding:8px 34px 8px 14px;font-size:13px;font-family:inherit;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:border-color .18s;min-width:160px;}
+.sort-sel:focus{border-color:rgba(215,25,32,.4);}
+.sort-sel option{background:var(--bg-card);color:var(--text-main);}
+
+/* Subcats */
+.subcats{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px;}
+.scat-btn{padding:7px 16px;background:transparent;border:1px solid #D71920;border-radius:3px;font-size:12px;font-weight:700;color:#D71920;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:background .15s,color .15s;}
+.scat-btn:hover{background:rgba(215,25,32,.12);}
+.scat-btn.active{background:#D71920;color:#fff;}
+
+/* === PRODUCT GRID === */
+.pg{display:grid;grid-template-columns:repeat(6,1fr);gap:32px 24px;}
+
+/* === CARD PICHAU === */
+.pc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;position:relative;}
+.pc-img{background:#CFCFCF;width:100%;height:230px;overflow:hidden;flex-shrink:0;}
+.pc-img img{width:100%;height:100%;object-fit:cover;padding:0;transition:transform .28s ease;display:block;}
+.pc:hover .pc-img img{transform:scale(1.03);}
+.pc-bdg{position:absolute;top:7px;left:7px;display:flex;gap:4px;z-index:2;}
+.bdg-d{background:#D71920;color:#fff;font-size:10px;font-weight:700;padding:3px 7px;border-radius:3px;line-height:1.4;}
+.pc-body{padding:12px 12px 18px;display:flex;flex-direction:column;flex:1;}
+.pc-name{font-size:14.5px;font-weight:600;color:var(--text-main);line-height:1.28;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;}
+.pc-old{font-size:12px;color:#D71920;text-decoration:line-through;margin-bottom:2px;}
+.pc-price{font-size:20px;font-weight:800;color:var(--success);line-height:1.1;margin-bottom:3px;}
+.pc-av{font-size:11px;color:var(--success);margin-bottom:2px;}
+.pc-pix{font-size:11px;font-weight:700;color:var(--text-main);}
+.pc-sep{width:70px;height:1px;background:var(--border-color);margin:10px 0;}
+.pc-inst-price{font-size:20px;font-weight:800;color:var(--success);line-height:1.1;margin-bottom:3px;}
+.pc-inst-txt{font-size:11.5px;color:var(--text-secondary);line-height:1.45;}
+
+/* Empty */
+.empty-state{grid-column:1/-1;text-align:center;padding:80px 0;color:var(--text-muted);}
+.empty-state svg{margin-bottom:16px;}
+.empty-state h3{font-size:16px;margin-bottom:8px;color:var(--text-secondary);}
 .empty-state p{font-size:13px;}
-/* SUBCATS */
-.subcats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
-.subcat-btn{padding:6px 14px;background:rgba(40,120,255,.06);border:1px solid rgba(40,120,255,.18);border-radius:20px;font-size:11.5px;font-weight:600;color:var(--txt2);cursor:pointer;transition:all var(--trans);}
-.subcat-btn:hover,.subcat-btn.active{background:rgba(40,120,255,.16);border-color:rgba(40,120,255,.5);color:#fff;}
-@media(max-width:860px){.page-wrap{grid-template-columns:1fr;}.sidebar{position:static;}}
+
+/* === MOBILE DRAWER === */
+.mob-bar{display:none;margin-bottom:16px;}
+.mob-filter-btn{display:flex;align-items:center;gap:8px;padding:9px 20px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;color:var(--text-main);font-size:13px;font-weight:700;cursor:pointer;transition:filter .18s;}
+.mob-filter-btn:hover{filter:brightness(1.12);}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:299;backdrop-filter:blur(2px);}
+.mob-overlay.active{display:block;}
+.sb-mob-close{display:none;justify-content:flex-end;padding:14px 18px 6px;}
+.sb-mob-close button{width:34px;height:34px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;color:var(--text-secondary);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.sb-mob-close button:hover{background:var(--border-color);color:var(--text-main);}
+
+/* === RESPONSIVE === */
+@media(max-width:1300px){.pg{grid-template-columns:repeat(5,1fr);}}
+@media(max-width:1050px){.pg{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:860px){
+  .page{grid-template-columns:1fr;}
+  .sb{
+    position:fixed;
+    left:-292px;
+    top:0;
+    bottom:0;
+    width:285px;
+    overflow-y:auto;
+    z-index:300;
+    transition:left .28s cubic-bezier(.4,0,.2,1);
+    background:var(--bg-section);
+    padding:0 16px 30px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,.15) transparent;
+  }
+  .sb.drawer-open{left:0;}
+  .mob-bar{display:flex;}
+  .sb-mob-close{display:flex;}
+  .sb-head{padding-top:4px;}
+}
+@media(max-width:640px){.pg{grid-template-columns:repeat(3,1fr);gap:24px 16px;}}
+@media(max-width:480px){.pg{grid-template-columns:repeat(2,1fr);gap:20px 12px;}}
+
+/* ══ SUPORTE FLUTUANTE ══ */
+.wpp-float{position:fixed;bottom:26px;right:26px;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35);color:#fff;z-index:9999;transition:transform .2s,box-shadow .2s;}
+.wpp-float:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(0,0,0,.45);}
+.wpp-float svg{width:30px;height:30px;}
+@media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
 </head>
 <body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div></div>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="themeToggle" onclick="Store.toggleTheme()" type="button">
+        <span class="theme-toggle-track"><span class="theme-toggle-knob"></span></span>
+        <span class="theme-toggle-label">Modo Claro</span>
+      </button>
+      <a href="auth.html" class="topbar-acct"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Minha Conta</a>
+    </div>
+  </div>
+</div>
 <header class="hdr">
 <div class="hdr-top">
-  <a href="alfa-replica.html" class="hdr-logo"><img src="logo.png" alt="Alfa Informática" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><span style="display:none;flex-direction:column"><span class="hdr-logo-text">ALFA</span><span class="hdr-logo-sub">Informática</span></span></a>
-  <div class="hdr-search">
-    <input class="hdr-search-in" type="text" placeholder="Buscar produtos...">
-    <button class="hdr-search-btn">BUSCAR</button>
+  <a href="alfa-replica.html" class="hdr-logo"><img src="logo.png" alt="Alfa Informática"></a>
+  <div class="search-wrap" id="searchWrap">
+    <div class="hdr-search">
+      <input class="hdr-search-in" id="searchIn" type="text" placeholder="Digite o que você procura..." autocomplete="off">
+      <button class="hdr-search-btn" onclick="doSearch()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> BUSCAR</button>
+    </div>
+    <div class="search-drop" id="searchDrop"></div>
   </div>
-  <a href="alfa-replica.html" class="hdr-back">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    Início
-  </a>
+  <div class="hdr-acts-group">
+    <a href="https://wa.me/5565992655883?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20no%20site%20da%20Alfa%20Inform%C3%A1tica." class="hdr-act" target="_blank" rel="noopener noreferrer">
+      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.4 8.4 0 0 1-4.2-1.1L3 20l1.1-5.3A8.4 8.4 0 0 1 3 11.5 8.5 8.5 0 0 1 11.5 3 8.5 8.5 0 0 1 21 11.5z"/><path d="M8.5 10.5c.5 2.5 2.5 4.5 5 5"/></svg>
+      <div class="hdr-act-text"><span class="hdr-act-line1">Suporte</span><span class="hdr-act-line2">Fale no WhatsApp</span></div>
+    </a>
+    <a href="auth.html" class="hdr-act">
+      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="hdr-act-text"><span class="hdr-act-line1">Minha Conta</span><span class="hdr-act-line2">Entrar / Cadastrar</span></div>
+    </a>
+    <a href="#" class="hdr-act">
+      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <div class="hdr-act-text"><span class="hdr-act-line1">Favoritos</span><span class="hdr-act-line2">Lista de desejos</span></div>
+    </a>
+    <a href="carrinho.html" class="hdr-act hdr-act-cart">
+      <svg class="hdr-act-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <div class="hdr-act-text"><span class="hdr-act-line1">CARRINHO</span><span class="hdr-act-line2" id="cart-count-lbl">0 produtos</span></div>
+    </a>
+  </div>
 </div>
+<nav class="hdr-nav">
+  <div class="hdr-nav-inner">
+    <div class="cat-wrap">
+      <a href="categoria.html" class="nav-cat"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><rect width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="4.6" width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="9.2" width="14" height="1.8" rx=".9" fill="currentColor"/></svg> CATEGORIAS</a>
+      <nav class="megamenu"><div class="megamenu-inner">
+        <div class="mega-left">
+          <div class="mega-left-head">Departamentos</div>
+          <a class="mega-cat" data-cat="computadores" href="categoria.html?cat=computadores"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>Computadores<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="hardware" href="categoria.html?cat=hardware"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="14" x2="4" y2="14"/></svg></span>Hardware<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="perifericos" href="categoria.html?cat=perifericos"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9 L7 15 L17 15 L18 9 Z"/><path d="M5 5 L19 5 L18 9 L6 9 Z"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></span>Periféricos<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="monitores" href="categoria.html?cat=monitores"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>Monitores<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="celulares" href="categoria.html?cat=celulares"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>Celulares<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="redes" href="categoria.html?cat=redes"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 7.76a6 6 0 0 0 0 8.49"/><path d="M20.07 4.93a10 10 0 0 1 0 14.14"/><path d="M3.93 4.93a10 10 0 0 0 0 14.14"/></svg></span>Redes<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="impressao" href="categoria.html?cat=impressao"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span>Impressão<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="moveis" href="categoria.html?cat=moveis"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 9V6a2 2 0 00-2-2H6a2 2 0 00-2 2v3"/><path d="M2 11v5a2 2 0 002 2h16a2 2 0 002-2v-5a2 2 0 00-4 0v2H6v-2a2 2 0 00-4 0z"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/></svg></span>Móveis<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="audio" href="categoria.html?cat=audio"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>Áudio<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="games" href="categoria.html?cat=games"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><path d="M17.32 5H6.68a4 4 0 00-3.978 3.59l-.99 8.5A4 4 0 005.69 21h.01a4 4 0 003.23-1.63l.68-1.01a2 2 0 011.62-.84h1.54a2 2 0 011.62.84l.68 1.01A4 4 0 0018.3 21h.01a4 4 0 003.978-3.91l-.99-8.5A4 4 0 0017.32 5z"/></svg></span>Games<span class="mega-cat-arrow">›</span></a>
+          <a class="mega-cat" data-cat="outros" href="categoria.html?cat=outros"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Outros<span class="mega-cat-arrow">›</span></a>
+        </div>
+        <div class="mega-right">
+          <div class="mega-subs" id="subs-computadores"><p class="mega-sub-title">Computadores</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=pc-gamer"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="10" height="18" rx="1.5"/><circle cx="10" cy="7" r="1"/><line x1="7.5" y1="17" x2="12.5" y2="17"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">PC Gamer</span><span class="mega-sub-desc">Alta performance para jogar</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=pc-office"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">PC Office</span><span class="mega-sub-desc">Produtividade sem limites</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=notebooks"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="11" rx="1.5"/><path d="M1 18h22"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Notebooks</span><span class="mega-sub-desc">Mobilidade e desempenho</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=servidores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><line x1="7" y1="7.5" x2="7.01" y2="7.5"/><line x1="7" y1="16.5" x2="7.01" y2="16.5"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Servidores</span><span class="mega-sub-desc">Estabilidade para sua empresa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=seminovos"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Seminovos</span><span class="mega-sub-desc">Qualidade com preço menor</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-hardware"><p class="mega-sub-title">Hardware</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=processadores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="2" x2="9" y2="5"/><line x1="15" y1="2" x2="15" y2="5"/><line x1="9" y1="19" x2="9" y2="22"/><line x1="15" y1="19" x2="15" y2="22"/><line x1="19" y1="9" x2="22" y2="9"/><line x1="19" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="5" y2="9"/><line x1="2" y1="14" x2="5" y2="14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Processadores</span><span class="mega-sub-desc">O cérebro do seu setup</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=placas-mae"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M13 8h5"/><path d="M13 13h5"/><path d="M6 14v4h4"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas-mãe</span><span class="mega-sub-desc">A base de tudo</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=placas-de-video"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="1.5"/><circle cx="7" cy="12" r="2"/><line x1="13" y1="10" x2="18" y2="10"/><line x1="13" y1="14" x2="16" y2="14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas de Vídeo</span><span class="mega-sub-desc">Gráficos de alta performance</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=memorias-ram"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="7" rx="1"/><line x1="7" y1="9" x2="7" y2="6"/><line x1="11" y1="9" x2="11" y2="6"/><line x1="15" y1="9" x2="15" y2="6"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Memórias RAM</span><span class="mega-sub-desc">Mais velocidade multitarefa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=ssd-hd"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5"/><path d="M3 12a9 3 0 0018 0"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">SSD / HD</span><span class="mega-sub-desc">Armazenamento rápido e seguro</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=fontes"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Fontes</span><span class="mega-sub-desc">Energia estável pro seu PC</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=gabinetes"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="1.5"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Gabinetes</span><span class="mega-sub-desc">Estilo e ventilação</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=coolers-gabinete"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 12c0-3 2-5 4-5s2 2 0 4-4 1-4 1z"/><path d="M12 12c0 3-2 5-4 5s-2-2 0-4 4-1 4-1z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Coolers p/ Gabinete</span><span class="mega-sub-desc">Fluxo de ar eficiente</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=coolers-processador"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Coolers p/ Processador</span><span class="mega-sub-desc">Temperatura sob controle</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=water-coolers"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2s6 7 6 12a6 6 0 01-12 0c0-5 6-12 6-12z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Water Coolers</span><span class="mega-sub-desc">Refrigeração líquida silenciosa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-perifericos"><p class="mega-sub-title">Periféricos</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=mouse"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="5"/><line x1="12" y1="6" x2="12" y2="10"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mouse</span><span class="mega-sub-desc">Precisão em cada clique</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=mousepad"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mousepad</span><span class="mega-sub-desc">Conforto e deslize perfeito</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=teclados"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="6" y1="9" x2="6" y2="9.01"/><line x1="10" y1="9" x2="10" y2="9.01"/><line x1="14" y1="9" x2="14" y2="9.01"/><line x1="18" y1="9" x2="18" y2="9.01"/><line x1="6" y1="13" x2="18" y2="13.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Teclados</span><span class="mega-sub-desc">Mecânicos e membrana</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=headsets"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 14v-2a9 9 0 0118 0v2"/><rect x="1" y="14" width="6" height="7" rx="2"/><rect x="17" y="14" width="6" height="7" rx="2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Headsets</span><span class="mega-sub-desc">Áudio imersivo para jogos</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=fones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14v-3a8 8 0 0116 0v3"/><path d="M2 14a2 2 0 012-2 2 2 0 012 2v3a2 2 0 01-2 2 2 2 0 01-2-2z"/><path d="M22 14a2 2 0 00-2-2 2 2 0 00-2 2v3a2 2 0 002 2 2 2 0 002-2z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Fones de Ouvido</span><span class="mega-sub-desc">Para música e chamadas</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=microfones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Microfones</span><span class="mega-sub-desc">Voz clara para streaming</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=webcam"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M4 20c2-2 5-3 8-3s6 1 8 3"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Webcam</span><span class="mega-sub-desc">Imagem nítida em video calls</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-monitores"><p class="mega-sub-title">Monitores</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=monitores-gaming"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Monitores</span><span class="mega-sub-desc">Alta taxa de atualização</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=tvs"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="13" rx="2"/><polyline points="8 2 12 6 16 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">TVs</span><span class="mega-sub-desc">Entretenimento em grande tela</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-celulares"><p class="mega-sub-title">Celulares</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=celulares-smartphones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Celulares</span><span class="mega-sub-desc">Os últimos lançamentos</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=cabos-celular"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9a3 3 0 003 3h10a3 3 0 003-3"/><path d="M4 9V6a2 2 0 012-2"/><path d="M20 9V6a2 2 0 00-2-2"/><line x1="8" y1="15" x2="8" y2="21"/><line x1="16" y1="15" x2="16" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cabos para Celular</span><span class="mega-sub-desc">Carregamento rápido</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=adaptadores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="9" width="6" height="6"/><path d="M9 3v4"/><path d="M15 3v4"/><path d="M9 17v4"/><path d="M15 17v4"/><path d="M3 9h4"/><path d="M3 15h4"/><path d="M17 9h4"/><path d="M17 15h4"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Adaptadores</span><span class="mega-sub-desc">Compatibilidade total</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-redes"><p class="mega-sub-title">Redes</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=switch"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="8" width="20" height="8" rx="1.5"/><line x1="6" y1="12" x2="6.01" y2="12"/><line x1="10" y1="12" x2="10.01" y2="12"/><line x1="14" y1="12" x2="14.01" y2="12"/><line x1="18" y1="12" x2="18.01" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Switch</span><span class="mega-sub-desc">Rede cabeada estável</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=repetidores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M7.76 7.76a6 6 0 000 8.49"/><path d="M20.07 4.93a10 10 0 010 14.14"/><path d="M3.93 4.93a10 10 0 000 14.14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Repetidores</span><span class="mega-sub-desc">Wi-Fi em toda a casa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=placas-rede"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M8 8h4"/><path d="M8 16h6"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas de Rede</span><span class="mega-sub-desc">Mais velocidade de conexão</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=cabos-rede"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9a3 3 0 003 3h10a3 3 0 003-3"/><path d="M4 9V6a2 2 0 012-2"/><path d="M20 9V6a2 2 0 00-2-2"/><line x1="8" y1="15" x2="8" y2="21"/><line x1="16" y1="15" x2="16" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cabos de Rede</span><span class="mega-sub-desc">Conexão estável e rápida</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-impressao"><p class="mega-sub-title">Impressão</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=impressoras"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Impressoras</span><span class="mega-sub-desc">Para casa e escritório</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-moveis"><p class="mega-sub-title">Móveis</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=cadeiras"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 10V4a1 1 0 011-1h10a1 1 0 011 1v6"/><path d="M6 10h12v6H6z"/><line x1="7" y1="16" x2="6" y2="22"/><line x1="17" y1="16" x2="18" y2="22"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cadeiras</span><span class="mega-sub-desc">Conforto para longas sessões</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=mesas"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 8h20"/><path d="M4 8v13"/><path d="M20 8v13"/><path d="M2 8l2-5h16l2 5"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mesas</span><span class="mega-sub-desc">Setup organizado</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-audio"><p class="mega-sub-title">Áudio</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=caixas-de-som"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Caixas de Som</span><span class="mega-sub-desc">Som potente pro seu ambiente</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-games"><p class="mega-sub-title">Games</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=video-games"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><path d="M17.32 5H6.68a4 4 0 00-3.978 3.59l-.99 8.5A4 4 0 005.69 21h.01a4 4 0 003.23-1.63l.68-1.01a2 2 0 011.62-.84h1.54a2 2 0 011.62.84l.68 1.01A4 4 0 0018.3 21h.01a4 4 0 003.978-3.91l-.99-8.5A4 4 0 0017.32 5z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Video Games</span><span class="mega-sub-desc">Consoles e acessórios</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-subs" id="subs-outros"><p class="mega-sub-title">Outros</p><div class="mega-sub-grid">
+            <a class="mega-sub-card" href="categoria.html?cat=projetores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="9" cy="12" r="2.5"/><line x1="17" y1="10" x2="17" y2="10.01"/><line x1="17" y1="14" x2="17" y2="14.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Projetores</span><span class="mega-sub-desc">Telas grandes onde quiser</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=eletronicos"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Eletrônicos</span><span class="mega-sub-desc">Gadgets pro dia a dia</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=licencas"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M10.5 12.5L20 3"/><path d="M17 6l3 3"/><path d="M14 9l2 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Licenças</span><span class="mega-sub-desc">Softwares originais</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+            <a class="mega-sub-card" href="categoria.html?cat=acessorios"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Acessórios de Informática</span><span class="mega-sub-desc">Complementos essenciais</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
+          </div></div>
+
+          <div class="mega-foot">
+            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Compra 100% Segura</div>
+            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Entrega para todo Brasil</div>
+            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Produtos Originais</div>
+            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 14v-3a9 9 0 0118 0v3"/><path d="M21 14a2 2 0 00-2-2 2 2 0 00-2 2v3a2 2 0 002 2 2 2 0 002-2z"/><path d="M3 14a2 2 0 012-2 2 2 0 012 2v3a2 2 0 01-2 2 2 2 0 01-2-2z"/></svg>Suporte Especializado</div>
+          </div>
+        </div>
+      </div></nav>
+    </div>
+    <a href="categoria.html?q=monte+seu+pc">MONTE SEU PC</a>
+    <a href="categoria.html?cat=pc-gamer">PCs GAMER</a>
+    <a href="categoria.html?cat=notebooks">NOTEBOOKS</a>
+    <a href="categoria.html?cat=monitores-gaming">MONITORES</a>
+    <a href="categoria.html?cat=perifericos">PERIFÉRICOS</a>
+    <a href="categoria.html?cat=promocoes" class="nav-promo">PROMOÇÕES</a>
+  </div>
+</nav>
 </header>
 
-<div class="page-wrap">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="filter-box">
-      <div class="filter-title">Faixa de Preço</div>
-      <div class="price-range">
-        <div class="price-inputs">
-          <input type="number" id="priceMin" placeholder="Mín" min="0">
-          <span class="price-sep">–</span>
-          <input type="number" id="priceMax" placeholder="Máx" min="0">
+<!-- Mobile overlay -->
+<div class="mob-overlay" id="mobOverlay" onclick="closeDrawer()"></div>
+
+<div class="page">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sb" id="sidebar">
+
+    <!-- Close button (mobile only) -->
+    <div class="sb-mob-close">
+      <button onclick="closeDrawer()">✕</button>
+    </div>
+
+    <!-- Title row -->
+    <div class="sb-head">
+      <span class="sb-ttl">FILTROS</span>
+      <button class="sb-clear-btn" onclick="clearFilters()">Limpar tudo</button>
+    </div>
+
+    <!-- Search -->
+    <div class="sb-search-wrap">
+      <div class="sb-s-inner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="sfSearch" placeholder="Buscar nos resultados...">
+      </div>
+    </div>
+
+    <!-- Price range -->
+    <div class="sb-box">
+      <div class="sb-acc-hd open" onclick="toggleAcc(this)">
+        <span class="sb-acc-ttl">Preço</span>
+        <svg class="sb-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-acc-bd" id="priceAcc" style="max-height:600px">
+        <div class="sb-acc-bd-inner">
+          <div class="range-cont">
+            <div class="range-bar">
+              <div class="range-fill" id="rangeFill" style="left:0%;right:0%"></div>
+            </div>
+            <div class="range-inputs-wrap">
+              <input type="range" class="r-inp" id="rangeMin" min="0" max="15000" value="0" step="100">
+              <input type="range" class="r-inp" id="rangeMax" min="0" max="15000" value="15000" step="100">
+            </div>
+          </div>
+          <div class="pi-row">
+            <div class="pi-box">
+              <span>R$</span>
+              <input type="number" id="priceMin" placeholder="Mín" min="0" oninput="syncInputToRange('min')">
+            </div>
+            <span class="pi-sep">—</span>
+            <div class="pi-box">
+              <span>R$</span>
+              <input type="number" id="priceMax" placeholder="Máx" min="0" oninput="syncInputToRange('max')">
+            </div>
+          </div>
         </div>
       </div>
-      <button class="filter-apply" onclick="applyFilters()">Aplicar Filtro</button>
-      <button class="filter-clear" onclick="clearFilters()">Limpar Filtros</button>
     </div>
-    <div class="filter-box" id="brandFilter">
-      <div class="filter-title">Marca</div>
-      <div id="brandList"></div>
+
+    <!-- Brand -->
+    <div class="sb-box">
+      <div class="sb-acc-hd open" onclick="toggleAcc(this)">
+        <span class="sb-acc-ttl">Fabricante</span>
+        <svg class="sb-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-acc-bd" id="brandAcc" style="max-height:600px">
+        <div class="sb-acc-bd-inner" style="padding-top:6px;">
+          <div class="sb-list" id="brandList"></div>
+        </div>
+      </div>
     </div>
-    <div class="filter-box" id="availFilter">
-      <div class="filter-title">Disponibilidade</div>
-      <div class="filter-item"><input type="checkbox" id="inStock" onchange="applyFilters()"><label for="inStock">Em estoque</label></div>
-      <div class="filter-item"><input type="checkbox" id="onSale" onchange="applyFilters()"><label for="onSale">Em promoção</label></div>
+
+    <!-- Availability -->
+    <div class="sb-box">
+      <div class="sb-acc-hd" onclick="toggleAcc(this)">
+        <span class="sb-acc-ttl">Disponibilidade</span>
+        <svg class="sb-arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-acc-bd" id="availAcc">
+        <div class="sb-acc-bd-inner" style="padding-top:6px;">
+          <label class="cb-item">
+            <input type="checkbox" class="cb-inp" id="onSale" onchange="applyFilters()">
+            <span class="cb-box"><svg class="cb-chk" viewBox="0 0 9 7"><polyline points="1,3.5 3.5,6 8,1"/></svg></span>
+            <span class="cb-lbl">Em promoção</span>
+          </label>
+        </div>
+      </div>
     </div>
+
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- ═══ MAIN ═══ -->
   <main class="cat-main">
-    <div class="breadcrumb" id="breadcrumb"></div>
-    <div class="cat-header">
-      <div class="cat-header-left">
-        <h1 id="catTitle">Categoria</h1>
-        <div class="cat-count" id="catCount"></div>
+
+    <!-- Mobile filter button -->
+    <div class="mob-bar">
+      <button class="mob-filter-btn" onclick="openDrawer()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        Filtros
+      </button>
+    </div>
+
+    <div class="bc" id="breadcrumb"></div>
+
+    <div class="cat-hdr">
+      <div class="cat-title-wrap">
+        <span class="cat-ttl" id="catTitle">Categoria</span>
+        <span class="cat-ttl-line"></span>
       </div>
-      <div class="sort-wrap">
-        <span class="sort-label">Ordenar:</span>
-        <select class="sort-select" id="sortSelect" onchange="applyFilters()">
-          <option value="relevance">Mais Relevantes</option>
-          <option value="price-asc">Menor Preço</option>
-          <option value="price-desc">Maior Preço</option>
-          <option value="name-asc">A–Z</option>
-          <option value="discount">Maior Desconto</option>
-        </select>
+      <div class="cat-meta">
+        <div class="cat-count" id="catCount"></div>
+        <div class="sort-wrap">
+          <span class="sort-lbl">Ordenar por:</span>
+          <select class="sort-sel" id="sortSelect" onchange="applyFilters()">
+            <option value="relevance">Relevância</option>
+            <option value="price-asc">Menor Preço</option>
+            <option value="price-desc">Maior Preço</option>
+            <option value="name-asc">A–Z</option>
+            <option value="discount">Maior Desconto</option>
+          </select>
+        </div>
       </div>
     </div>
+
     <div class="subcats" id="subcatBar"></div>
-    <div class="prod-grid" id="prodGrid"></div>
+    <div class="pg" id="prodGrid"></div>
+
   </main>
 </div>
 
+<script src="store.js"></script>
 <script>
-// ─── CATEGORY MAP ───────────────────────────────────────────
+Store.syncThemeUI();
+function updateCartCount(){ document.getElementById('cart-count-lbl').textContent = Store.cartCount()+' produto'+(Store.cartCount()!==1?'s':''); }
+updateCartCount();
+Store.on('cart', updateCartCount);
+
+// ─── CATEGORY MAP ───────────────────────────────────────────────────────────
 const CATS = {
   'computadores':{label:'Computadores',parent:null,children:['pc-gamer','pc-office','notebooks','servidores','seminovos']},
   'pc-gamer':{label:'PC Gamer',parent:'computadores'},
@@ -174,10 +731,10 @@ const CATS = {
   'microfones':{label:'Microfones',parent:'perifericos'},
   'webcam':{label:'Webcam',parent:'perifericos'},
   'monitores':{label:'Monitores',parent:null,children:['monitores-gaming','tvs']},
-  'monitores-gaming':{label:'Monitores',parent:'monitores'},
+  'monitores-gaming':{label:'Monitores Gaming',parent:'monitores'},
   'tvs':{label:'TVs',parent:'monitores'},
   'celulares':{label:'Celulares',parent:null,children:['celulares-smartphones','cabos-celular','adaptadores']},
-  'celulares-smartphones':{label:'Celulares',parent:'celulares'},
+  'celulares-smartphones':{label:'Smartphones',parent:'celulares'},
   'cabos-celular':{label:'Cabos para Celular',parent:'celulares'},
   'adaptadores':{label:'Adaptadores',parent:'celulares'},
   'redes':{label:'Redes',parent:null,children:['switch','repetidores','placas-rede','cabos-rede']},
@@ -185,106 +742,232 @@ const CATS = {
   'repetidores':{label:'Repetidores',parent:'redes'},
   'placas-rede':{label:'Placas de Rede',parent:'redes'},
   'cabos-rede':{label:'Cabos de Rede',parent:'redes'},
-  'impressao':{label:'Impressão',parent:null,children:['impressoras']},
-  'impressoras':{label:'Impressoras',parent:'impressao'},
   'moveis':{label:'Móveis',parent:null,children:['cadeiras','mesas']},
   'cadeiras':{label:'Cadeiras',parent:'moveis'},
   'mesas':{label:'Mesas',parent:'moveis'},
-  'audio':{label:'Áudio',parent:null,children:['caixas-de-som']},
-  'caixas-de-som':{label:'Caixas de Som',parent:'audio'},
-  'games':{label:'Games',parent:null,children:['video-games']},
-  'video-games':{label:'Video Games',parent:'games'},
   'outros':{label:'Outros',parent:null,children:['projetores','eletronicos','licencas','acessorios']},
   'projetores':{label:'Projetores',parent:'outros'},
   'eletronicos':{label:'Eletrônicos',parent:'outros'},
   'licencas':{label:'Licenças',parent:'outros'},
-  'acessorios':{label:'Acessórios de Informática',parent:'outros'},
+  'acessorios':{label:'Acessórios',parent:'outros'},
 };
 
-// ─── MOCK PRODUCTS ───────────────────────────────────────────
+// ─── PRODUCTS ───────────────────────────────────────────────────────────────
 const PRODUCTS = [
-  {id:1,name:'Intel Core i9-14900K 3.2GHz',brand:'Intel',price:2799,old:3199,cat:'processadores'},
-  {id:2,name:'AMD Ryzen 9 7950X 4.5GHz',brand:'AMD',price:3299,old:3799,cat:'processadores'},
-  {id:3,name:'Intel Core i7-14700K 3.4GHz',brand:'Intel',price:1899,old:2199,cat:'processadores'},
-  {id:4,name:'AMD Ryzen 5 7600X 4.7GHz',brand:'AMD',price:1099,old:1299,cat:'processadores'},
-  {id:5,name:'Intel Core i5-14600K 3.5GHz',brand:'Intel',price:1249,old:1499,cat:'processadores'},
-  {id:6,name:'NVIDIA GeForce RTX 4090 24GB',brand:'NVIDIA',price:9999,old:11999,cat:'placas-de-video'},
-  {id:7,name:'AMD Radeon RX 7900 XTX 24GB',brand:'AMD',price:5999,old:7299,cat:'placas-de-video'},
-  {id:8,name:'NVIDIA GeForce RTX 4070 Ti 12GB',brand:'NVIDIA',price:4199,old:4999,cat:'placas-de-video'},
-  {id:9,name:'NVIDIA GeForce RTX 4060 8GB',brand:'NVIDIA',price:1999,old:2399,cat:'placas-de-video'},
-  {id:10,name:'AMD Radeon RX 7600 8GB',brand:'AMD',price:1399,old:1699,cat:'placas-de-video'},
-  {id:11,name:'Corsair Vengeance 32GB DDR5 6000MHz',brand:'Corsair',price:699,old:849,cat:'memorias-ram'},
+  {id:1,name:'Intel Core i9-14900K 3.2GHz 24-Core LGA1700',brand:'Intel',price:2799,old:3199,cat:'processadores'},
+  {id:2,name:'AMD Ryzen 9 7950X 4.5GHz 16-Core AM5',brand:'AMD',price:3299,old:3799,cat:'processadores'},
+  {id:3,name:'Intel Core i7-14700K 3.4GHz 20-Core LGA1700',brand:'Intel',price:1899,old:2199,cat:'processadores'},
+  {id:4,name:'AMD Ryzen 5 7600X 4.7GHz 6-Core AM5',brand:'AMD',price:1099,old:1299,cat:'processadores'},
+  {id:5,name:'Intel Core i5-14600K 3.5GHz 14-Core LGA1700',brand:'Intel',price:1249,old:1499,cat:'processadores'},
+  {id:6,name:'NVIDIA GeForce RTX 4090 24GB GDDR6X',brand:'NVIDIA',price:9999,old:11999,cat:'placas-de-video'},
+  {id:7,name:'AMD Radeon RX 7900 XTX 24GB GDDR6',brand:'AMD',price:5999,old:7299,cat:'placas-de-video'},
+  {id:8,name:'NVIDIA GeForce RTX 4070 Ti 12GB GDDR6X',brand:'NVIDIA',price:4199,old:4999,cat:'placas-de-video'},
+  {id:9,name:'NVIDIA GeForce RTX 4060 8GB GDDR6',brand:'NVIDIA',price:1999,old:2399,cat:'placas-de-video'},
+  {id:10,name:'AMD Radeon RX 7600 8GB GDDR6',brand:'AMD',price:1399,old:1699,cat:'placas-de-video'},
+  {id:11,name:'Corsair Vengeance 32GB DDR5 6000MHz Kit (2x16GB)',brand:'Corsair',price:699,old:849,cat:'memorias-ram'},
   {id:12,name:'Kingston Fury Beast 16GB DDR4 3200MHz',brand:'Kingston',price:289,old:349,cat:'memorias-ram'},
-  {id:13,name:'HyperX Fury 32GB DDR4 3600MHz',brand:'HyperX',price:399,old:479,cat:'memorias-ram'},
-  {id:14,name:'Samsung 990 Pro 2TB NVMe M.2',brand:'Samsung',price:799,old:999,cat:'ssd-hd'},
-  {id:15,name:'Kingston NV2 1TB NVMe M.2',brand:'Kingston',price:299,old:379,cat:'ssd-hd'},
-  {id:16,name:'Seagate Barracuda 2TB HD',brand:'Seagate',price:239,old:299,cat:'ssd-hd'},
-  {id:17,name:'ASUS ROG Strix B650-E Gaming WiFi',brand:'ASUS',price:1599,old:1899,cat:'placas-mae'},
-  {id:18,name:'MSI MAG B650 TOMAHAWK WiFi',brand:'MSI',price:1099,old:1299,cat:'placas-mae'},
-  {id:19,name:'Gigabyte B760M DS3H DDR4',brand:'Gigabyte',price:649,old:799,cat:'placas-mae'},
-  {id:20,name:'Cooler Master HAF 700 EVO',brand:'Cooler Master',price:1299,old:1599,cat:'gabinetes'},
-  {id:21,name:'Lian Li PC-O11D XL Branco',brand:'Lian Li',price:899,old:1099,cat:'gabinetes'},
-  {id:22,name:'NZXT H9 Flow Preto',brand:'NZXT',price:799,old:999,cat:'gabinetes'},
-  {id:23,name:'LG UltraGear 27GP850-B 165Hz IPS',brand:'LG',price:1899,old:2299,cat:'monitores-gaming'},
-  {id:24,name:'ASUS ROG Swift PG279QM 240Hz',brand:'ASUS',price:3299,old:3999,cat:'monitores-gaming'},
-  {id:25,name:'Samsung Odyssey G5 27" 144Hz',brand:'Samsung',price:1299,old:1599,cat:'monitores-gaming'},
-  {id:26,name:'Logitech G Pro X Superlight 2',brand:'Logitech',price:699,old:849,cat:'mouse'},
-  {id:27,name:'Redragon Impact M908 RGB',brand:'Redragon',price:199,old:249,cat:'mouse'},
-  {id:28,name:'Logitech G502 X Plus',brand:'Logitech',price:449,old:549,cat:'mouse'},
-  {id:29,name:'HyperX Cloud Alpha Wireless',brand:'HyperX',price:799,old:999,cat:'headsets'},
-  {id:30,name:'Corsair HS80 RGB Wireless',brand:'Corsair',price:699,old:849,cat:'headsets'},
-  {id:31,name:'Logitech G915 TKL Lightspeed',brand:'Logitech',price:1299,old:1599,cat:'teclados'},
-  {id:32,name:'Redragon Kumara K552 RGB',brand:'Redragon',price:229,old:289,cat:'teclados'},
-  {id:33,name:'ASUS TUF Gaming A15 RTX 4060',brand:'ASUS',price:4999,old:5999,cat:'notebooks'},
-  {id:34,name:'Lenovo LOQ 15IRH8 i7 RTX 4050',brand:'Lenovo',price:3999,old:4799,cat:'notebooks'},
-  {id:35,name:'PC Gamer Intel i9 + RTX 4080 + 32GB',brand:'Alfa Informática',price:11999,old:13999,cat:'pc-gamer'},
-  {id:36,name:'PC Gamer AMD Ryzen 7 + RX 7800 XT + 32GB',brand:'Alfa Informática',price:7999,old:9499,cat:'pc-gamer'},
-  {id:37,name:'PC Gamer Intel i5 + RTX 4060 + 16GB',brand:'Alfa Informática',price:4999,old:5999,cat:'pc-gamer'},
-  {id:38,name:'PC Office Intel i3 + 8GB + SSD 480GB',brand:'Alfa Informática',price:1599,old:1899,cat:'pc-office'},
-  {id:39,name:'PC Office Intel i5 + 16GB + SSD 1TB',brand:'Alfa Informática',price:2499,old:2999,cat:'pc-office'},
-  {id:40,name:'Corsair RM1000x 1000W 80+ Gold',brand:'Corsair',price:799,old:999,cat:'fontes'},
-  {id:41,name:'EVGA SuperNOVA 750 G6 80+ Gold',brand:'EVGA',price:549,old:699,cat:'fontes'},
-  {id:42,name:'Cadeira Gamer DXRacer Drifting D-series',brand:'DXRacer',price:1299,old:1599,cat:'cadeiras'},
-  {id:43,name:'Cadeira Gamer ThunderX3 TC5',brand:'ThunderX3',price:1099,old:1399,cat:'cadeiras'},
+  {id:13,name:'HyperX Fury 32GB DDR4 3600MHz Kit (2x16GB)',brand:'HyperX',price:399,old:479,cat:'memorias-ram'},
+  {id:14,name:'Samsung 990 Pro 2TB NVMe PCIe 4.0 M.2',brand:'Samsung',price:799,old:999,cat:'ssd-hd'},
+  {id:15,name:'Kingston NV2 1TB NVMe M.2 PCIe 4.0',brand:'Kingston',price:299,old:379,cat:'ssd-hd'},
+  {id:16,name:'Seagate Barracuda 2TB HD 7200RPM SATA',brand:'Seagate',price:239,old:299,cat:'ssd-hd'},
+  {id:17,name:'ASUS ROG Strix B650-E Gaming WiFi DDR5',brand:'ASUS',price:1599,old:1899,cat:'placas-mae'},
+  {id:18,name:'MSI MAG B650 TOMAHAWK WiFi DDR5',brand:'MSI',price:1099,old:1299,cat:'placas-mae'},
+  {id:19,name:'Gigabyte B760M DS3H DDR4 LGA1700',brand:'Gigabyte',price:649,old:799,cat:'placas-mae'},
+  {id:20,name:'Cooler Master HAF 700 EVO Mid-Tower ARGB',brand:'Cooler Master',price:1299,old:1599,cat:'gabinetes'},
+  {id:21,name:'Lian Li PC-O11D XL Branco Vidro Temperado',brand:'Lian Li',price:899,old:1099,cat:'gabinetes'},
+  {id:22,name:'NZXT H9 Flow Mid-Tower Dual-Chamber',brand:'NZXT',price:799,old:999,cat:'gabinetes'},
+  {id:23,name:'LG UltraGear 27GP850-B 27" 165Hz IPS Nano',brand:'LG',price:1899,old:2299,cat:'monitores-gaming'},
+  {id:24,name:'ASUS ROG Swift PG279QM 27" QHD 240Hz IPS',brand:'ASUS',price:3299,old:3999,cat:'monitores-gaming'},
+  {id:25,name:'Samsung Odyssey G5 27" VA 144Hz QHD',brand:'Samsung',price:1299,old:1599,cat:'monitores-gaming'},
+  {id:26,name:'Logitech G Pro X Superlight 2 60g Sem Fio',brand:'Logitech',price:699,old:849,cat:'mouse'},
+  {id:27,name:'Redragon Impact M908 RGB 12400 DPI',brand:'Redragon',price:199,old:249,cat:'mouse'},
+  {id:28,name:'Logitech G502 X Plus HERO 25K Sensor',brand:'Logitech',price:449,old:549,cat:'mouse'},
+  {id:29,name:'HyperX Cloud Alpha Wireless 300h',brand:'HyperX',price:799,old:999,cat:'headsets'},
+  {id:30,name:'Corsair HS80 RGB Wireless Dolby Atmos',brand:'Corsair',price:699,old:849,cat:'headsets'},
+  {id:31,name:'Logitech G915 TKL Lightspeed Wireless',brand:'Logitech',price:1299,old:1599,cat:'teclados'},
+  {id:32,name:'Redragon Kumara K552 Mecânico RGB Switch Red',brand:'Redragon',price:229,old:289,cat:'teclados'},
+  {id:33,name:'ASUS TUF Gaming A15 RTX 4060 144Hz 16GB',brand:'ASUS',price:4999,old:5999,cat:'notebooks'},
+  {id:34,name:'Lenovo LOQ 15IRH8 i7-13700H RTX 4050',brand:'Lenovo',price:3999,old:4799,cat:'notebooks'},
+  {id:35,name:'PC Gamer Intel i9-14900K + RTX 4080 + 32GB DDR5',brand:'Alfa Informática',price:11999,old:13999,cat:'pc-gamer'},
+  {id:36,name:'PC Gamer AMD Ryzen 7 7700X + RX 7800 XT + 32GB',brand:'Alfa Informática',price:7999,old:9499,cat:'pc-gamer'},
+  {id:37,name:'PC Gamer Intel i5-14600K + RTX 4060 + 16GB DDR5',brand:'Alfa Informática',price:4999,old:5999,cat:'pc-gamer'},
+  {id:38,name:'PC Office Intel i3-13100 + 8GB + SSD 480GB',brand:'Alfa Informática',price:1599,old:1899,cat:'pc-office'},
+  {id:39,name:'PC Office Intel i5-13400 + 16GB + SSD 1TB',brand:'Alfa Informática',price:2499,old:2999,cat:'pc-office'},
+  {id:40,name:'Corsair RM1000x 1000W 80+ Gold Modular',brand:'Corsair',price:799,old:999,cat:'fontes'},
+  {id:41,name:'EVGA SuperNOVA 750 G6 750W 80+ Gold',brand:'EVGA',price:549,old:699,cat:'fontes'},
+  {id:42,name:'Cadeira Gamer DXRacer Drifting D-series Couro PU',brand:'DXRacer',price:1299,old:1599,cat:'cadeiras'},
+  {id:43,name:'Cadeira Gamer ThunderX3 TC5 Reclinável 175°',brand:'ThunderX3',price:1099,old:1399,cat:'cadeiras'},
 ];
 
-// ─── STATE ────────────────────────────────────────────────────
+// ─── HEADER SEARCH (autocomplete) ────────────────────────────────────────────
+(function(){
+  var inp=document.getElementById('searchIn');
+  var drop=document.getElementById('searchDrop');
+  var wrap=document.getElementById('searchWrap');
+  if(!inp||!drop) return;
+  var products=PRODUCTS.map(function(p){
+    return {name:p.name,brand:p.brand,price:'R$ '+p.price.toLocaleString('pt-BR',{minimumFractionDigits:2})};
+  });
+  var selIdx=-1;
+  function renderDrop(q){
+    q=q.trim().toLowerCase();
+    if(!q){drop.classList.remove('open');return;}
+    var res=products.filter(function(p){return p.name.toLowerCase().indexOf(q)>-1||p.brand.toLowerCase().indexOf(q)>-1;}).slice(0,8);
+    selIdx=-1;
+    if(!res.length){drop.innerHTML='<div class="search-none">Nenhum produto encontrado para "<b>'+q+'</b>"</div>';drop.classList.add('open');return;}
+    drop.innerHTML='<div class="search-drop-head">'+res.length+' resultado'+(res.length!==1?'s':'')+'</div>'+
+      res.map(function(p,i){
+        return '<a class="search-item" href="produto.html?q='+encodeURIComponent(p.name)+'" data-idx="'+i+'">'+
+          '<div class="search-item-img"><span class="search-item-img-ph">📦</span></div>'+
+          '<div class="search-item-info"><div class="search-item-brand">'+p.brand+'</div><div class="search-item-name">'+p.name+'</div></div>'+
+          '<div class="search-item-right"><span class="search-item-price">'+p.price+'</span><span class="search-item-arrow">›</span></div>'+
+        '</a>';
+      }).join('');
+    drop.classList.add('open');
+  }
+  inp.addEventListener('input',function(){renderDrop(this.value);});
+  inp.addEventListener('focus',function(){if(this.value.trim())renderDrop(this.value);});
+  inp.addEventListener('keydown',function(e){
+    var items=drop.querySelectorAll('.search-item');
+    if(e.key==='ArrowDown'){e.preventDefault();selIdx=Math.min(selIdx+1,items.length-1);}
+    else if(e.key==='ArrowUp'){e.preventDefault();selIdx=Math.max(selIdx-1,-1);}
+    else if(e.key==='Escape'){drop.classList.remove('open');return;}
+    else if(e.key==='Enter'){if(selIdx>-1&&items[selIdx]){items[selIdx].click();}else doSearch();return;}
+    items.forEach(function(it,i){it.classList.toggle('active',i===selIdx);});
+    if(selIdx>-1&&items[selIdx])items[selIdx].scrollIntoView({block:'nearest'});
+  });
+  document.addEventListener('click',function(e){if(!wrap.contains(e.target))drop.classList.remove('open');});
+  window.doSearch=function(){
+    var q=inp.value.trim();
+    if(!q) return;
+    drop.classList.remove('open');
+    searchQuery=q.toLowerCase();
+    var sfSearch=document.getElementById('sfSearch');
+    if(sfSearch) sfSearch.value=q;
+    applyFilters();
+  };
+})();
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+const RANGE_MAX = 15000;
 let currentSlug = '';
 let activeSubcat = '';
-let filters = { minPrice: null, maxPrice: null, brands: [], inStock: false, onSale: false };
+let searchQuery = '';
+let filters = { minPrice:null, maxPrice:null, brands:[], onSale:false };
 
-// ─── INIT ─────────────────────────────────────────────────────
+// ─── ACCORDION ──────────────────────────────────────────────────────────────
+function toggleAcc(head) {
+  const body = head.nextElementSibling;
+  const arr  = head.querySelector('.sb-arr');
+  const isOpen = head.classList.contains('open');
+  head.classList.toggle('open');
+  body.style.maxHeight = isOpen ? '0' : '600px';
+  arr.style.transform  = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+// ─── MOBILE DRAWER ──────────────────────────────────────────────────────────
+function openDrawer() {
+  document.getElementById('sidebar').classList.add('drawer-open');
+  document.getElementById('mobOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('sidebar').classList.remove('drawer-open');
+  document.getElementById('mobOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ─── RANGE SLIDER ───────────────────────────────────────────────────────────
+function initRange() {
+  const rMin = document.getElementById('rangeMin');
+  const rMax = document.getElementById('rangeMax');
+
+  rMin.addEventListener('input', function() {
+    let lo = parseInt(this.value);
+    let hi = parseInt(rMax.value);
+    if (lo > hi) { lo = hi; this.value = lo; }
+    updateRangeFill(lo, hi);
+    document.getElementById('priceMin').value = lo > 0 ? lo : '';
+    filters.minPrice = lo > 0 ? lo : null;
+    applyFilters();
+  });
+
+  rMax.addEventListener('input', function() {
+    let lo = parseInt(rMin.value);
+    let hi = parseInt(this.value);
+    if (hi < lo) { hi = lo; this.value = hi; }
+    updateRangeFill(lo, hi);
+    document.getElementById('priceMax').value = hi < RANGE_MAX ? hi : '';
+    filters.maxPrice = hi < RANGE_MAX ? hi : null;
+    applyFilters();
+  });
+}
+
+function updateRangeFill(lo, hi) {
+  const fill = document.getElementById('rangeFill');
+  fill.style.left  = (lo / RANGE_MAX * 100) + '%';
+  fill.style.right = ((RANGE_MAX - hi) / RANGE_MAX * 100) + '%';
+}
+
+function syncInputToRange(which) {
+  const rMin = document.getElementById('rangeMin');
+  const rMax = document.getElementById('rangeMax');
+  let lo = parseInt(document.getElementById('priceMin').value) || 0;
+  let hi = parseInt(document.getElementById('priceMax').value) || RANGE_MAX;
+  lo = Math.min(Math.max(lo, 0), RANGE_MAX);
+  hi = Math.min(Math.max(hi, 0), RANGE_MAX);
+  if (which === 'min') {
+    if (lo > hi) lo = hi;
+    rMin.value = lo;
+    filters.minPrice = lo > 0 ? lo : null;
+  } else {
+    if (hi < lo) hi = lo;
+    rMax.value = hi;
+    filters.maxPrice = hi < RANGE_MAX ? hi : null;
+  }
+  updateRangeFill(parseInt(rMin.value), parseInt(rMax.value));
+  applyFilters();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
 function init() {
-  const params = new URLSearchParams(location.search);
-  currentSlug = params.get('cat') || 'hardware';
+  const p = new URLSearchParams(location.search);
+  currentSlug = p.get('cat') || 'hardware';
   if (!CATS[currentSlug]) currentSlug = 'outros';
   activeSubcat = '';
+
+  initRange();
+
+  document.getElementById('sfSearch').addEventListener('input', function() {
+    searchQuery = this.value.trim().toLowerCase();
+    applyFilters();
+  });
+
   renderPage();
 }
 
 function renderPage() {
-  const info = CATS[currentSlug] || { label: 'Categoria', parent: null };
+  const info = CATS[currentSlug] || { label:'Categoria', parent:null };
   document.title = info.label + ' — Alfa Informática';
 
   // Breadcrumb
-  let bc = '<a href="alfa-replica.html">Início</a><span>/</span>';
+  let bc = '<a href="alfa-replica.html">Home</a><span class="bc-sep">/</span>';
   if (info.parent) {
-    const p = CATS[info.parent];
-    bc += `<a href="categoria.html?cat=${info.parent}">${p.label}</a><span>/</span>`;
+    const par = CATS[info.parent];
+    bc += `<a href="categoria.html?cat=${info.parent}">${par.label}</a><span class="bc-sep">/</span>`;
   }
-  bc += `<strong>${info.label}</strong>`;
+  bc += `<span class="bc-cur">${info.label}</span>`;
   document.getElementById('breadcrumb').innerHTML = bc;
 
-  // Title
   document.getElementById('catTitle').textContent = info.label;
 
-  // Subcategory pills (if parent category)
+  // Subcats
   const bar = document.getElementById('subcatBar');
   if (info.children && info.children.length) {
-    let pills = `<button class="subcat-btn ${activeSubcat===''?'active':''}" onclick="filterSubcat('')">Todos</button>`;
+    let pills = `<button class="scat-btn ${activeSubcat===''?'active':''}" onclick="filterSubcat(event,'')">Todos</button>`;
     info.children.forEach(slug => {
       const child = CATS[slug];
-      if (child) pills += `<button class="subcat-btn ${activeSubcat===slug?'active':''}" onclick="filterSubcat('${slug}')">${child.label}</button>`;
+      if (child) pills += `<button class="scat-btn ${activeSubcat===slug?'active':''}" onclick="filterSubcat(event,'${slug}')">${child.label}</button>`;
     });
     bar.innerHTML = pills;
     bar.style.display = 'flex';
@@ -297,10 +980,11 @@ function renderPage() {
   applyFilters();
 }
 
-function filterSubcat(slug) {
+function filterSubcat(e, slug) {
   activeSubcat = slug;
-  document.querySelectorAll('.subcat-btn').forEach(b => b.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  document.querySelectorAll('.scat-btn').forEach(b => b.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+  buildBrandFilter();
   applyFilters();
 }
 
@@ -311,96 +995,190 @@ function getRelevantSlugs() {
   return [currentSlug];
 }
 
+function buildBrandFilter() {
+  const slugs = getRelevantSlugs();
+  const catProds = PRODUCTS.filter(p => slugs.includes(p.cat));
+  const brandCounts = {};
+  catProds.forEach(p => { brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1; });
+  const brands = Object.keys(brandCounts).sort();
+
+  document.getElementById('brandList').innerHTML = brands.map(b =>
+    `<label class="cb-item">
+      <input type="checkbox" class="cb-inp" value="${b}" onchange="updateBrands()">
+      <span class="cb-box">
+        <svg class="cb-chk" viewBox="0 0 9 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1,3.5 3.5,6 8,1"/>
+        </svg>
+      </span>
+      <span class="cb-lbl">${b}</span>
+      <span class="cb-cnt">(${brandCounts[b]})</span>
+    </label>`
+  ).join('');
+
+  // Restore checked state
+  if (filters.brands.length) {
+    document.querySelectorAll('#brandList .cb-inp').forEach(el => {
+      if (filters.brands.includes(el.value)) el.checked = true;
+    });
+  }
+
+  // Update brand accordion height if open
+  const acc = document.getElementById('brandAcc');
+  if (acc.style.maxHeight && acc.style.maxHeight !== '0px') {
+    acc.style.maxHeight = '600px';
+  }
+}
+
+function updateBrands() {
+  filters.brands = [...document.querySelectorAll('#brandList .cb-inp:checked')].map(el => el.value);
+  applyFilters();
+}
+
 function getFilteredProducts() {
   const slugs = getRelevantSlugs();
-  let products = PRODUCTS.filter(p => slugs.includes(p.cat));
+  let prods = PRODUCTS.filter(p => slugs.includes(p.cat));
 
-  if (filters.minPrice !== null) products = products.filter(p => p.price >= filters.minPrice);
-  if (filters.maxPrice !== null) products = products.filter(p => p.price <= filters.maxPrice);
-  if (filters.brands.length) products = products.filter(p => filters.brands.includes(p.brand));
-  if (filters.onSale) products = products.filter(p => p.old && p.old > p.price);
+  if (filters.minPrice !== null) prods = prods.filter(p => p.price >= filters.minPrice);
+  if (filters.maxPrice !== null) prods = prods.filter(p => p.price <= filters.maxPrice);
+  if (filters.brands.length)    prods = prods.filter(p => filters.brands.includes(p.brand));
+  if (filters.onSale)           prods = prods.filter(p => p.old && p.old > p.price);
+  if (searchQuery)              prods = prods.filter(p =>
+    p.name.toLowerCase().includes(searchQuery) || p.brand.toLowerCase().includes(searchQuery)
+  );
 
   const sort = document.getElementById('sortSelect').value;
-  if (sort === 'price-asc') products.sort((a,b) => a.price - b.price);
-  else if (sort === 'price-desc') products.sort((a,b) => b.price - a.price);
-  else if (sort === 'name-asc') products.sort((a,b) => a.name.localeCompare(b.name));
-  else if (sort === 'discount') products.sort((a,b) => {
+  if (sort === 'price-asc')  prods.sort((a,b) => a.price - b.price);
+  else if (sort === 'price-desc') prods.sort((a,b) => b.price - a.price);
+  else if (sort === 'name-asc')   prods.sort((a,b) => a.name.localeCompare(b.name));
+  else if (sort === 'discount')   prods.sort((a,b) => {
     const da = a.old ? (a.old-a.price)/a.old : 0;
     const db = b.old ? (b.old-b.price)/b.old : 0;
     return db - da;
   });
 
-  return products;
-}
-
-function buildBrandFilter() {
-  const slugs = getRelevantSlugs();
-  const brands = [...new Set(PRODUCTS.filter(p => slugs.includes(p.cat)).map(p => p.brand))].sort();
-  const list = document.getElementById('brandList');
-  list.innerHTML = brands.map(b =>
-    `<div class="filter-item">
-      <input type="checkbox" id="brand-${b}" value="${b}" onchange="updateBrands()">
-      <label for="brand-${b}">${b}</label>
-    </div>`
-  ).join('');
-}
-
-function updateBrands() {
-  filters.brands = [...document.querySelectorAll('#brandList input:checked')].map(el => el.value);
-  applyFilters();
+  return prods;
 }
 
 function applyFilters() {
-  const minEl = document.getElementById('priceMin');
-  const maxEl = document.getElementById('priceMax');
-  filters.minPrice = minEl.value ? parseFloat(minEl.value) : null;
-  filters.maxPrice = maxEl.value ? parseFloat(maxEl.value) : null;
   filters.onSale = document.getElementById('onSale').checked;
 
-  const products = getFilteredProducts();
-  const grid = document.getElementById('prodGrid');
+  const prods = getFilteredProducts();
+  const grid  = document.getElementById('prodGrid');
   const count = document.getElementById('catCount');
+  const total = prods.length;
 
-  count.textContent = `${products.length} produto${products.length !== 1 ? 's' : ''} encontrado${products.length !== 1 ? 's' : ''}`;
+  count.textContent = total
+    ? `Exibindo 1–${total} de ${total} resultado${total !== 1 ? 's' : ''}`
+    : 'Nenhum produto encontrado';
 
-  if (!products.length) {
+  if (!total) {
     grid.innerHTML = `<div class="empty-state">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <h3>Nenhum produto encontrado</h3>
-      <p>Tente ajustar os filtros ou escolha outra categoria.</p>
+      <p>Tente ajustar os filtros ou a busca.</p>
     </div>`;
     return;
   }
 
-  grid.innerHTML = products.map(p => {
-    const disc = p.old ? Math.round((p.old-p.price)/p.old*100) : 0;
-    return `<div class="prod-card">
-      <div class="prod-img">?</div>
-      <div class="prod-body">
-        <div class="prod-brand">${p.brand}</div>
-        ${disc ? `<span class="prod-badge">-${disc}% OFF</span>` : ''}
-        <div class="prod-name">${p.name}</div>
-        <div class="prod-prices">
-          ${p.old ? `<div class="prod-old">R$ ${p.old.toLocaleString('pt-BR')},00</div>` : ''}
-          <div class="prod-price">R$ ${p.price.toLocaleString('pt-BR')},00</div>
-        </div>
+  const fmt = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  grid.innerHTML = prods.map(p => {
+    const disc      = p.old ? Math.round((p.old - p.price) / p.old * 100) : 0;
+    const pixPrice  = p.price * 0.85;
+    const instPrice = p.price / 12;
+
+    return `<div class="pc" onclick="viewProduct(${p.id})" style="cursor:pointer">
+      <div class="pc-bdg">${disc ? `<span class="bdg-d">-${disc}% OFF</span>` : ''}</div>
+      <div class="pc-img">
+        <img src="img teste.jpg" alt="${p.name}" loading="lazy">
       </div>
-      <button class="prod-btn">Adicionar ao Carrinho</button>
+      <div class="pc-body">
+        <div class="pc-name">${p.name}</div>
+        ${p.old ? `<div class="pc-old">de R$ ${fmt(p.old)} por</div>` : ''}
+        <div class="pc-price">R$ ${fmt(p.price)}</div>
+        <div class="pc-av">à vista</div>
+        <div class="pc-pix">15% de desconto no PIX</div>
+        <div class="pc-sep"></div>
+        <div class="pc-inst-price">R$ ${fmt(pixPrice)}</div>
+        <div class="pc-inst-txt">Em até 12x de R$ ${fmt(instPrice)}<br>Sem juros no cartão</div>
+      </div>
     </div>`;
   }).join('');
 }
 
 function clearFilters() {
+  // Reset range slider
+  document.getElementById('rangeMin').value = 0;
+  document.getElementById('rangeMax').value = RANGE_MAX;
+  updateRangeFill(0, RANGE_MAX);
   document.getElementById('priceMin').value = '';
   document.getElementById('priceMax').value = '';
+
+  // Reset checkboxes
   document.getElementById('onSale').checked = false;
-  document.getElementById('inStock').checked = false;
-  document.querySelectorAll('#brandList input').forEach(el => el.checked = false);
-  filters = { minPrice: null, maxPrice: null, brands: [], inStock: false, onSale: false };
+  document.querySelectorAll('#brandList .cb-inp').forEach(el => el.checked = false);
+
+  // Reset search
+  document.getElementById('sfSearch').value = '';
+  searchQuery = '';
+
+  filters = { minPrice:null, maxPrice:null, brands:[], onSale:false };
   applyFilters();
+}
+
+function viewProduct(id) {
+  location.href = 'produto.html?id=' + id;
 }
 
 init();
 </script>
+<script>
+(function(){
+  const wrap = document.querySelector('.cat-wrap');
+  const menu = document.querySelector('.megamenu');
+  const cats = document.querySelectorAll('.mega-cat');
+  const subs = document.querySelectorAll('.mega-subs');
+  let closeTimer = null;
+
+  function activate(cat){
+    cats.forEach(c=>c.classList.remove('mm-active'));
+    subs.forEach(s=>s.classList.remove('mm-active'));
+    cat.classList.add('mm-active');
+    const t = document.getElementById('subs-'+cat.dataset.cat);
+    if(t) t.classList.add('mm-active');
+  }
+
+  function openMenu(){
+    clearTimeout(closeTimer);
+    const r = wrap.getBoundingClientRect();
+    menu.style.left = r.left + 'px';
+    menu.style.top = r.bottom + 'px';
+    menu.style.display = 'flex';
+    const first = cats[0];
+    if(first && !document.querySelector('.mega-cat.mm-active')) activate(first);
+  }
+
+  function scheduleClose(){
+    closeTimer = setTimeout(()=>{ menu.style.display = 'none'; }, 300);
+  }
+
+  if(wrap){
+    wrap.addEventListener('mouseenter', openMenu);
+    wrap.addEventListener('mouseleave', scheduleClose);
+  }
+  if(menu){
+    menu.addEventListener('mouseenter', openMenu);
+    menu.addEventListener('mouseleave', scheduleClose);
+  }
+
+  cats.forEach(cat=>{
+    cat.addEventListener('mouseenter',()=>activate(cat));
+  });
+})();
+</script>
+
+<a href="https://wa.me/5565992655883" class="wpp-float" target="_blank" rel="noopener noreferrer" title="Fale conosco no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
 </body>
 </html>

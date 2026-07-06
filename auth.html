@@ -3,224 +3,329 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Alfa Informática — Entrar</title>
+<title>Minha Conta — Alfa Informática</title>
+<script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;font-family:'Inter','Segoe UI',system-ui,sans-serif;background:#3A3A3A;color:#fff;overflow-x:hidden;}
+:root{
+  --bg-main:#202020; --bg-section:#2B2B2B; --bg-card:#303030;
+  --bg-header:#1F1F1F; --bg-menu:#0052CC;
+  --text-main:#FFFFFF; --text-secondary:#D1D5DB; --text-muted:#9CA3AF;
+  --border-color:#404040;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+}
+[data-theme="light"]{
+  --bg-main:#F5F7FA; --bg-section:#FFFFFF; --bg-card:#FFFFFF;
+  --bg-header:#FFFFFF; --bg-menu:#0066FF;
+  --text-main:#111827; --text-secondary:#4B5563; --text-muted:#6B7280;
+  --border-color:#E5E7EB;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+}
+html,body{background:var(--bg-main);color:var(--text-main);font-family:'Inter','Segoe UI',system-ui,sans-serif;min-height:100vh;}
 a{color:inherit;text-decoration:none;}
+img{display:block;max-width:100%;}
+button{font-family:inherit;cursor:pointer;}
 
-/* ══ LAYOUT ══ */
-.layout{display:grid;grid-template-columns:55% 45%;min-height:100vh;}
+/* ══ TOPBAR ══ */
+.topbar{background:var(--bg-header);height:33px;border-bottom:1px solid rgba(255,255,255,.07);}
+.topbar-in{max-width:1600px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:100%;}
+.topbar-left{display:flex;align-items:center;height:100%;}
+.topbar-lk{font-size:11.5px;color:rgba(255,255,255,.48);padding:0 12px;height:100%;display:flex;align-items:center;gap:5px;transition:color .15s;text-decoration:none;border-right:1px solid rgba(255,255,255,.08);}
+.topbar-lk:first-child{padding-left:0;}
+.topbar-lk:last-child{border-right:none;}
+.topbar-lk:hover{color:rgba(255,255,255,.85);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.theme-toggle{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 10px;border-radius:8px;transition:background .15s;}
+.theme-toggle:hover{background:rgba(128,128,128,.12);}
+.theme-toggle-track{width:38px;height:20px;border-radius:10px;background:var(--border-color);position:relative;flex-shrink:0;transition:background .2s;}
+.theme-toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+.theme-toggle.is-dark .theme-toggle-track{background:var(--primary);}
+.theme-toggle.is-dark .theme-toggle-knob{left:20px;}
+.theme-toggle-label{font-size:12.5px;font-weight:700;color:var(--text-secondary);white-space:nowrap;}
 
-/* ══ LEFT PANEL ══ */
-.lp{position:relative;overflow:hidden;background:#2B2B2B;}
+/* ══ HEADER ══ */
+.hdr{background:var(--bg-header);position:sticky;top:0;z-index:200;}
+.hdr-top{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:96px;align-items:center;gap:28px;height:96px;padding:0 24px 0 28px;}
+.hdr-logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
+.hdr-logo img{height:130px;width:auto;object-fit:contain;max-width:300px;}
+.search-wrap{position:relative;flex:1;}
+.hdr-search{display:flex;height:47px;border:1px solid var(--border-color);border-radius:6px;overflow:hidden;background:var(--bg-card);transition:border-color .2s,box-shadow .2s;}
+.hdr-search:focus-within{border-color:rgba(37,99,255,.55);box-shadow:0 0 0 3px rgba(37,99,255,.08);}
+.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 16px;font-size:14px;font-family:inherit;color:var(--text-main);outline:none;height:100%;}
+.hdr-search-in::placeholder{color:var(--text-secondary);}
+.hdr-search-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--primary);color:#fff;border:none;width:130px;flex-shrink:0;font-size:13px;font-weight:700;letter-spacing:.3px;cursor:pointer;transition:background .18s;height:100%;}
+.hdr-search-btn:hover{background:var(--primary-hover);}
+.search-drop{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:600;background:linear-gradient(160deg,var(--bg-section) 0%,var(--bg-card) 100%);border:1px solid var(--border-color);border-top:2px solid var(--primary);border-radius:0 0 14px 14px;box-shadow:0 28px 70px rgba(0,0,0,.9);overflow:hidden;max-height:460px;overflow-y:auto;}
+.search-drop.open{display:block;}
+.search-drop-head{padding:11px 18px 9px;font-size:9px;font-weight:800;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;background:rgba(0,0,0,.3);border-bottom:1px solid var(--border-color);display:flex;align-items:center;gap:8px;}
+.search-drop-head::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--primary);flex-shrink:0;}
+.search-item{display:flex;align-items:center;gap:14px;padding:11px 18px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border-color);text-decoration:none;position:relative;}
+.search-item:last-child{border-bottom:none;}
+.search-item:hover,.search-item.active{background:rgba(37,99,255,.09);}
+.search-item-img{width:52px;height:52px;flex-shrink:0;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.search-item-img img{width:100%;height:100%;object-fit:contain;padding:5px;}
+.search-item-img-ph{font-size:22px;opacity:.15;}
+.search-item-info{flex:1;min-width:0;}
+.search-item-brand{font-size:9px;font-weight:800;color:#3b82f6;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;}
+.search-item-name{font-size:13px;font-weight:600;color:var(--text-main);line-height:1.38;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.search-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.search-item-price{font-size:14px;font-weight:800;color:var(--success);white-space:nowrap;}
+.search-none{padding:28px 18px;text-align:center;font-size:13px;color:var(--text-muted);}
+.search-none b{color:var(--text-secondary);}
+.hdr-acts-group{display:flex;align-items:center;gap:4px;}
+.hdr-act{display:flex;align-items:center;gap:10px;text-decoration:none;padding:8px 14px;border-radius:8px;transition:background .15s,color .15s;color:var(--text-secondary);}
+.hdr-act:hover{background:rgba(128,128,128,.1);color:var(--text-main);}
+.hdr-act.hdr-act-current{color:var(--text-main);background:rgba(0,102,255,.14);}
+.hdr-act-icon{color:currentColor;flex-shrink:0;}
+.hdr-act-text{display:flex;flex-direction:column;gap:2px;}
+.hdr-act-line1{font-size:12.5px;font-weight:700;color:inherit;line-height:1.2;white-space:nowrap;}
+.hdr-act-line2{font-size:10.5px;color:var(--text-muted);line-height:1.2;white-space:nowrap;}
+.hdr-act-cart{background:var(--primary);border-radius:10px;padding:0 22px;height:54px;gap:14px;color:#fff;flex-shrink:0;}
+.hdr-act-cart:hover{background:var(--primary-hover);color:#fff;}
+.hdr-act-cart .hdr-act-line1{font-size:14px;font-weight:800;letter-spacing:.5px;color:#fff;}
+.hdr-act-cart .hdr-act-line2{font-size:11px;color:rgba(255,255,255,.75);}
+.hdr-act-cart .hdr-act-icon{color:#fff;}
+.hdr-nav{background:var(--bg-menu);border:none;border-bottom:1px solid var(--border-color);}
+.hdr-nav-inner{display:flex;align-items:stretch;max-width:1600px;margin:0 auto;padding:0 28px;height:48px;overflow-x:auto;}
+.hdr-nav-inner::-webkit-scrollbar{display:none;}
+.hdr-nav-inner a{font-size:13px;font-weight:700;color:rgba(255,255,255,.9);padding:0 18px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.4px;transition:background .15s,color .15s;white-space:nowrap;flex-shrink:0;text-decoration:none;border-right:1px solid rgba(255,255,255,.18);}
+.hdr-nav-inner a:last-child{border-right:none;}
+.hdr-nav-inner a:hover{background:rgba(0,0,0,.18);color:#fff;}
+.hdr-nav-inner a.nav-promo{color:#FFE14D;}
+.hdr-nav-inner a.nav-promo:hover{color:#FFE14D;background:rgba(0,0,0,.18);}
 
-.limg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:left center;
-  display:block;
-}
+/* ══ MAIN WRAP ══ */
+.acc-wrap{max-width:1200px;margin:0 auto;padding:56px 24px 80px;}
 
-/* Fade direito — une o painel com a coluna do formulário */
-.lfade{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(to right,
-      transparent 50%,
-      rgba(43,43,43,.35) 72%,
-      rgba(43,43,43,.75) 88%,
-      #3A3A3A 100%),
-    radial-gradient(ellipse 80% 60% at 50% 100%,rgba(43,43,43,.5) 0%,transparent 70%);
-}
+/* ══ LOGIN/REGISTER CARD ══ */
+.acc-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,.5);overflow:hidden;}
+.acc-split{display:grid;grid-template-columns:1fr auto 1fr;}
+.acc-col{padding:48px 46px;}
+.acc-divider{display:flex;align-items:center;justify-content:center;position:relative;width:1px;background:var(--border-color);}
+.acc-divider span{position:absolute;background:var(--bg-card);border:1px solid var(--border-color);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;}
+.acc-title{font-size:26px;font-weight:800;color:var(--text-main);margin-bottom:8px;letter-spacing:-.3px;}
+.acc-sub{font-size:13.5px;color:var(--text-secondary);margin-bottom:28px;}
 
-/* Vinheta nas bordas (topo/lateral) */
-.lvign{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(to bottom, rgba(43,43,43,.35) 0%, transparent 18%, transparent 82%, rgba(43,43,43,.5) 100%),
-    linear-gradient(to right, rgba(43,43,43,.2) 0%, transparent 12%);
-}
-
-/* BADGE "ALTA PERFORMANCE" */
-.lbadge{
-  position:absolute;
-  left:30px;
-  z-index:10;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:11px 30px 11px 18px;
-  background:#2B2B2B;
-  border:1px solid rgba(59,130,246,.45);
-  border-radius:100px;
-  font-family:'Inter',sans-serif;
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:3px;
-  color:#93c5fd;
-  text-transform:uppercase;
-  pointer-events:none;
-  white-space:nowrap;
-  min-width:260px;
-  animation:badgeGlow 2.8s ease-in-out infinite;
-}
-.lbdot-w{position:relative;width:8px;height:8px;flex-shrink:0;}
-.lbdot{position:absolute;inset:0;border-radius:50%;background:#3b82f6;}
-.lbdot-ping{position:absolute;inset:0;border-radius:50%;background:#3b82f6;animation:ping 1.8s ease-out infinite;}
-@keyframes ping{0%{transform:scale(1);opacity:.75;}100%{transform:scale(3);opacity:0;}}
-@keyframes badgeGlow{
-  0%,100%{border-color:rgba(59,130,246,.4);box-shadow:0 0 8px rgba(37,99,235,.15);}
-  50%{border-color:rgba(59,130,246,.85);box-shadow:0 0 24px rgba(37,99,235,.5),0 0 8px rgba(147,197,253,.25);}
-}
-
-/* ══ RIGHT PANEL ══ */
-.rp{position:relative;display:flex;align-items:center;justify-content:center;padding:40px 48px;background:#3A3A3A;}
-#rcv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
-.rglow{position:absolute;width:520px;height:520px;background:radial-gradient(circle,rgba(37,99,235,.12) 0%,rgba(37,99,235,.03) 50%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:0;animation:rg 6s ease-in-out infinite;}
-@keyframes rg{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.07);}}
-.ri{position:relative;z-index:10;width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;}
-
-/* LOGO */
-.logo-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:30px;}
-.logo-img{height:136px;object-fit:contain;filter:drop-shadow(0 0 28px rgba(37,99,235,.5));}
-.logo-sep{display:flex;align-items:center;gap:12px;width:100%;}
-.logo-sep::before,.logo-sep::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(37,99,235,.45));}
-.logo-sep::after{background:linear-gradient(to left,transparent,rgba(37,99,235,.45));}
-.logo-sub{font-size:9px;color:#3b82f6;letter-spacing:3.8px;text-transform:uppercase;font-weight:700;white-space:nowrap;}
-
-/* CARD */
-.card{width:100%;background:rgba(47,47,47,.97);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:30px 30px 26px;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(37,99,235,.08),0 24px 60px rgba(0,0,0,.8),0 0 60px rgba(37,99,235,.1),inset 0 1px 0 rgba(255,255,255,.05);}
-.btn-close{
-  position:absolute;top:14px;right:14px;z-index:10;
-  width:32px;height:32px;border-radius:50%;border:none;
-  background:rgba(255,255,255,.06);
-  color:rgba(255,255,255,.45);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .22s cubic-bezier(.4,0,.2,1);
-}
-.btn-close:hover{background:rgba(239,68,68,.18);color:#f87171;transform:scale(1.1);}
-.btn-close:active{transform:scale(.94);}
-.card::after{content:'';position:absolute;inset:0;border-radius:20px;background:radial-gradient(ellipse 90% 40% at 50% 0%,rgba(37,99,235,.06),transparent 65%);pointer-events:none;}
-
-/* TABS */
-.tabs{display:flex;position:relative;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:26px;}
-.tab{flex:1;padding:12px 8px;font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.32);background:none;border:none;cursor:pointer;transition:color .25s;position:relative;font-family:inherit;}
-.tab.active{color:#fff;}
-.tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:#2563eb;border-radius:2px 2px 0 0;box-shadow:0 0 8px rgba(37,99,235,.8);}
-
-/* MSG */
 .msg{padding:10px 14px;border-radius:10px;font-size:12.5px;line-height:1.5;margin-bottom:14px;display:none;}
-.msg.error{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25);color:#fca5a5;}
+.msg.error{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#fcd34d;}
 .msg.success{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#86efac;}
 
-/* FIELDS */
 .field{margin-bottom:16px;}
-.flabel{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;color:#4b8ef5;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.flabel{font-size:9.5px;font-weight:800;color:#4b8ef5;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:block;}
 .fw{position:relative;}
-.fil{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.28);display:flex;pointer-events:none;z-index:1;}
-.field input{width:100%;background:#2B2B2B;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:15px 46px 15px 44px;font-size:14px;color:#fff;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;}
-.field input:hover{border-color:rgba(255,255,255,.22);background:#303030;}
-.field input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.14);background:#2F2F2F;}
-.field input::placeholder{color:rgba(255,255,255,.16);}
-.fi2{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.22);display:flex;cursor:pointer;transition:color .2s;padding:2px;z-index:1;}
-.fi2:hover{color:rgba(255,255,255,.6);}
+.fil{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);display:flex;pointer-events:none;z-index:1;}
+.field input{width:100%;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px 46px 14px 44px;font-size:14px;color:var(--text-main);font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;}
+.field input:hover{border-color:rgba(128,128,128,.4);}
+.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,102,255,.16);background:var(--bg-card);}
+.field input::placeholder{color:var(--text-muted);}
+.fi2{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);display:flex;cursor:pointer;transition:color .2s;padding:2px;z-index:1;}
+.fi2:hover{color:var(--text-secondary);}
+.frow2{display:flex;gap:14px;}
+.frow2 .field{flex:1;}
 
-/* ROW */
-.frow{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;margin-top:-4px;}
+.frow{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;margin-top:-4px;flex-wrap:wrap;gap:10px;}
 .cklabel{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;}
-.cbox{width:18px;height:18px;border:1.5px solid #2563eb;border-radius:5px;background:rgba(37,99,235,.05);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;}
-.cbox.on{background:#2563eb;border-color:#2563eb;box-shadow:0 0 12px rgba(37,99,235,.55);}
-.cktxt{font-size:13px;color:rgba(255,255,255,.45);}
-.flnk{font-size:13px;color:#4b8ef5;cursor:pointer;transition:color .2s;white-space:nowrap;font-weight:500;}
+.cbox{width:18px;height:18px;border:1.5px solid var(--primary);border-radius:5px;background:rgba(0,102,255,.05);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.cbox svg{display:none;}
+.cbox.on{background:var(--primary);border-color:var(--primary);}
+.cbox.on svg{display:block;}
+.cktxt{font-size:13px;color:var(--text-secondary);}
+.flnk{font-size:13px;color:#4b8ef5;cursor:pointer;transition:color .2s;white-space:nowrap;font-weight:500;background:none;border:none;font-family:inherit;padding:0;}
 .flnk:hover{color:#93c5fd;}
 
-/* BUTTON */
-.btn{width:100%;padding:17px;background:linear-gradient(135deg,#1749c9 0%,#2563eb 50%,#3b82f6 100%);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;letter-spacing:1.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;font-family:inherit;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 32px rgba(37,99,235,.5),0 0 60px rgba(37,99,235,.12);}
-.btn::before{content:'';position:absolute;top:-50%;left:-110%;width:55%;height:200%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);transform:skewX(-22deg);transition:left .55s;}
-.btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(37,99,235,.65),0 0 80px rgba(37,99,235,.2);}
-.btn:hover::before{left:160%;}
-.btn:active{transform:translateY(0) scale(.99);}
+.btn{width:100%;padding:16px;background:linear-gradient(135deg,#0047CC 0%,#0066FF 50%,#3b82f6 100%);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 26px rgba(0,102,255,.35);}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,102,255,.5);}
+.btn:active{transform:translateY(0);}
+.btn-out{background:transparent;border:1.5px solid rgba(0,102,255,.5);box-shadow:none;color:#7fb0ff;}
+.btn-out:hover{background:rgba(0,102,255,.08);box-shadow:none;}
 
-/* MISC */
-.bto{width:100%;padding:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:10px;color:rgba(255,255,255,.65);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;text-decoration:none;}
-.bto:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16);color:#fff;}
-.bto-out{border-color:rgba(220,38,38,.2);color:rgba(248,113,113,.7);}
-.bto-out:hover{background:rgba(220,38,38,.08);border-color:rgba(220,38,38,.4);color:#f87171;}
-.bk{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.24);font-size:12.5px;margin-top:18px;cursor:pointer;transition:color .2s;}
-.bk:hover{color:rgba(255,255,255,.55);}
 .tp{display:none;}.tp.on{display:block;}
-.uav{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;margin:0 auto 12px;box-shadow:0 0 24px rgba(37,99,235,.5);}
-.ui{text-align:center;margin-bottom:6px;}
-.un{font-size:16px;font-weight:800;margin-bottom:3px;}
-.ue{font-size:12px;color:rgba(255,255,255,.4);}
-.udv{display:flex;align-items:center;gap:12px;margin:18px 0 4px;color:rgba(255,255,255,.14);font-size:10px;letter-spacing:1px;text-transform:uppercase;}
-.udv::before,.udv::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
-.pdsc{font-size:13px;color:rgba(255,255,255,.42);margin-bottom:18px;line-height:1.65;}
-.lnks{display:flex;justify-content:space-between;margin-top:12px;flex-wrap:wrap;gap:8px;}
-.lsm{font-size:12.5px;color:rgba(255,255,255,.3);cursor:pointer;transition:color .2s;}
-.lsm:hover{color:rgba(99,145,255,.8);}
-.ri2{font-size:11px;color:rgba(255,255,255,.22);text-align:center;margin-top:12px;line-height:1.6;}
-.ri2 a{color:rgba(99,145,255,.6);}
+.terms{font-size:12px;color:var(--text-secondary);line-height:1.6;margin:14px 0 18px;}
+.terms a{color:#4b8ef5;}
+.lnks{margin-top:14px;text-align:center;}
+.lsm{font-size:12.5px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s;}
+.lsm:hover{color:#93c5fd;}
 
-@media(max-width:900px){.layout{grid-template-columns:1fr;}.lp{display:none;}.rp{padding:32px 20px;}}
+/* ══ ACCOUNT AREA (client) ══ */
+.acc-client{display:none;}
+.cli-wrap{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start;}
+.cli-menu{background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:22px 14px;position:sticky;top:112px;}
+.cli-user{text-align:center;padding:6px 8px 20px;border-bottom:1px solid var(--border-color);margin-bottom:14px;}
+.cli-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0047CC,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;margin:0 auto 10px;color:#fff;}
+.cli-uname{font-size:14.5px;font-weight:800;color:var(--text-main);}
+.cli-uemail{font-size:11.5px;color:var(--text-secondary);margin-top:2px;}
+.cli-item{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text-secondary);font-size:13.5px;font-weight:600;font-family:inherit;padding:12px 14px;border-radius:9px;cursor:pointer;transition:background .15s,color .15s;margin-bottom:2px;}
+.cli-item:hover{background:rgba(128,128,128,.12);color:var(--text-main);}
+.cli-item.active{background:rgba(0,102,255,.15);color:var(--text-main);}
+.cli-item.cli-out{color:var(--text-secondary);margin-top:10px;border-top:1px solid var(--border-color);padding-top:16px;border-radius:0 0 9px 9px;}
+.cli-item.cli-out:hover{color:var(--text-main);background:rgba(128,128,128,.12);}
+.cli-content{background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:34px 38px;min-height:360px;}
+.cli-panel{display:none;}
+.cli-panel.on{display:block;}
+.cli-h{font-size:20px;font-weight:800;color:var(--text-main);margin-bottom:22px;}
+.ord-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;background:var(--bg-section);border:1px solid var(--border-color);border-radius:12px;margin-bottom:12px;flex-wrap:wrap;}
+.ord-id{font-size:12px;color:var(--text-secondary);}
+.ord-name{font-size:13.5px;font-weight:600;color:var(--text-main);margin-top:3px;}
+.ord-status{font-size:11.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:5px 12px;border-radius:20px;background:rgba(0,102,255,.14);color:#7fb0ff;}
+.ord-status.done{background:rgba(34,197,94,.14);color:#86efac;}
+.ord-total{font-size:15px;font-weight:800;color:var(--text-main);}
+.ord-empty,.addr-empty,.fav-empty{font-size:13.5px;color:var(--text-secondary);padding:14px 0;}
+.addr-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;background:var(--bg-section);border:1px solid var(--border-color);border-radius:12px;margin-bottom:10px;}
+.addr-txt{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.addr-rm{background:none;border:1px solid var(--border-color);color:var(--text-secondary);font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:7px;cursor:pointer;font-family:inherit;transition:all .15s;flex-shrink:0;}
+.addr-rm:hover{border-color:var(--primary);color:#7fb0ff;}
+.addr-form{margin-top:22px;padding-top:22px;border-top:1px solid var(--border-color);}
+.addr-form-h{font-size:13px;font-weight:800;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;}
+.fav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.fav-card{background:var(--bg-section);border:1px solid var(--border-color);border-radius:12px;padding:14px;}
+.fav-name{font-size:12.5px;font-weight:600;color:var(--text-main);line-height:1.35;margin-bottom:8px;min-height:34px;}
+.fav-price{font-size:15px;font-weight:800;color:var(--success);margin-bottom:10px;}
+.fav-btn{display:block;text-align:center;font-size:11.5px;font-weight:700;color:#7fb0ff;border:1px solid rgba(0,102,255,.4);border-radius:7px;padding:7px;transition:all .15s;}
+.fav-btn:hover{background:rgba(0,102,255,.1);}
+.cli-save-msg{display:none;font-size:12.5px;color:#86efac;margin-top:10px;}
+
+/* ══ OFERTAS ══ */
+.ofertas{margin-top:56px;}
+.of-title{font-size:22px;font-weight:800;color:var(--text-main);margin-bottom:22px;letter-spacing:-.3px;}
+.of-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:20px;}
+.of-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;position:relative;transition:transform .2s,border-color .2s;}
+.of-card:hover{transform:translateY(-3px);border-color:rgba(0,102,255,.35);}
+.of-badge{position:absolute;top:10px;left:10px;background:var(--primary);color:#fff;font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:6px;z-index:2;}
+.of-img{background:#CFCFCF;height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.of-img img{width:100%;height:100%;object-fit:contain;padding:10px;}
+.of-body{padding:14px;}
+.of-name{font-size:12.5px;font-weight:600;color:var(--text-main);line-height:1.35;min-height:34px;margin-bottom:8px;}
+.of-old{font-size:11px;color:var(--text-secondary);text-decoration:line-through;}
+.of-price{font-size:17px;font-weight:800;color:var(--success);margin-bottom:10px;}
+.of-btn{display:block;text-align:center;font-size:11.5px;font-weight:700;color:#fff;background:var(--primary);border-radius:7px;padding:9px;transition:background .15s;}
+.of-btn:hover{background:var(--primary-hover);}
+@media(max-width:1100px){.of-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:580px){.of-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* ══ FOOTER (ft2 — igual à alfa-replica.html) ══ */
+.sec-wrap{max-width:1650px;margin:0 auto;padding:0 20px;}
+.nlt-band{background:var(--bg-section);border-top:1px solid var(--border-color);padding:56px 0 60px;}
+.wpp-box{background:linear-gradient(125deg,var(--bg-section) 0%,var(--bg-card) 48%,var(--bg-section) 100%);border:1px solid var(--border-color);border-radius:16px;padding:44px 56px;display:flex;align-items:center;justify-content:space-between;gap:40px;position:relative;overflow:hidden;flex-wrap:wrap;}
+.wpp-glr{position:absolute;right:-100px;top:-100px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(0,102,255,.12) 0%,transparent 65%);pointer-events:none;}
+.wpp-gll{position:absolute;left:-60px;bottom:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(34,197,94,.07) 0%,transparent 65%);pointer-events:none;}
+.wpp-left{flex:1;min-width:260px;position:relative;}
+.wpp-seal{display:inline-flex;align-items:center;gap:7px;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#22c55e;background:rgba(34,197,94,.09);border:1px solid rgba(34,197,94,.25);border-radius:20px;padding:5px 14px;margin-bottom:16px;}
+.wpp-title{font-size:24px;font-weight:900;color:var(--text-main);letter-spacing:-.4px;margin:0 0 8px;line-height:1.25;}
+.wpp-sub{font-size:13.5px;color:var(--text-secondary);line-height:1.6;max-width:480px;}
+.wpp-right{flex-shrink:0;position:relative;}
+.wpp-btn{display:inline-flex;align-items:center;gap:13px;background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);color:#fff;text-decoration:none;padding:17px 32px;border-radius:12px;font-size:14.5px;font-weight:800;white-space:nowrap;transition:transform .25s,box-shadow .25s,filter .25s;box-shadow:0 8px 32px rgba(34,197,94,.3),0 0 0 1px rgba(34,197,94,.15);}
+.wpp-btn:hover{transform:translateY(-3px) scale(1.025);box-shadow:0 18px 50px rgba(34,197,94,.46),0 0 0 1px rgba(34,197,94,.3);filter:brightness(1.07);}
+.ft2-main{background:var(--bg-section);border-top:1px solid var(--border-color);position:relative;}
+.ft2-main::before{content:'';position:absolute;top:-1px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,102,255,.52) 50%,transparent);pointer-events:none;}
+.ft2-grid{display:grid;grid-template-columns:2fr 1.3fr 1.3fr 1.6fr;gap:56px;padding:56px 0 50px;}
+.ft2-logo{height:44px;width:auto;display:block;margin-bottom:14px;}
+.ft2-tag{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);margin-bottom:16px;display:block;}
+.ft2-about{font-size:12.5px;color:var(--text-muted);line-height:1.78;margin:0 0 22px;max-width:268px;}
+.ft2-phone{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--text-muted);text-decoration:none;margin-bottom:16px;}
+.ft2-col-h{font-size:9.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin:0 0 20px;display:flex;align-items:center;gap:10px;}
+.ft2-col-h::after{content:'';flex:1;height:1px;background:var(--border-color);}
+.ft2-link{font-size:13px;color:var(--text-muted);text-decoration:none;display:block;margin-bottom:11px;transition:color .2s;}
+.ft2-link:hover{color:#7fa8d9;}
+.ft2-pay-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;}
+.ft2-pay-chip{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:#fff;border:1px solid rgba(0,0,0,.14);border-radius:6px;padding:0 11px;height:32px;min-width:48px;transition:transform .15s,box-shadow .15s;}
+.ft2-pay-chip:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.18);}
+.fpc-elo-logo{position:relative;width:26px;height:18px;}
+.fpc-elo-y{position:absolute;left:0;top:2px;width:12px;height:12px;border-radius:50%;background:#FFCB05;}
+.fpc-elo-c{position:absolute;left:5px;top:4px;width:12px;height:12px;border-radius:50%;background:#00A4E0;mix-blend-mode:multiply;}
+.fpc-elo-k{position:absolute;left:11px;top:1px;width:12px;height:12px;border-radius:50%;background:#000;mix-blend-mode:multiply;opacity:.85;}
+.ft2-seal-list{display:flex;flex-direction:column;gap:9px;}
+.ft2-seal-item{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--text-muted);font-weight:600;}
+.ft2-bottom{border-top:1px solid var(--border-color);padding:20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.ft2-bottom p{margin:0;font-size:11px;color:var(--text-muted);font-weight:500;}
+@media(max-width:960px){.ft2-grid{grid-template-columns:repeat(2,1fr);gap:36px;}}
+@media(max-width:900px){.acc-split{grid-template-columns:1fr;}.acc-divider{width:auto;height:1px;flex-direction:row;padding:0;}.acc-divider span{position:static;margin:24px 0;}.cli-wrap{grid-template-columns:1fr;}.cli-menu{position:static;}}
+@media(max-width:580px){.ft2-grid{grid-template-columns:1fr;text-align:center;padding:40px 0 32px;}.ft2-col-h{justify-content:center;}.ft2-col-h::after{display:none;}.ft2-pay-grid{justify-content:center;}.ft2-seal-list{align-items:center;}.nlt-in{flex-direction:column;text-align:center;}.acc-col{padding:34px 24px;}}
+
+/* ══ SUPORTE FLUTUANTE ══ */
+.wpp-float{position:fixed;bottom:26px;right:26px;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35);color:#fff;z-index:9999;transition:transform .2s,box-shadow .2s;}
+.wpp-float:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(0,0,0,.45);}
+.wpp-float svg{width:30px;height:30px;}
+@media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
 </head>
 <body>
-<div class="layout">
 
-<!-- ══ LEFT — imagem real ══ -->
-<div class="lp">
-  <img
-    class="limg"
-    src="ChatGPT Image 2 de jul. de 2026, 00_48_50.png"
-    alt="Hardware Sem Limites — Alfa Informática"
-  >
-  <div class="lfade"></div>
-  <div class="lvign"></div>
-  <div class="lbadge"><span class="lbdot-w"><span class="lbdot-ping"></span><span class="lbdot"></span></span>Alta Performance</div>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="topbar-left">
+      <a href="#" class="topbar-lk">Atendimento ao cliente</a>
+      <a href="#" class="topbar-lk">Suporte</a>
+      <a href="#" class="topbar-lk">Rastrear pedido</a>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="themeToggle" onclick="Store.toggleTheme()" type="button">
+        <span class="theme-toggle-track"><span class="theme-toggle-knob"></span></span>
+        <span class="theme-toggle-label">Modo Claro</span>
+      </button>
+    </div>
+  </div>
 </div>
 
-<!-- ══ RIGHT — formulário ══ -->
-<div class="rp">
-  <canvas id="rcv"></canvas>
-  <div class="rglow"></div>
-  <div class="ri">
-    <div class="logo-wrap">
-      <img src="logo.png" class="logo-img" alt="Alfa Informática" onerror="this.style.display='none'">
-      <div class="logo-sep"><span class="logo-sub">Hardware &amp; Periféricos</span></div>
+<header class="hdr">
+<div class="hdr-top">
+  <a href="alfa-replica.html" class="hdr-logo"><img src="logo.png" alt="Alfa Informática"></a>
+  <div class="search-wrap" id="searchWrap">
+    <div class="hdr-search">
+      <input class="hdr-search-in" id="searchIn" type="text" placeholder="Digite o que você procura..." autocomplete="off">
+      <button class="hdr-search-btn" onclick="doSearch()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> BUSCAR</button>
     </div>
+    <div class="search-drop" id="searchDrop"></div>
+  </div>
+  <div class="hdr-acts-group">
+    <a href="alfa-replica.html" class="hdr-act hdr-act-current">
+      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="hdr-act-text"><span class="hdr-act-line1">Minha Conta</span><span class="hdr-act-line2">Você está aqui</span></div>
+    </a>
+    <a href="favoritos.html" class="hdr-act">
+      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <div class="hdr-act-text"><span class="hdr-act-line1">Favoritos</span><span class="hdr-act-line2">Lista de desejos</span></div>
+    </a>
+    <a href="carrinho.html" class="hdr-act hdr-act-cart">
+      <svg class="hdr-act-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <div class="hdr-act-text"><span class="hdr-act-line1">CARRINHO</span><span class="hdr-act-line2" id="cart-count-lbl">0 produtos</span></div>
+    </a>
+  </div>
+</div>
+<nav class="hdr-nav">
+  <div class="hdr-nav-inner">
+    <a href="categoria.html"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><rect width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="4.6" width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="9.2" width="14" height="1.8" rx=".9" fill="currentColor"/></svg> DEPARTAMENTOS</a>
+    <a href="categoria.html?q=monte+seu+pc">MONTE SEU PC</a>
+    <a href="categoria.html?cat=pc-gamer">PCs GAMER</a>
+    <a href="categoria.html?cat=notebooks">NOTEBOOKS</a>
+    <a href="categoria.html?cat=monitores-gaming">MONITORES</a>
+    <a href="categoria.html?cat=perifericos">PERIFÉRICOS</a>
+    <a href="categoria.html?cat=promocoes" class="nav-promo">PROMOÇÕES</a>
+  </div>
+</nav>
+</header>
 
-    <div class="card" id="card">
-      <button class="btn-close" onclick="location.href='alfa-replica.html'" title="Voltar à loja">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-      <div class="tabs" id="tbr">
-        <button class="tab active" onclick="stab('login')">Entrar</button>
-        <button class="tab" onclick="stab('register')">Criar Conta</button>
-      </div>
+<main class="acc-wrap">
+
+  <!-- ══ LOGIN / REGISTER / FORGOT ══ -->
+  <div class="acc-card" id="accCard">
+    <div class="acc-split" id="accSplit">
 
       <!-- LOGIN -->
-      <div class="tp on" id="panel-login">
+      <div class="tp on acc-col" id="panel-login">
+        <div class="acc-title">Acesse sua conta</div>
+        <div class="acc-sub">Informe seus dados para continuar</div>
         <div class="msg" id="loginMsg"></div>
         <div class="field">
-          <div class="flabel"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>E-mail</div>
+          <label class="flabel">E-mail</label>
           <div class="fw">
             <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span>
             <input type="email" id="lE" placeholder="seu@email.com" autocomplete="email">
           </div>
         </div>
         <div class="field">
-          <div class="flabel"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Senha</div>
+          <label class="flabel">Senha</label>
           <div class="fw">
             <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
             <input type="password" id="lP" placeholder="••••••••" autocomplete="current-password">
@@ -228,124 +333,430 @@ a{color:inherit;text-decoration:none;}
           </div>
         </div>
         <div class="frow">
-          <label class="cklabel" onclick="tck('rc')"><div class="cbox on" id="rc"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cktxt">Lembrar de mim</span></label>
-          <span class="flnk" onclick="spanel('forgot')">Esqueci minha senha</span>
+          <label class="cklabel" onclick="tck('rc')"><div class="cbox on" id="rc"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cktxt">Lembrar meus dados</span></label>
+          <button class="flnk" onclick="spanel('forgot')">Esqueci minha senha</button>
         </div>
-        <button class="btn" onclick="doLogin()">ENTRAR &nbsp;→</button>
+        <button class="btn" onclick="doLogin()">ACESSAR CONTA &nbsp;→</button>
       </div>
 
-      <!-- REGISTER -->
-      <div class="tp" id="panel-register">
-        <div class="msg" id="registerMsg"></div>
+      <div class="acc-divider"><span>ou</span></div>
+
+      <!-- NOVO POR AQUI -->
+      <div class="acc-col" style="display:flex;flex-direction:column;justify-content:center;">
+        <div class="acc-title" style="font-size:22px;">Novo por aqui?</div>
+        <p class="acc-sub" style="margin-bottom:26px;">Crie sua conta e aproveite todos os benefícios de ser cliente Alpha.</p>
+        <button class="btn btn-out" onclick="stab('register')">CRIAR CONTA</button>
+      </div>
+
+    </div>
+
+    <!-- REGISTER (ocupa o card inteiro quando ativo) -->
+    <div class="tp acc-col" id="panel-register" style="max-width:520px;margin:0 auto;">
+      <div class="acc-title">Criar minha conta</div>
+      <div class="acc-sub">Leva menos de um minuto</div>
+      <div class="msg" id="registerMsg"></div>
+      <div class="field">
+        <label class="flabel">Nome Completo</label>
+        <div class="fw">
+          <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+          <input type="text" id="rN" placeholder="Seu nome completo" autocomplete="name">
+        </div>
+      </div>
+      <div class="frow2">
         <div class="field">
-          <div class="flabel"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Nome Completo</div>
+          <label class="flabel">CPF</label>
           <div class="fw">
-            <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
-            <input type="text" id="rN" placeholder="Seu nome completo" autocomplete="name">
+            <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="13" y2="13"/></svg></span>
+            <input type="text" id="rCpf" placeholder="000.000.000-00" oninput="maskCPF(this)" inputmode="numeric" maxlength="14">
           </div>
         </div>
         <div class="field">
-          <div class="flabel"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>E-mail</div>
+          <label class="flabel">Telefone</label>
           <div class="fw">
-            <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span>
-            <input type="email" id="rE" placeholder="seu@email.com" autocomplete="email">
+            <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg></span>
+            <input type="text" id="rTel" placeholder="(00) 00000-0000" oninput="maskTel(this)" inputmode="numeric" maxlength="15">
           </div>
         </div>
+      </div>
+      <div class="field">
+        <label class="flabel">E-mail</label>
+        <div class="fw">
+          <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span>
+          <input type="email" id="rE" placeholder="seu@email.com" autocomplete="email">
+        </div>
+      </div>
+      <div class="frow2">
         <div class="field">
-          <div class="flabel"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Senha</div>
+          <label class="flabel">Senha</label>
           <div class="fw">
             <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
             <input type="password" id="rP" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
-            <span class="fi2" onclick="tp2('rP',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
           </div>
         </div>
         <div class="field">
-          <div class="flabel"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Confirmar Senha</div>
+          <label class="flabel">Confirmar Senha</label>
           <div class="fw">
             <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
             <input type="password" id="rC" placeholder="Repita a senha" autocomplete="new-password">
-            <span class="fi2" onclick="tp2('rC',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
           </div>
         </div>
-        <button class="btn" onclick="doReg()">CRIAR CONTA &nbsp;→</button>
-        <p class="ri2">Ao criar conta você concorda com os <a href="#">Termos de Uso</a> e <a href="#">Política de Privacidade</a>.</p>
-        <div class="lnks"><span class="lsm" onclick="stab('login')">← Já tenho conta</span></div>
       </div>
-
-      <!-- FORGOT -->
-      <div class="tp" id="panel-forgot">
-        <div class="msg" id="forgotMsg"></div>
-        <p class="pdsc">Informe seu e-mail e enviaremos as instruções para redefinir sua senha.</p>
-        <div class="field">
-          <div class="flabel"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>E-mail</div>
-          <div class="fw">
-            <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span>
-            <input type="email" id="fE" placeholder="seu@email.com">
-          </div>
-        </div>
-        <button class="btn" onclick="doFgt()">ENVIAR INSTRUÇÕES &nbsp;→</button>
-        <div class="lnks"><span class="lsm" onclick="spanel('login')">← Voltar ao login</span></div>
-      </div>
-
-      <!-- LOGGED -->
-      <div class="tp" id="panel-logged">
-        <div class="uav" id="uav">?</div>
-        <div class="ui"><div class="un" id="uN"></div><div class="ue" id="uE"></div></div>
-        <div class="udv">Ações rápidas</div>
-        <a href="favoritos.html" class="bto"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Meus Favoritos</a>
-        <a href="carrinho.html" class="bto"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Meu Carrinho</a>
-        <button class="bto bto-out" onclick="doOut()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sair da conta</button>
-      </div>
+      <label class="cklabel" style="margin-bottom:8px;" onclick="tck('rt')"><div class="cbox" id="rt"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cktxt">Li e aceito os Termos de Uso e a Política de Privacidade</span></label>
+      <button class="btn" style="margin-top:14px;" onclick="doReg()">CRIAR MINHA CONTA &nbsp;→</button>
+      <div class="lnks"><button class="lsm" onclick="stab('login')">← Já tenho conta</button></div>
     </div>
 
-    <a href="alfa-replica.html" class="bk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Voltar à loja</a>
+    <!-- FORGOT -->
+    <div class="tp acc-col" id="panel-forgot" style="max-width:440px;margin:0 auto;">
+      <div class="acc-title" style="font-size:22px;">Recuperar senha</div>
+      <div class="acc-sub">Informe seu e-mail e enviaremos as instruções para redefinir sua senha.</div>
+      <div class="msg" id="forgotMsg"></div>
+      <div class="field">
+        <label class="flabel">E-mail</label>
+        <div class="fw">
+          <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span>
+          <input type="email" id="fE" placeholder="seu@email.com">
+        </div>
+      </div>
+      <button class="btn" onclick="doFgt()">ENVIAR INSTRUÇÕES &nbsp;→</button>
+      <div class="lnks"><button class="lsm" onclick="spanel('login')">← Voltar ao login</button></div>
+    </div>
+  </div>
+
+  <!-- ══ ÁREA DO CLIENTE ══ -->
+  <div class="acc-client" id="accClient">
+    <div class="cli-wrap">
+      <aside class="cli-menu">
+        <div class="cli-user">
+          <div class="cli-avatar" id="cliAvatar">?</div>
+          <div class="cli-uname" id="cliName"></div>
+          <div class="cli-uemail" id="cliEmail"></div>
+        </div>
+        <button class="cli-item active" onclick="cliPanel('pedidos',this)">Meus Pedidos</button>
+        <button class="cli-item" onclick="cliPanel('dados',this)">Meus Dados</button>
+        <button class="cli-item" onclick="cliPanel('enderecos',this)">Endereços</button>
+        <button class="cli-item" onclick="cliPanel('favoritos',this)">Favoritos</button>
+        <button class="cli-item cli-out" onclick="doOut()">Sair da conta</button>
+      </aside>
+      <div class="cli-content">
+
+        <div class="cli-panel on" id="cli-pedidos">
+          <div class="cli-h">Meus Pedidos</div>
+          <div id="ordersList"></div>
+        </div>
+
+        <div class="cli-panel" id="cli-dados">
+          <div class="cli-h">Meus Dados</div>
+          <div class="field"><label class="flabel">Nome Completo</label><div class="fw"><input type="text" id="dN"></div></div>
+          <div class="frow2">
+            <div class="field"><label class="flabel">CPF</label><div class="fw"><input type="text" id="dCpf" oninput="maskCPF(this)" maxlength="14"></div></div>
+            <div class="field"><label class="flabel">Telefone</label><div class="fw"><input type="text" id="dTel" oninput="maskTel(this)" maxlength="15"></div></div>
+          </div>
+          <div class="field"><label class="flabel">E-mail</label><div class="fw"><input type="email" id="dE" disabled style="opacity:.6;"></div></div>
+          <button class="btn" style="max-width:220px;" onclick="saveDados()">SALVAR ALTERAÇÕES</button>
+          <div class="cli-save-msg" id="dadosMsg">Dados salvos com sucesso.</div>
+        </div>
+
+        <div class="cli-panel" id="cli-enderecos">
+          <div class="cli-h">Endereços</div>
+          <div id="addrList"></div>
+          <div class="addr-form">
+            <div class="addr-form-h">Adicionar novo endereço</div>
+            <div class="field"><label class="flabel">Rua e número</label><div class="fw"><input type="text" id="aRua" placeholder="Rua, número"></div></div>
+            <div class="frow2">
+              <div class="field"><label class="flabel">Cidade</label><div class="fw"><input type="text" id="aCid" placeholder="Cidade"></div></div>
+              <div class="field"><label class="flabel">UF</label><div class="fw"><input type="text" id="aUf" placeholder="UF" maxlength="2"></div></div>
+              <div class="field"><label class="flabel">CEP</label><div class="fw"><input type="text" id="aCep" placeholder="00000-000" maxlength="9"></div></div>
+            </div>
+            <button class="btn btn-out" style="max-width:220px;" onclick="addAddr()">ADICIONAR ENDEREÇO</button>
+          </div>
+        </div>
+
+        <div class="cli-panel" id="cli-favoritos">
+          <div class="cli-h">Favoritos</div>
+          <div id="favGrid" class="fav-grid"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ OFERTAS E PROMOÇÕES ══ -->
+  <section class="ofertas">
+    <div class="of-title">Ofertas e Promoções</div>
+    <div class="of-grid" id="ofGrid"></div>
+  </section>
+
+</main>
+
+<div class="nlt-band">
+  <div class="sec-wrap">
+    <div class="wpp-box">
+      <div class="wpp-glr"></div>
+      <div class="wpp-gll"></div>
+      <div class="wpp-left">
+        <div class="wpp-seal"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> Ofertas exclusivas</div>
+        <h3 class="wpp-title">Entre no Grupo de Ofertas</h3>
+        <p class="wpp-sub">Receba promoções exclusivas, cupons e avisos de hardware antes de todo mundo.</p>
+      </div>
+      <div class="wpp-right">
+        <a href="COLOCAR_AQUI_O_LINK_DO_GRUPO" class="wpp-btn" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          Entrar no grupo do WhatsApp
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 
-</div><!-- /layout -->
+<footer class="ft2-main">
+<div class="sec-wrap">
+<div class="ft2-grid">
 
+<div>
+<img src="logo.png" alt="Alfa Informática" class="ft2-logo">
+<span class="ft2-tag">Hardware &bull; Periféricos &bull; Setup Gamer</span>
+<p class="ft2-about">Especialistas em hardware, periféricos e computadores gamer de alta performance.</p>
+<a href="tel:+5565992655883" class="ft2-phone">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+(65) 99265-5883
+</a>
+</div>
+
+<div>
+<p class="ft2-col-h">Atendimento</p>
+<a href="#" class="ft2-link">Central de Ajuda</a>
+<a href="#" class="ft2-link">Trocas e Devoluções</a>
+<a href="#" class="ft2-link">Garantia</a>
+<a href="#" class="ft2-link">Fale Conosco</a>
+</div>
+
+<div>
+<p class="ft2-col-h">Departamentos</p>
+<a href="categoria.html?cat=processadores" class="ft2-link">Processadores</a>
+<a href="categoria.html?cat=placas-de-video" class="ft2-link">Placas de Vídeo</a>
+<a href="categoria.html?cat=notebooks" class="ft2-link">Notebooks</a>
+<a href="categoria.html?cat=perifericos" class="ft2-link">Periféricos</a>
+<a href="categoria.html?cat=monitores-gaming" class="ft2-link">Monitores</a>
+</div>
+
+<div>
+<p class="ft2-col-h">Formas de Pagamento</p>
+<div class="ft2-pay-grid">
+<div class="ft2-pay-chip"><svg width="36" height="13" viewBox="0 0 40 14"><text x="1" y="13" font-family="Arial,Helvetica,sans-serif" font-style="italic" font-weight="900" font-size="16" fill="#1A1F71" letter-spacing="-1">VISA</text></svg></div>
+<div class="ft2-pay-chip"><svg width="28" height="18" viewBox="0 0 32 20"><circle cx="12" cy="10" r="9" fill="#EB001B"/><circle cx="20" cy="10" r="9" fill="#F79E1B" style="mix-blend-mode:multiply"/></svg></div>
+<div class="ft2-pay-chip"><div class="fpc-elo-logo"><div class="fpc-elo-y"></div><div class="fpc-elo-c"></div><div class="fpc-elo-k"></div></div></div>
+<div class="ft2-pay-chip"><svg width="42" height="13" viewBox="0 0 56 18" fill="none"><path d="M9 9L15 3L21 9L15 15Z" fill="#32BCAD"/><text x="27" y="14" font-family="Arial,sans-serif" font-weight="800" font-size="13" fill="#32BCAD" letter-spacing=".4">Pix</text></svg></div>
+<div class="ft2-pay-chip"><svg width="22" height="17" viewBox="0 0 24 18"><rect x="0" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="4" y="0" width="1" height="18" fill="#1a1a1a"/><rect x="6.5" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="10" y="0" width="1.5" height="18" fill="#1a1a1a"/><rect x="13" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="17" y="0" width="1" height="18" fill="#1a1a1a"/><rect x="19.5" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="23" y="0" width="1" height="18" fill="#1a1a1a"/></svg></div>
+</div>
+<p class="ft2-col-h" style="margin-top:4px;">Segurança</p>
+<div class="ft2-seal-list">
+<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Compra 100% Segura</div>
+<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>SSL Certificado</div>
+<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Garantia Oficial</div>
+</div>
+</div>
+
+</div>
+
+<div class="ft2-bottom">
+<p class="ft2-bottom-txt">&copy; 2026 Alfa Informática. Todos os direitos reservados.</p>
+<p class="ft2-bottom-txt">Desenvolvido por Alfa Informática</p>
+</div>
+</div>
+</footer>
+
+<script src="products.js"></script>
 <script src="store.js"></script>
 <script>
-/* ═══ RIGHT CANVAS (partículas sutis) ═══ */
-(function(){
-  const cv=document.getElementById('rcv');
-  const ctx=cv.getContext('2d');
-  const p=cv.parentElement;
-  function rs(){cv.width=p.offsetWidth;cv.height=p.offsetHeight;}
-  rs();window.addEventListener('resize',rs);
-  const pts=Array.from({length:28},()=>({x:Math.random()*800,y:Math.random()*800,r:Math.random()*.85+.2,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,a:Math.random()*.16+.04}));
-  pts.forEach(pt=>{pt.x=Math.random()*p.offsetWidth;pt.y=Math.random()*p.offsetHeight;});
-  (function fr(){const w=cv.width,h=cv.height;ctx.clearRect(0,0,w,h);pts.forEach(pt=>{pt.x+=pt.vx;pt.y+=pt.vy;if(pt.x<0)pt.x=w;if(pt.x>w)pt.x=0;if(pt.y<0)pt.y=h;if(pt.y>h)pt.y=0;ctx.beginPath();ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);ctx.fillStyle=`rgba(99,145,255,${pt.a})`;ctx.fill();});requestAnimationFrame(fr);})();
-})();
+/* ═══ THEME ═══ */
+Store.syncThemeUI();
 
-/* ═══ FORM ═══ */
-function tck(id){const el=document.getElementById(id);el.classList.toggle('on');el.querySelector('svg').style.display=el.classList.contains('on')?'block':'none';}
-function tp2(id,btn){const i=document.getElementById(id);const s=i.type==='password';i.type=s?'text':'password';btn.innerHTML=s?`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;}
-function stab(t){document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['login','register'][i]===t));spanel(t);}
-function spanel(p){document.querySelectorAll('.tp').forEach(e=>e.classList.remove('on'));document.getElementById('panel-'+p).classList.add('on');}
-function smsg(id,type,txt){const el=document.getElementById(id);el.className='msg '+type;el.textContent=txt;el.style.display='block';}
-function doLogin(){const e=document.getElementById('lE').value.trim(),p=document.getElementById('lP').value;if(!e||!p){smsg('loginMsg','error','Preencha todos os campos.');return;}const r=Store.mockLogin(e,p);if(!r.ok){smsg('loginMsg','error',r.msg);return;}smsg('loginMsg','success','Login realizado! Redirecionando...');setTimeout(()=>{location.href=document.referrer||'alfa-replica.html';},1000);}
-function doReg(){const n=document.getElementById('rN').value.trim(),e=document.getElementById('rE').value.trim(),p=document.getElementById('rP').value,c=document.getElementById('rC').value;if(!n||!e||!p){smsg('registerMsg','error','Preencha todos os campos.');return;}if(p.length<6){smsg('registerMsg','error','Senha deve ter ao menos 6 caracteres.');return;}if(p!==c){smsg('registerMsg','error','As senhas não coincidem.');return;}const r=Store.mockRegister(n,e,p);if(!r.ok){smsg('registerMsg','error',r.msg);return;}smsg('registerMsg','success','Conta criada! Redirecionando...');setTimeout(()=>{location.href='alfa-replica.html';},1000);}
-function doFgt(){const e=document.getElementById('fE').value.trim();if(!e){smsg('forgotMsg','error','Informe o e-mail.');return;}smsg('forgotMsg','success','Instruções enviadas para '+e+' (simulado).');}
-function doOut(){Store.clearUser();location.reload();}
-const _u=Store.getUser();if(_u){spanel('logged');document.getElementById('uN').textContent=_u.name;document.getElementById('uE').textContent=_u.email;document.getElementById('uav').textContent=(_u.name||'U').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();document.getElementById('tbr').style.display='none';}
-document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const a=document.querySelector('.tp.on');if(!a)return;if(a.id==='panel-login')doLogin();else if(a.id==='panel-register')doReg();else if(a.id==='panel-forgot')doFgt();});
-
-/* ═══ BADGE — só ajusta o top pelo scale da imagem ═══ */
+/* ═══ HEADER SEARCH (autocomplete) ═══ */
 (function(){
-  const lp=document.querySelector('.lp');
-  const badge=document.querySelector('.lbadge');
-  const img=document.querySelector('.limg');
-  function pos(){
-    const ch=lp.offsetHeight;
-    const scale=Math.max(lp.offsetWidth/1624, ch/969);
-    const oy=(ch-969*scale)/2;
-    badge.style.top=(oy+54*scale).toFixed(1)+'px';
+  var inp=document.getElementById('searchIn');
+  var drop=document.getElementById('searchDrop');
+  var wrap=document.getElementById('searchWrap');
+  var products=(window.PRODUCTS_DB||[]).map(function(p){
+    return {name:p.name,brand:p.brand,price:'R$ '+p.price.toLocaleString('pt-BR',{minimumFractionDigits:2}),img:p.images&&p.images[0]?p.images[0]:''};
+  });
+  var selIdx=-1;
+  function renderDrop(q){
+    q=q.trim().toLowerCase();
+    if(!q){drop.classList.remove('open');return;}
+    var res=products.filter(function(p){return p.name.toLowerCase().indexOf(q)>-1||p.brand.toLowerCase().indexOf(q)>-1;}).slice(0,8);
+    selIdx=-1;
+    if(!res.length){drop.innerHTML='<div class="search-none">Nenhum produto encontrado para "<b>'+q+'</b>"</div>';drop.classList.add('open');return;}
+    drop.innerHTML='<div class="search-drop-head">'+res.length+' resultado'+(res.length!==1?'s':'')+'</div>'+
+      res.map(function(p,i){
+        return '<a class="search-item" href="produto.html?q='+encodeURIComponent(p.name)+'" data-idx="'+i+'">'+
+          '<div class="search-item-img">'+(p.img?'<img src="'+p.img+'" alt="">':'<span class="search-item-img-ph">📦</span>')+'</div>'+
+          '<div class="search-item-info"><div class="search-item-brand">'+p.brand+'</div><div class="search-item-name">'+p.name+'</div></div>'+
+          '<div class="search-item-right"><span class="search-item-price">'+p.price+'</span></div>'+
+        '</a>';
+      }).join('');
+    drop.classList.add('open');
   }
-  pos();
-  if(!img.complete)img.addEventListener('load',pos);
-  window.addEventListener('resize',pos);
+  inp.addEventListener('input',function(){renderDrop(this.value);});
+  inp.addEventListener('focus',function(){if(this.value.trim())renderDrop(this.value);});
+  document.addEventListener('click',function(e){if(!wrap.contains(e.target))drop.classList.remove('open');});
+  window.doSearch=function(){var q=inp.value.trim();if(q)location.href='categoria.html?q='+encodeURIComponent(q);};
 })();
+function updateCartCount(){ document.getElementById('cart-count-lbl').textContent = Store.cartCount()+' produto'+(Store.cartCount()!==1?'s':''); }
+updateCartCount();
+Store.on('cart', updateCartCount);
+
+/* ═══ MASKS ═══ */
+function maskCPF(el){let v=el.value.replace(/\D/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');el.value=v;}
+function maskTel(el){let v=el.value.replace(/\D/g,'').slice(0,11);v=v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d{1,4})$/,'$1-$2');el.value=v;}
+
+/* ═══ FORM CONTROLS ═══ */
+function tck(id){const el=document.getElementById(id);el.classList.toggle('on');}
+function tp2(id,btn){const i=document.getElementById(id);const s=i.type==='password';i.type=s?'text':'password';}
+function stab(t){spanel(t);}
+function spanel(p){
+  document.getElementById('accSplit').style.display = p==='login' ? 'grid' : 'none';
+  document.querySelectorAll('.tp').forEach(e=>e.classList.remove('on'));
+  document.getElementById('panel-'+p).classList.add('on');
+}
+function smsg(id,type,txt){const el=document.getElementById(id);el.className='msg '+type;el.textContent=txt;el.style.display='block';}
+
+function doLogin(){
+  const e=document.getElementById('lE').value.trim(),p=document.getElementById('lP').value;
+  if(!e||!p){smsg('loginMsg','error','Preencha e-mail e senha.');return;}
+  const r=Store.mockLogin(e,p);
+  if(!r.ok){smsg('loginMsg','error',r.msg);return;}
+  if(document.getElementById('rc').classList.contains('on')) localStorage.setItem('alfa_remember_email',e);
+  else localStorage.removeItem('alfa_remember_email');
+  smsg('loginMsg','success','Login realizado! Redirecionando...');
+  setTimeout(showClient,700);
+}
+function doReg(){
+  const n=document.getElementById('rN').value.trim(),cpf=document.getElementById('rCpf').value.trim(),
+        tel=document.getElementById('rTel').value.trim(),e=document.getElementById('rE').value.trim(),
+        p=document.getElementById('rP').value,c=document.getElementById('rC').value;
+  if(!n||!e||!p||!cpf||!tel){smsg('registerMsg','error','Preencha todos os campos.');return;}
+  if(cpf.replace(/\D/g,'').length!==11){smsg('registerMsg','error','CPF inválido.');return;}
+  if(tel.replace(/\D/g,'').length<10){smsg('registerMsg','error','Telefone inválido.');return;}
+  if(p.length<6){smsg('registerMsg','error','Senha deve ter ao menos 6 caracteres.');return;}
+  if(p!==c){smsg('registerMsg','error','As senhas não coincidem.');return;}
+  if(!document.getElementById('rt').classList.contains('on')){smsg('registerMsg','error','Você precisa aceitar os termos de uso.');return;}
+  const r=Store.mockRegister(n,e,p,cpf,tel);
+  if(!r.ok){smsg('registerMsg','error',r.msg);return;}
+  smsg('registerMsg','success','Conta criada! Redirecionando...');
+  setTimeout(showClient,700);
+}
+function doFgt(){
+  const e=document.getElementById('fE').value.trim();
+  if(!e){smsg('forgotMsg','error','Informe o e-mail.');return;}
+  smsg('forgotMsg','success','Instruções enviadas para '+e+' (simulado).');
+}
+function doOut(){Store.clearUser();location.reload();}
+
+/* ═══ CLIENT AREA ═══ */
+function cliPanel(p,btn){
+  document.querySelectorAll('.cli-panel').forEach(e=>e.classList.remove('on'));
+  document.getElementById('cli-'+p).classList.add('on');
+  document.querySelectorAll('.cli-item').forEach(e=>e.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+function showClient(){
+  const u=Store.getUser();
+  if(!u) return;
+  document.getElementById('accCard').style.display='none';
+  document.getElementById('accClient').style.display='block';
+  document.getElementById('cliName').textContent=u.name;
+  document.getElementById('cliEmail').textContent=u.email;
+  document.getElementById('cliAvatar').textContent=(u.name||'U').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
+  renderOrders();
+  renderDados();
+  renderAddresses();
+  renderFavorites();
+}
+function renderOrders(){
+  const list=document.getElementById('ordersList');
+  const orders=Store.getOrders();
+  if(!orders.length){list.innerHTML='<div class="ord-empty">Você ainda não tem pedidos.</div>';return;}
+  list.innerHTML=orders.map(o=>
+    '<div class="ord-item"><div><div class="ord-id">Pedido #'+o.id+' &middot; '+o.date+'</div><div class="ord-name">'+o.items+'</div></div>'+
+    '<span class="ord-status'+(o.status==='Entregue'?' done':'')+'">'+o.status+'</span><div class="ord-total">'+o.total+'</div></div>'
+  ).join('');
+}
+function renderDados(){
+  const u=Store.getUser()||{};
+  document.getElementById('dN').value=u.name||'';
+  document.getElementById('dCpf').value=u.cpf||'';
+  document.getElementById('dTel').value=u.phone||'';
+  document.getElementById('dE').value=u.email||'';
+}
+function saveDados(){
+  Store.updateUser({name:document.getElementById('dN').value.trim(),cpf:document.getElementById('dCpf').value.trim(),phone:document.getElementById('dTel').value.trim()});
+  document.getElementById('cliName').textContent=Store.getUser().name;
+  const m=document.getElementById('dadosMsg');m.style.display='block';
+  setTimeout(()=>m.style.display='none',2200);
+}
+function renderAddresses(){
+  const list=document.getElementById('addrList');
+  const addrs=Store.getAddresses();
+  if(!addrs.length){list.innerHTML='<div class="addr-empty">Nenhum endereço cadastrado.</div>';return;}
+  list.innerHTML=addrs.map(a=>
+    '<div class="addr-item"><div class="addr-txt">'+a.rua+' &middot; '+a.cid+'/'+a.uf+' &middot; CEP '+a.cep+'</div>'+
+    '<button class="addr-rm" onclick="rmAddr('+a.id+')">Remover</button></div>'
+  ).join('');
+}
+function addAddr(){
+  const rua=document.getElementById('aRua').value.trim(),cid=document.getElementById('aCid').value.trim(),
+        uf=document.getElementById('aUf').value.trim(),cep=document.getElementById('aCep').value.trim();
+  if(!rua||!cid||!uf) return;
+  Store.addAddress({rua,cid,uf,cep});
+  document.getElementById('aRua').value='';document.getElementById('aCid').value='';
+  document.getElementById('aUf').value='';document.getElementById('aCep').value='';
+  renderAddresses();
+}
+function rmAddr(id){Store.removeAddress(id);renderAddresses();}
+function renderFavorites(){
+  const grid=document.getElementById('favGrid');
+  const favs=Store.getFavorites();
+  if(!favs.length){grid.innerHTML='<div class="fav-empty">Você ainda não tem favoritos.</div>';return;}
+  grid.innerHTML=favs.map(f=>
+    '<div class="fav-card"><div class="fav-name">'+f.name+'</div><div class="fav-price">'+(typeof f.price==='number'?Store.fmt(f.price):f.price)+'</div>'+
+    '<a class="fav-btn" href="produto.html?q='+encodeURIComponent(f.name)+'">Ver produto</a></div>'
+  ).join('');
+}
+
+/* ═══ OFERTAS ═══ */
+(function(){
+  const grid=document.getElementById('ofGrid');
+  const items=(window.PRODUCTS_DB||[]).filter(p=>p.old && p.old>p.price).slice(0,6);
+  grid.innerHTML=items.map(p=>{
+    const off=Math.round((1-p.price/p.old)*100);
+    const img=p.images&&p.images[0]?p.images[0]:'';
+    return '<div class="of-card"><div class="of-badge">-'+off+'%</div>'+
+      '<div class="of-img">'+(img?'<img src="'+img+'" alt="'+p.name+'">':'')+'</div>'+
+      '<div class="of-body"><div class="of-name">'+p.name+'</div>'+
+      '<div class="of-old">'+Store.fmt(p.old)+'</div><div class="of-price">'+Store.fmt(p.price)+'</div>'+
+      '<a class="of-btn" href="produto.html?q='+encodeURIComponent(p.name)+'">Ver produto</a></div></div>';
+  }).join('');
+})();
+
+/* ═══ INIT ═══ */
+(function(){
+  const remembered=localStorage.getItem('alfa_remember_email');
+  if(remembered) document.getElementById('lE').value=remembered;
+  if(Store.isLoggedIn()) showClient();
+})();
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  const a=document.querySelector('.tp.on');
+  if(!a)return;
+  if(a.id==='panel-login')doLogin();
+  else if(a.id==='panel-register')doReg();
+  else if(a.id==='panel-forgot')doFgt();
+});
 </script>
+
+<a href="https://wa.me/5565992655883" class="wpp-float" target="_blank" rel="noopener noreferrer" title="Fale conosco no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
 </body>
 </html>

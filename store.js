@@ -12,16 +12,24 @@ const Store = {
     const users = JSON.parse(localStorage.getItem('alfa_users') || '[]');
     const u = users.find(u => u.email === email && u.pass === pass);
     if (!u) return { ok: false, msg: 'E-mail ou senha incorretos.' };
-    Store.setUser({ name: u.name, email: u.email });
+    Store.setUser({ name: u.name, email: u.email, cpf: u.cpf || '', phone: u.phone || '' });
     return { ok: true };
   },
-  mockRegister: (name, email, pass) => {
+  mockRegister: (name, email, pass, cpf, phone) => {
     const users = JSON.parse(localStorage.getItem('alfa_users') || '[]');
     if (users.find(u => u.email === email)) return { ok: false, msg: 'E-mail já cadastrado.' };
-    users.push({ name, email, pass });
+    users.push({ name, email, pass, cpf: cpf || '', phone: phone || '' });
     localStorage.setItem('alfa_users', JSON.stringify(users));
-    Store.setUser({ name, email });
+    Store.setUser({ name, email, cpf: cpf || '', phone: phone || '' });
+    if (!Store.getOrders().length) Store._seedOrders();
     return { ok: true };
+  },
+  updateUser: (patch) => {
+    const u = { ...(Store.getUser() || {}), ...patch };
+    Store.setUser(u);
+    const users = JSON.parse(localStorage.getItem('alfa_users') || '[]');
+    const idx = users.findIndex(x => x.email === (Store.getUser().email));
+    if (idx >= 0) { users[idx] = { ...users[idx], ...patch }; localStorage.setItem('alfa_users', JSON.stringify(users)); }
   },
 
   // ── CART ──────────────────────────────────────────────
@@ -77,6 +85,49 @@ const Store = {
   // ── CHECKOUT ──────────────────────────────────────────
   getCheckoutItems:  () => JSON.parse(localStorage.getItem('alfa_checkout') || '[]'),
   setCheckoutItems:  (items) => localStorage.setItem('alfa_checkout', JSON.stringify(items)),
+
+  // ── THEME ─────────────────────────────────────────────
+  getTheme: () => localStorage.getItem('alfa_theme') || 'dark',
+  setTheme: (t) => {
+    localStorage.setItem('alfa_theme', t);
+    document.documentElement.dataset.theme = t;
+    Store.syncThemeUI();
+    Store.emit('theme');
+  },
+  toggleTheme: () => Store.setTheme(Store.getTheme() === 'dark' ? 'light' : 'dark'),
+  initTheme: () => { document.documentElement.dataset.theme = Store.getTheme(); },
+  syncThemeUI: () => {
+    const dark = Store.getTheme() === 'dark';
+    document.querySelectorAll('.theme-toggle').forEach(btn => {
+      btn.classList.toggle('is-dark', dark);
+      const lbl = btn.querySelector('.theme-toggle-label');
+      if (lbl) lbl.textContent = dark ? 'Modo Claro' : 'Modo Escuro';
+    });
+  },
+
+  // ── ORDERS (mock) ─────────────────────────────────────
+  getOrders: () => JSON.parse(localStorage.getItem('alfa_orders') || '[]'),
+  addOrder:  (order) => {
+    const orders = Store.getOrders();
+    orders.unshift(order);
+    localStorage.setItem('alfa_orders', JSON.stringify(orders));
+  },
+  _seedOrders: () => {
+    const fmt = Store.fmt;
+    Store.addOrder({ id: '48213', date: '28/06/2026', status: 'Entregue', total: fmt(1249), items: 'Intel Core i5-14600K 3.5GHz 14-Core LGA1700' });
+    Store.addOrder({ id: '48097', date: '14/06/2026', status: 'Em transporte', total: fmt(699), items: 'Corsair Vengeance 32GB DDR5 6000MHz Kit (2x16GB)' });
+  },
+
+  // ── ADDRESSES (mock) ──────────────────────────────────
+  getAddresses:   () => JSON.parse(localStorage.getItem('alfa_addresses') || '[]'),
+  addAddress:     (addr) => {
+    const list = Store.getAddresses();
+    list.push({ ...addr, id: Date.now() });
+    localStorage.setItem('alfa_addresses', JSON.stringify(list));
+  },
+  removeAddress:  (id) => {
+    localStorage.setItem('alfa_addresses', JSON.stringify(Store.getAddresses().filter(a => a.id !== id)));
+  },
 
   // ── EVENTS ────────────────────────────────────────────
   _L: {},

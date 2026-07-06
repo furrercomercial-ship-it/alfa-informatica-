@@ -4,16 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Carrinho — Alfa Informática</title>
+<script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#3A3A3A;--card:rgba(47,47,47,.98);--border:rgba(255,255,255,.08);--bh:rgba(37,99,235,.45);
-  --blue:#2563EB;--bl:#3b82f6;--glow:rgba(37,99,235,.38);
-  --txt2:#6B7280;--txt3:#9CA3AF;--green:#22C55E;--tr:.25s cubic-bezier(.4,0,.2,1);
+  --bg-main:#202020; --bg-section:#2B2B2B; --bg-card:#303030;
+  --bg-header:#1F1F1F; --bg-menu:#0052CC;
+  --text-main:#FFFFFF; --text-secondary:#D1D5DB; --text-muted:#9CA3AF;
+  --border-color:#404040;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+  --tr:.25s cubic-bezier(.4,0,.2,1);
 }
-html,body{min-height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:#fff;overflow-x:hidden;}
+[data-theme="light"]{
+  --bg-main:#F5F7FA; --bg-section:#FFFFFF; --bg-card:#FFFFFF;
+  --bg-header:#FFFFFF; --bg-menu:#0066FF;
+  --text-main:#111827; --text-secondary:#4B5563; --text-muted:#6B7280;
+  --border-color:#E5E7EB;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+}
+html,body{min-height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg-main);color:var(--text-main);overflow-x:hidden;}
 a{color:inherit;text-decoration:none;}
 input,button{font-family:inherit;}
 
@@ -37,7 +48,7 @@ input,button{font-family:inherit;}
 /* ── HEADER ── */
 .hdr{
   position:sticky;top:0;z-index:200;height:72px;
-  background:rgba(43,43,43,.97);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  background:var(--bg-header);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
   border-bottom:1px solid rgba(255,255,255,.08);
   display:flex;align-items:center;justify-content:space-between;padding:0 48px;
   box-shadow:0 2px 40px rgba(0,0,0,.45);
@@ -49,16 +60,16 @@ input,button{font-family:inherit;}
 }
 .hdr-back{
   display:flex;align-items:center;gap:9px;padding:8px 14px;margin:-8px -14px;
-  color:var(--txt3);font-size:13px;font-weight:600;transition:all var(--tr);width:200px;border-radius:10px;
+  color:var(--text-muted);font-size:13px;font-weight:600;transition:all var(--tr);width:200px;border-radius:10px;
 }
 .hdr-back:hover{color:#fff;background:rgba(37,99,235,.09);}
 .hdr-back svg{transition:transform var(--tr);}
 .hdr-back:hover svg{transform:translateX(-3px);}
-.hdr-logo img{height:50px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(37,99,235,.48));transition:filter var(--tr);}
+.hdr-logo img{height:78px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(37,99,235,.48));transition:filter var(--tr);}
 .hdr-logo img:hover{filter:drop-shadow(0 0 28px rgba(37,99,235,.75));}
 .hdr-fav{
   display:flex;align-items:center;gap:9px;padding:8px 14px;margin:-8px -14px;
-  color:var(--txt3);font-size:13px;font-weight:600;transition:all var(--tr);
+  color:var(--text-muted);font-size:13px;font-weight:600;transition:all var(--tr);
   width:200px;justify-content:flex-end;border-radius:10px;
 }
 .hdr-fav:hover{color:#fff;background:rgba(37,99,235,.09);}
@@ -71,343 +82,175 @@ input,button{font-family:inherit;}
 }
 #rightCol{display:flex;flex-direction:column;}
 
-/* ── CART HEADER ── */
-.cart-header{margin-bottom:30px;}
-.cart-title{
-  font-size:32px;font-weight:900;letter-spacing:-.7px;margin-bottom:6px;
-  background:linear-gradient(135deg,#fff 40%,rgba(147,197,253,.75) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.cart-title em{
-  font-style:normal;font-size:20px;font-weight:400;
-  background:none;-webkit-text-fill-color:var(--txt3);
-}
-.cart-sub{font-size:13.5px;color:var(--txt2);}
+/* ── CART BOX ── */
+.cart-box{background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;overflow:hidden;margin-bottom:20px;}
+.cart-box-head{display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--border-color);}
+.cart-box-title{font-size:19px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--text-main);}
+.btn-clear-cart{background:none;border:1px solid var(--border-color);color:var(--text-secondary);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all var(--tr);}
+.btn-clear-cart:hover{border-color:var(--primary);color:var(--primary);}
+.cart-cols{display:grid;grid-template-columns:100px 1fr 130px 150px;gap:20px;padding:13px 26px;border-bottom:1px solid var(--border-color);}
+.cart-cols span{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--text-muted);}
+.cart-cols .cc-prod{grid-column:1/3;}
+.cart-cols .cc-qtd{text-align:center;}
+.cart-cols .cc-price{text-align:right;}
 
-.cart-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.cart-bar-label{font-size:12.5px;color:var(--txt3);font-weight:500;}
-.btn-selall{
-  display:flex;align-items:center;gap:7px;padding:8px 16px;
-  background:rgba(37,99,235,.07);border:1px solid var(--border);border-radius:9px;
-  color:var(--txt3);font-size:11.5px;font-weight:700;cursor:pointer;transition:all var(--tr);
-}
-.btn-selall:hover{background:rgba(37,99,235,.18);border-color:var(--bh);color:#fff;box-shadow:0 0 18px rgba(37,99,235,.12);}
-
-/* ── ITEM CARD ── */
+/* ── ITEM ROW ── */
 .cart-item{
-  background:linear-gradient(150deg,rgba(53,53,53,.99) 0%,rgba(47,47,47,.98) 60%,rgba(43,43,43,.99) 100%);
-  border:1px solid var(--border);border-radius:22px;
-  padding:28px 26px;margin-bottom:16px;
-  display:grid;grid-template-columns:26px 162px 1fr auto;gap:24px;align-items:center;
-  position:relative;overflow:hidden;min-height:150px;
-  box-shadow:0 4px 28px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.035);
-  transition:border-color var(--tr),box-shadow var(--tr),transform var(--tr);
+  display:grid;grid-template-columns:100px 1fr 130px 150px;gap:20px;align-items:center;
+  padding:20px 26px;border-bottom:1px solid var(--border-color);
 }
-.cart-item::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(37,99,235,.55),rgba(96,165,250,.3),transparent);
-  opacity:0;transition:opacity var(--tr);
-}
-.cart-item::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 55% 90% at 18% 50%,rgba(37,99,235,.04) 0%,transparent 65%);
-  pointer-events:none;
-}
-.cart-item:hover{
-  border-color:rgba(37,99,235,.42);transform:translateY(-2px);
-  box-shadow:0 12px 52px rgba(37,99,235,.1),0 4px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.055);
-}
-.cart-item:hover::before{opacity:1;}
-
-/* checkbox */
-.cbox-wrap{display:flex;align-items:center;justify-content:center;}
-.cbox{
-  width:22px;height:22px;border:1.5px solid rgba(37,99,235,.3);border-radius:7px;
-  background:rgba(37,99,235,.04);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all var(--tr);flex-shrink:0;
-}
-.cbox:hover:not(.on){border-color:rgba(37,99,235,.65);background:rgba(37,99,235,.1);}
-.cbox.on{
-  background:linear-gradient(135deg,#1d4ed8,#2563eb);border-color:#2563eb;
-  box-shadow:0 0 0 3px rgba(37,99,235,.18),0 0 20px rgba(37,99,235,.55);
-}
-.cbox svg{display:none;}
-.cbox.on svg{display:block;}
+.cart-item:last-child{border-bottom:none;}
 
 /* product image */
 .item-img{
-  width:162px;height:140px;
-  background:linear-gradient(150deg,rgba(47,47,47,.96) 0%,rgba(38,38,38,.99) 100%);
-  border:1px solid rgba(255,255,255,.09);border-radius:16px;
-  display:flex;align-items:center;justify-content:center;
-  overflow:visible;position:relative;transition:border-color var(--tr);
+  width:100px;height:100px;flex-shrink:0;
+  background:#f2f4f7;border:1px solid var(--border-color);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
 }
-/* pedestal line */
-.item-img::before{
-  content:'';position:absolute;
-  bottom:-1px;left:50%;transform:translateX(-50%);
-  width:75%;height:2px;
-  background:linear-gradient(90deg,transparent,rgba(37,99,235,.8),rgba(96,165,250,.55),rgba(37,99,235,.8),transparent);
-  border-radius:100%;filter:blur(1.5px);
-  box-shadow:0 0 14px rgba(37,99,235,.7),0 0 32px rgba(37,99,235,.25);
-  z-index:2;
-}
-/* pedestal glow pool */
-.item-img::after{
-  content:'';position:absolute;
-  bottom:-8px;left:50%;transform:translateX(-50%);
-  width:65%;height:14px;
-  background:radial-gradient(ellipse at center,rgba(37,99,235,.4) 0%,transparent 70%);
-  filter:blur(6px);z-index:1;
-}
-.item-img-inner{
-  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-  overflow:hidden;border-radius:15px;position:relative;z-index:3;
-}
-.item-img-inner img{
-  width:100%;height:100%;object-fit:contain;padding:12px;
-  filter:drop-shadow(0 6px 22px rgba(37,99,235,.28));
-  transition:transform var(--tr),filter var(--tr);
-}
-.cart-item:hover .item-img-inner img{
-  transform:scale(1.05) translateY(-2px);
-  filter:drop-shadow(0 8px 30px rgba(37,99,235,.45));
-}
-.item-img-ph{font-size:50px;opacity:.14;z-index:3;position:relative;}
+.item-img-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.item-img-inner img{width:100%;height:100%;object-fit:contain;padding:8px;box-sizing:border-box;}
+.item-img-ph{font-size:34px;opacity:.18;}
 
 /* info */
 .item-info{min-width:0;}
-.item-brand{font-size:10px;font-weight:800;color:var(--bl);text-transform:uppercase;letter-spacing:1.6px;margin-bottom:8px;}
-.item-name{font-size:16.5px;font-weight:700;line-height:1.4;margin-bottom:12px;color:#eef2ff;}
-.specs-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;}
-.spec{
-  padding:4px 13px;
-  background:linear-gradient(135deg,rgba(37,99,235,.1),rgba(59,130,246,.07));
-  border:1px solid rgba(59,130,246,.3);border-radius:100px;
-  font-size:10px;font-weight:700;color:#93c5fd;letter-spacing:.5px;
-  transition:all var(--tr);cursor:default;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-}
-.spec:hover{
-  background:linear-gradient(135deg,rgba(37,99,235,.22),rgba(59,130,246,.16));
-  border-color:rgba(59,130,246,.58);color:#bfdbfe;
-  box-shadow:0 0 14px rgba(37,99,235,.22),inset 0 1px 0 rgba(255,255,255,.07);
-}
-.item-prices{display:flex;align-items:baseline;gap:12px;}
-.item-old{font-size:12px;color:var(--txt2);text-decoration:line-through;font-weight:500;}
-.item-price{font-size:23px;font-weight:900;color:var(--green);letter-spacing:-.4px;}
+.item-brand{font-size:10px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.item-name{font-size:14.5px;font-weight:700;line-height:1.4;margin-bottom:6px;color:var(--text-main);}
+.item-meta{font-size:12px;color:var(--text-secondary);line-height:1.65;}
+.item-meta b{color:var(--text-main);font-weight:700;}
 
-/* side */
-.item-side{display:flex;flex-direction:column;align-items:flex-end;gap:16px;}
-.item-total{font-size:18px;font-weight:800;white-space:nowrap;color:#f0f4ff;letter-spacing:-.2px;}
+/* qty column */
+.item-qty-col{display:flex;flex-direction:column;align-items:center;gap:8px;}
 .qty{
   display:flex;align-items:center;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);
-  border-radius:12px;overflow:hidden;transition:border-color var(--tr);
+  background:var(--bg-main);border:1px solid var(--border-color);
+  border-radius:10px;overflow:hidden;transition:border-color var(--tr);
 }
-.qty:hover{border-color:var(--border);}
+.qty:hover{border-color:var(--primary);}
 .qbtn{
-  width:40px;height:40px;background:none;border:none;
-  color:var(--txt3);font-size:20px;cursor:pointer;
+  width:32px;height:32px;background:none;border:none;
+  color:var(--text-muted);font-size:16px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;transition:all var(--tr);
 }
-.qbtn:hover{background:rgba(37,99,235,.2);color:#fff;}
+.qbtn:hover{background:rgba(0,102,255,.14);color:var(--primary);}
 .qval{
-  width:46px;height:40px;background:none;border:none;
-  border-left:1px solid rgba(255,255,255,.07);border-right:1px solid rgba(255,255,255,.07);
-  text-align:center;color:#fff;font-size:14px;font-weight:700;outline:none;
+  width:38px;height:32px;background:none;border:none;
+  border-left:1px solid var(--border-color);border-right:1px solid var(--border-color);
+  text-align:center;color:var(--text-main);font-size:13px;font-weight:700;outline:none;
 }
 .btn-rm{
   display:flex;align-items:center;gap:5px;
-  background:none;border:none;color:rgba(239,68,68,.38);
-  font-size:11.5px;font-weight:600;cursor:pointer;transition:color var(--tr);
+  background:none;border:none;color:var(--text-muted);
+  font-size:11px;font-weight:600;cursor:pointer;transition:color var(--tr);
 }
-.btn-rm:hover{color:#f87171;}
+.btn-rm:hover{color:var(--primary);}
 
-/* ── BENEFITS ── */
-.benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:26px;}
-.ben{
-  background:linear-gradient(150deg,rgba(53,53,53,.98) 0%,rgba(47,47,47,.96) 100%);
-  border:1px solid rgba(37,99,235,.13);border-radius:18px;
-  padding:20px 16px;display:flex;flex-direction:column;gap:12px;
-  transition:all var(--tr);cursor:default;
-  box-shadow:0 2px 18px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.03);
-  position:relative;overflow:hidden;
-}
-.ben::before{
-  content:'';position:absolute;inset:0;border-radius:18px;
-  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(37,99,235,.1) 0%,transparent 60%);
-  opacity:0;transition:opacity var(--tr);pointer-events:none;
-}
-.ben:hover{
-  border-color:rgba(37,99,235,.4);transform:translateY(-4px);
-  box-shadow:0 12px 36px rgba(37,99,235,.14),0 4px 14px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);
-}
-.ben:hover::before{opacity:1;}
-.ben-icon{
-  width:48px;height:48px;
-  background:linear-gradient(135deg,rgba(37,99,235,.16),rgba(59,130,246,.09));
-  border:1px solid rgba(37,99,235,.32);border-radius:14px;
-  display:flex;align-items:center;justify-content:center;color:var(--bl);
-  transition:all var(--tr);box-shadow:0 0 18px rgba(37,99,235,.09);
-}
-.ben:hover .ben-icon{
-  background:linear-gradient(135deg,rgba(37,99,235,.3),rgba(59,130,246,.2));
-  border-color:rgba(37,99,235,.58);
-  box-shadow:0 0 28px rgba(37,99,235,.35),inset 0 1px 0 rgba(255,255,255,.08);
-}
-.ben-title{font-size:12.5px;font-weight:700;color:#e2e8f0;}
-.ben-desc{font-size:11px;color:var(--txt2);line-height:1.55;}
+/* price column */
+.item-price-col{text-align:right;}
+.item-unit{font-size:13px;font-weight:700;color:var(--success);margin-bottom:5px;white-space:nowrap;}
+.item-total-lbl{font-size:12px;color:var(--text-secondary);}
+.item-total-val{font-size:12.5px;font-weight:800;color:var(--text-main);}
+
+
+/* ══ OFERTAS ══ */
+.ofertas{margin-top:36px;}
+.of-title{font-size:20px;font-weight:800;color:var(--text-main);margin-bottom:20px;letter-spacing:-.3px;}
+.of-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.of-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;position:relative;transition:transform .2s,border-color .2s;}
+.of-card:hover{transform:translateY(-3px);border-color:rgba(0,102,255,.35);}
+.of-badge{position:absolute;top:10px;left:10px;background:var(--primary);color:#fff;font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:6px;z-index:2;}
+.of-img{background:#CFCFCF;height:140px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.of-img img{width:100%;height:100%;object-fit:contain;padding:10px;}
+.of-body{padding:14px;}
+.of-name{font-size:12.5px;font-weight:600;color:var(--text-main);line-height:1.35;min-height:34px;margin-bottom:8px;}
+.of-old{font-size:11px;color:var(--text-secondary);text-decoration:line-through;}
+.of-price{font-size:17px;font-weight:800;color:var(--success);margin-bottom:10px;}
+.of-btn{display:block;text-align:center;font-size:11.5px;font-weight:700;color:#fff;background:var(--primary);border-radius:7px;padding:9px;transition:background .15s;}
+.of-btn:hover{background:var(--primary-hover);}
+@media(max-width:900px){.of-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:580px){.of-grid{grid-template-columns:repeat(2,1fr);}}
 
 /* ══ SUMMARY ══ */
 .summary{
   position:sticky;top:88px;
-  background:linear-gradient(160deg,rgba(53,53,53,.99) 0%,rgba(47,47,47,.99) 55%,rgba(43,43,43,.99) 100%);
-  border:1px solid rgba(37,99,235,.2);border-radius:24px;overflow:hidden;
-  box-shadow:0 10px 60px rgba(0,0,0,.55),0 0 0 1px rgba(37,99,235,.07),inset 0 1px 0 rgba(255,255,255,.04);
-  position:relative;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);border-radius:16px;overflow:hidden;
 }
-.summary::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;z-index:2;
-  background:linear-gradient(90deg,transparent,rgba(37,99,235,.6),rgba(96,165,250,.4),rgba(37,99,235,.6),transparent);
-  pointer-events:none;
-}
-/* glow blob behind summary */
-.summary::after{
-  content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);
-  width:70%;height:80px;
-  background:radial-gradient(ellipse at center,rgba(37,99,235,.12) 0%,transparent 70%);
-  filter:blur(20px);pointer-events:none;
-}
-.sum-body{padding:30px 28px 24px;position:relative;z-index:1;}
-.sum-title{
-  font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:2px;
-  color:var(--txt3);display:flex;align-items:center;gap:12px;margin-bottom:26px;
-}
-.sum-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(37,99,235,.22),transparent);}
-.sum-items-count{
-  font-size:13px;color:var(--txt3);margin-bottom:24px;
-  padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.05);
-}
-.sum-items-count strong{color:#fff;font-weight:700;}
-
-/* inputs */
-.seclabel{font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;}
-.sinput-row{display:flex;gap:8px;margin-bottom:24px;}
-.sinput{
-  flex:1;background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.08);
-  border-radius:12px;padding:12px 14px;color:#fff;font-size:13px;
-  outline:none;transition:all var(--tr);
-}
-.sinput:focus{
-  border-color:var(--blue);background:rgba(37,99,235,.04);
-  box-shadow:0 0 0 3px rgba(37,99,235,.14),0 0 24px rgba(37,99,235,.08);
-}
-.sinput::placeholder{color:var(--txt2);}
-.sbtn{
-  padding:12px 16px;
-  background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.28);
-  border-radius:12px;color:var(--bl);font-size:12px;font-weight:700;
-  cursor:pointer;transition:all var(--tr);white-space:nowrap;
-}
-.sbtn:hover{background:rgba(37,99,235,.26);border-color:rgba(37,99,235,.6);color:#fff;box-shadow:0 0 22px rgba(37,99,235,.16);}
-
-/* order rows */
-.sum-rows{margin-bottom:6px;}
-.srow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;}
-.srow-l{font-size:13px;color:var(--txt3);}
-.srow-r{font-size:13px;color:#e2e8f0;font-weight:500;}
-.srow-discount .srow-l,.srow-discount .srow-r{color:var(--green);font-weight:700;}
-.sdiv{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);margin:18px 0 14px;}
-
-/* total */
-.total-block{padding:14px 0 4px;}
-.total-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
-.total-l{font-size:15px;font-weight:700;color:rgba(255,255,255,.65);}
-.total-r{
-  font-size:33px;font-weight:900;letter-spacing:-1px;
-  color:#fff;text-shadow:0 0 30px rgba(37,99,235,.35);
-}
-.installment{font-size:11.5px;color:var(--txt2);text-align:right;margin-bottom:24px;}
-
-/* ── BUTTON ── */
+.sum-body{padding:26px 26px 22px;}
+.sum-title{font-size:20px;font-weight:800;color:var(--text-main);margin-bottom:18px;}
+.sum-plain-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--text-secondary);padding:7px 0;}
+.sum-total-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg-main);border-radius:10px;padding:13px 14px;margin:6px 0 22px;font-size:14px;font-weight:800;color:var(--text-main);}
+.pix-block{text-align:center;margin-bottom:14px;}
+.pix-price{font-size:30px;font-weight:900;color:var(--success);letter-spacing:-.5px;}
+.pix-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;}
+.or-div{display:flex;align-items:center;gap:12px;margin:16px 0;}
+.or-div::before,.or-div::after{content:'';flex:1;height:1px;background:var(--border-color);}
+.or-circ{width:34px;height:34px;border-radius:50%;background:var(--bg-main);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;flex-shrink:0;}
+.card-block{text-align:center;margin-bottom:22px;}
+.card-price{font-size:22px;font-weight:800;color:var(--primary);}
+.card-cap{font-size:12px;color:var(--text-secondary);margin-top:4px;}
 .btn-ck{
-  width:100%;height:64px;
-  background:linear-gradient(135deg,#1240b0 0%,#1d4ed8 38%,#2563eb 65%,#3b82f6 100%);
-  color:#fff;border:none;border-radius:16px;
-  font-size:15px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;
-  position:relative;overflow:hidden;
-  transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s cubic-bezier(.4,0,.2,1);
-  box-shadow:
-    0 6px 32px rgba(37,99,235,.52),
-    0 2px 10px rgba(0,0,0,.4),
-    inset 0 1px 0 rgba(255,255,255,.22),
-    0 0 60px rgba(37,99,235,.1);
-  margin-bottom:18px;
+  width:100%;height:56px;
+  background:var(--success);
+  color:#fff;border:none;border-radius:12px;
+  font-size:14px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:background .2s,transform .2s;
 }
-.btn-ck::before{
-  content:'';position:absolute;top:-50%;left:-110%;width:55%;height:200%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
-  transform:skewX(-22deg);transition:left .6s cubic-bezier(.4,0,.2,1);
+.btn-ck:hover{background:var(--success-hover);}
+.btn-ck:active{transform:scale(.98);}
+.btn-ck .btn-arrow{width:18px;height:18px;}
+.btn-continue{
+  width:100%;margin-top:10px;height:46px;background:transparent;
+  border:1.5px solid var(--success);color:var(--success);border-radius:12px;
+  font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  cursor:pointer;transition:all .2s;
 }
-.btn-ck:hover{
-  transform:translateY(-3px);
-  box-shadow:
-    0 18px 52px rgba(37,99,235,.68),
-    0 4px 18px rgba(0,0,0,.5),
-    inset 0 1px 0 rgba(255,255,255,.28),
-    0 0 100px rgba(37,99,235,.2);
-}
-.btn-ck:hover::before{left:160%;}
-.btn-arrow{transition:transform .25s cubic-bezier(.4,0,.2,1);}
-.btn-ck:hover .btn-arrow{transform:translateX(6px);}
-.btn-ck:active{transform:translateY(-1px) scale(.997);}
-.btn-ck:disabled{background:rgba(37,99,235,.13);color:rgba(255,255,255,.24);cursor:not-allowed;box-shadow:none;}
-.btn-ck:disabled:hover{transform:none;}
+.btn-continue:hover{background:rgba(22,163,74,.08);}
 
-/* security */
-.security{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.sec{
-  display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06);
-  border-radius:11px;padding:10px 12px;transition:border-color var(--tr);
+/* accordion */
+.acc-list{border-top:1px solid var(--border-color);}
+.acc-item{border-bottom:1px solid var(--border-color);}
+.acc-head{display:flex;align-items:center;gap:12px;padding:16px 26px;cursor:pointer;user-select:none;}
+.acc-ic{color:var(--primary);flex-shrink:0;width:17px;height:17px;}
+.acc-head-txt{flex:1;font-size:13.5px;font-weight:700;color:var(--text-main);}
+.acc-chev{color:var(--text-muted);transition:transform .25s;flex-shrink:0;width:15px;height:15px;}
+.acc-item.open .acc-chev{transform:rotate(180deg);}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+.acc-item.open .acc-body{max-height:420px;}
+.acc-body-in{padding:0 26px 20px;}
+.seclabel{font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;}
+.sinput-row{display:flex;gap:8px;margin-bottom:8px;}
+.sinput{
+  flex:1;background:var(--bg-main);border:1px solid var(--border-color);border-radius:9px;
+  padding:11px 13px;font-size:13px;color:var(--text-main);font-family:inherit;outline:none;
+  transition:border-color var(--tr);
 }
-.sec:hover{border-color:rgba(37,99,235,.22);}
-.sec svg{color:var(--bl);flex-shrink:0;}
-.sec span{font-size:10.5px;color:var(--txt3);font-weight:500;line-height:1.3;}
-
-/* payments */
-.payments{
-  padding:18px 28px 22px;border-top:1px solid rgba(255,255,255,.05);
-  background:rgba(0,0,0,.22);position:relative;z-index:1;
+.sinput:focus{border-color:var(--primary);}
+.sinput::placeholder{color:var(--text-muted);}
+.sbtn{
+  padding:0 18px;background:rgba(0,102,255,.1);border:1px solid rgba(0,102,255,.3);
+  border-radius:9px;color:var(--primary);font-size:12.5px;font-weight:700;cursor:pointer;
+  transition:all var(--tr);white-space:nowrap;
 }
-.pay-label{font-size:9.5px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:1.4px;text-align:center;margin-bottom:12px;}
-.pay-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
-.pay-chip{
-  padding:5px 13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  border-radius:8px;font-size:11px;font-weight:700;color:var(--txt2);letter-spacing:.3px;
-  transition:all var(--tr);
-}
-.pay-chip:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);color:var(--txt3);}
+.sbtn:hover{background:rgba(0,102,255,.2);border-color:var(--primary);}
 
 /* frete */
 .frete-opt{
   display:flex;align-items:center;gap:10px;padding:12px 14px;
-  background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.07);
-  border-radius:11px;cursor:pointer;font-size:12.5px;transition:all var(--tr);margin-bottom:8px;
+  background:var(--bg-main);border:1px solid var(--border-color);
+  border-radius:10px;cursor:pointer;font-size:12.5px;transition:all var(--tr);margin-bottom:8px;
 }
-.frete-opt:hover{border-color:var(--border);background:rgba(37,99,235,.05);}
-.frete-opt input{accent-color:var(--blue);}
-.frete-name{flex:1;font-weight:600;}
-.frete-price{color:var(--green);font-weight:700;font-size:12.5px;}
-.frete-days{color:var(--txt2);font-size:10.5px;}
+.frete-opt:hover{border-color:var(--primary);}
+.frete-opt input{accent-color:var(--primary);}
+.frete-name{flex:1;font-weight:600;color:var(--text-main);}
+.frete-price{color:var(--success);font-weight:700;font-size:12.5px;}
+.frete-days{color:var(--text-secondary);font-size:10.5px;}
 
 /* empty */
 .empty{grid-column:1/-1;text-align:center;padding:120px 0;}
 .empty-ic{font-size:78px;opacity:.18;margin-bottom:24px;}
-.empty h2{font-size:24px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:8px;}
-.empty p{font-size:14px;color:var(--txt3);margin-bottom:32px;}
+.empty h2{font-size:24px;font-weight:700;color:var(--text-secondary);margin-bottom:8px;}
+.empty p{font-size:14px;color:var(--text-muted);margin-bottom:32px;}
 .btn-home{
   display:inline-flex;align-items:center;gap:9px;padding:15px 34px;
   background:linear-gradient(135deg,#1749c9,#2563eb);color:#fff;
@@ -416,63 +259,31 @@ input,button{font-family:inherit;}
 }
 .btn-home:hover{transform:translateY(-2px);box-shadow:0 12px 38px rgba(37,99,235,.58);}
 
-/* ══ STEPPER ══ */
-.stepper-wrap{margin-bottom:16px;}
-.stepper{display:flex;align-items:center;max-width:620px;padding-bottom:46px;position:relative;}
-.stp{
-  width:52px;height:52px;flex-shrink:0;border-radius:50%;
-  border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);
-  display:flex;align-items:center;justify-content:center;position:relative;
-  transition:all .4s cubic-bezier(.4,0,.2,1);
-}
-.stp.active{
-  background:linear-gradient(135deg,#1d4ed8,#2563eb);border-color:#2563eb;
-  box-shadow:0 0 0 8px rgba(37,99,235,.1),0 0 40px rgba(37,99,235,.55),0 0 70px rgba(37,99,235,.15);
-}
-.stp.done{
-  background:linear-gradient(135deg,#1d4ed8,#2563eb);border-color:#2563eb;
-  box-shadow:0 0 0 4px rgba(37,99,235,.08),0 0 20px rgba(37,99,235,.32);
-}
-.stp-num{font-size:15px;font-weight:700;color:rgba(255,255,255,.24);}
-.stp.active .stp-num,.stp.done .stp-num{display:none;}
-.stp-ico{display:none;color:#fff;}
-.stp.active .stp-ico-a{display:flex;}
-.stp.done .stp-ico-d{display:flex;}
-.stp-label{
-  position:absolute;top:calc(100% + 13px);left:50%;transform:translateX(-50%);
-  white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.2px;
-  color:rgba(255,255,255,.24);transition:color .35s;
-}
-.stp.active .stp-label{color:#fff;font-weight:800;}
-.stp.done .stp-label{color:#60a5fa;font-weight:700;}
-.stp-line{
-  flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:3px;
-  position:relative;overflow:hidden;
-}
-.stp-line::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,#1240b0,#1d4ed8,#2563eb,#3b82f6);
-  width:0%;border-radius:3px;
-  box-shadow:0 0 10px rgba(37,99,235,.65);
-  transition:width .85s cubic-bezier(.4,0,.2,1);
-}
-.stp-line.on::after{width:100%;}
-
 @media(max-width:980px){
   .layout{grid-template-columns:1fr;padding:24px 20px 60px;}
   .summary{position:static;}
-  .benefits{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:600px){
-  .stp{width:40px;height:40px;}
-  .stp-num{font-size:13px;}
-  .stp-label{font-size:10.5px;}
-  .cart-item{grid-template-columns:26px 1fr;min-height:auto;}
-  .item-img{display:none;}
-  .item-side{flex-direction:row;flex-wrap:wrap;justify-content:space-between;grid-column:1/-1;}
-  .benefits{grid-template-columns:1fr;}
+  .cart-cols{display:none;}
+  .cart-item{grid-template-columns:70px 1fr;grid-template-rows:auto auto;}
+  .item-img{width:70px;height:70px;grid-row:1/3;}
+  .item-qty-col,.item-price-col{grid-column:2;text-align:left;align-items:flex-start;}
   .hdr{padding:0 20px;height:64px;}
 }
+
+.theme-toggle{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 10px;border-radius:8px;transition:background .15s;}
+.theme-toggle:hover{background:rgba(128,128,128,.12);}
+.theme-toggle-track{width:38px;height:20px;border-radius:10px;background:var(--border-color);position:relative;flex-shrink:0;transition:background .2s;}
+.theme-toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+.theme-toggle.is-dark .theme-toggle-track{background:var(--primary);}
+.theme-toggle.is-dark .theme-toggle-knob{left:20px;}
+.theme-toggle-label{font-size:12.5px;font-weight:700;color:var(--text-secondary);white-space:nowrap;}
+
+/* ══ SUPORTE FLUTUANTE ══ */
+.wpp-float{position:fixed;bottom:26px;right:26px;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35);color:#fff;z-index:9999;transition:transform .2s,box-shadow .2s;}
+.wpp-float:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(0,0,0,.45);}
+.wpp-float svg{width:30px;height:30px;}
+@media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
 </head>
 <body>
@@ -489,10 +300,16 @@ input,button{font-family:inherit;}
   <div class="hdr-logo">
     <img src="logo.png" alt="Alfa Informática" onerror="this.outerHTML='<span style=\'font-size:16px;font-weight:900;letter-spacing:.3px;\'>ALFA INFORMÁTICA</span>'">
   </div>
-  <a href="favoritos.html" class="hdr-fav">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-    Favoritos
-  </a>
+  <div style="display:flex;align-items:center;">
+    <a href="favoritos.html" class="hdr-fav">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Favoritos
+    </a>
+    <button class="theme-toggle" id="themeToggle" onclick="Store.toggleTheme()" type="button">
+      <span class="theme-toggle-track"><span class="theme-toggle-knob"></span></span>
+      <span class="theme-toggle-label">Modo Claro</span>
+    </button>
+  </div>
 </header>
 
 <div class="layout" id="layout">
@@ -501,7 +318,9 @@ input,button{font-family:inherit;}
 </div>
 
 <script src="store.js"></script>
+<script src="products.js"></script>
 <script>
+Store.syncThemeUI();
 /* ── Particles canvas ── */
 (function(){
   const c=document.getElementById('bgCanvas');
@@ -559,6 +378,25 @@ function getSpecs(item){
 }
 
 let appliedDiscount=0,fretePrice=null;
+let openAcc={frete:false,cupom:false,afiliado:false};
+
+function ofertasHtml(){
+  const items=(window.PRODUCTS_DB||[]).filter(p=>p.old && p.old>p.price).slice(0,4);
+  return items.map(p=>{
+    const off=Math.round((1-p.price/p.old)*100);
+    const img=p.images&&p.images[0]?p.images[0]:'';
+    return '<div class="of-card"><div class="of-badge">-'+off+'%</div>'+
+      '<div class="of-img">'+(img?'<img src="'+img+'" alt="'+p.name+'">':'')+'</div>'+
+      '<div class="of-body"><div class="of-name">'+p.name+'</div>'+
+      '<div class="of-old">'+fmt(p.old)+'</div><div class="of-price">'+fmt(p.price)+'</div>'+
+      '<a class="of-btn" href="produto.html?q='+encodeURIComponent(p.name)+'">Ver produto</a></div></div>';
+  }).join('');
+}
+
+function toggleAccCart(key){
+  openAcc[key]=!openAcc[key];
+  render();
+}
 
 function render(){
   const cart=Store.getCart();
@@ -576,188 +414,137 @@ function render(){
     return;
   }
 
-  const selected=cart.filter(i=>i.selected);
-  const subtotal=selected.reduce((s,i)=>s+i.price*i.qty,0);
+  const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
   const discount=appliedDiscount?subtotal*appliedDiscount:0;
   const freteNum=fretePrice===null?null:(fretePrice==='Grátis'?0:parseFloat(fretePrice.replace('R$ ','').replace(',','.')));
   const total=subtotal-discount+(freteNum||0);
-  const allSel=cart.every(i=>i.selected);
+  const pixTotal=total*0.85;
+  const install=(total/12).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 
-  const stepperHTML=`
-  <div class="stepper-wrap">
-    <div class="stepper">
-      <div class="stp active">
-        <span class="stp-ico stp-ico-a"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span>
-        <span class="stp-ico stp-ico-d"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-        <span class="stp-num">1</span><span class="stp-label">Carrinho</span>
-      </div>
-      <div class="stp-line on"></div>
-      <div class="stp">
-        <span class="stp-ico stp-ico-a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
-        <span class="stp-ico stp-ico-d"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-        <span class="stp-num">2</span><span class="stp-label">Pagamento</span>
-      </div>
-      <div class="stp-line"></div>
-      <div class="stp">
-        <span class="stp-ico stp-ico-a"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
-        <span class="stp-ico stp-ico-d"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-        <span class="stp-num">3</span><span class="stp-label">Confirmação</span>
-      </div>
+  document.getElementById('leftCol').innerHTML=`
+  <div class="cart-box">
+    <div class="cart-box-head">
+      <div class="cart-box-title">Carrinho de Compras</div>
+      <button class="btn-clear-cart" onclick="if(confirm('Limpar todos os itens do carrinho?')){Store.clearCart();render();}">Limpar Carrinho</button>
     </div>
-  </div>`;
-
-  document.getElementById('leftCol').innerHTML=stepperHTML+`
-  <div class="cart-header">
-    <h1 class="cart-title">Carrinho <em>(${cart.length} ${cart.length===1?'item':'itens'})</em></h1>
-    <p class="cart-sub">Revise seus produtos antes de finalizar sua compra.</p>
+    <div class="cart-cols">
+      <span class="cc-prod">Produto</span>
+      <span class="cc-qtd">Qtd.</span>
+      <span class="cc-price">Preço à vista no PIX</span>
+    </div>
+    ${cart.map(item=>{
+      const specs=getSpecs(item);
+      return `
+      <div class="cart-item">
+        <div class="item-img">
+          <div class="item-img-inner">
+            <img src="img teste.jpg" alt="${item.name}">
+          </div>
+        </div>
+        <div class="item-info">
+          <div class="item-brand">${item.brand||'—'}</div>
+          <div class="item-name">${item.name}</div>
+          <div class="item-meta">Preço no cartão em até 12x sem juros: <b>${fmt(item.price)}</b><br>${specs.length?specs.join(' · '):'SKU: '+item.id}</div>
+        </div>
+        <div class="item-qty-col">
+          <div class="qty">
+            <button class="qbtn" onclick="Store.updateQty('${item.id}',${item.qty-1});render()">−</button>
+            <input type="number" class="qval" value="${item.qty}" min="1" onchange="Store.updateQty('${item.id}',+this.value);render()">
+            <button class="qbtn" onclick="Store.updateQty('${item.id}',${item.qty+1});render()">+</button>
+          </div>
+          <button class="btn-rm" onclick="Store.removeFromCart('${item.id}');render()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Remover
+          </button>
+        </div>
+        <div class="item-price-col">
+          <div class="item-unit">${item.qty} x ${fmt(item.price)}</div>
+          <div class="item-total-lbl">Total: <span class="item-total-val">${fmt(item.price*item.qty)}</span></div>
+        </div>
+      </div>`;
+    }).join('')}
   </div>
 
-  <div class="cart-bar">
-    <span class="cart-bar-label">${selected.length} de ${cart.length} selecionado${selected.length!==1?'s':''}</span>
-    <button class="btn-selall" onclick="Store.selectAll(${!allSel});render()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-      ${allSel?'Desmarcar todos':'Selecionar todos'}
-    </button>
-  </div>
-
-  ${cart.map(item=>{
-    const specs=getSpecs(item);
-    return `
-    <div class="cart-item">
-      <div class="cbox-wrap">
-        <div class="cbox ${item.selected?'on':''}" onclick="Store.toggleSelected('${item.id}');render()">
-          <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </div>
-      <div class="item-img">
-        <div class="item-img-inner">
-          ${item.image
-            ?`<img src="${item.image}" alt="${item.name}" onerror="this.parentElement.innerHTML='<span class=item-img-ph>📦</span>'">`
-            :`<span class="item-img-ph">📦</span>`}
-        </div>
-      </div>
-      <div class="item-info">
-        <div class="item-brand">${item.brand||'—'}</div>
-        <div class="item-name">${item.name}</div>
-        ${specs.length?`<div class="specs-row">${specs.map(s=>`<span class="spec">${s}</span>`).join('')}</div>`:''}
-        <div class="item-prices">
-          ${item.old?`<span class="item-old">${fmt(item.old)}</span>`:''}
-          <span class="item-price">${fmt(item.price)}</span>
-        </div>
-      </div>
-      <div class="item-side">
-        <span class="item-total">${fmt(item.price*item.qty)}</span>
-        <div class="qty">
-          <button class="qbtn" onclick="Store.updateQty('${item.id}',${item.qty-1});render()">−</button>
-          <input type="number" class="qval" value="${item.qty}" min="1" onchange="Store.updateQty('${item.id}',+this.value);render()">
-          <button class="qbtn" onclick="Store.updateQty('${item.id}',${item.qty+1});render()">+</button>
-        </div>
-        <button class="btn-rm" onclick="Store.removeFromCart('${item.id}');render()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          Remover
-        </button>
-      </div>
-    </div>`;
-  }).join('')}
-
-  <div class="benefits">
-    <div class="ben">
-      <div class="ben-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      <div class="ben-title">Compra 100% Segura</div>
-      <div class="ben-desc">Seus dados protegidos com criptografia SSL</div>
-    </div>
-    <div class="ben">
-      <div class="ben-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
-      <div class="ben-title">Frete para todo Brasil</div>
-      <div class="ben-desc">Entrega rápida e segura em todo território</div>
-    </div>
-    <div class="ben">
-      <div class="ben-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      <div class="ben-title">Produtos Originais</div>
-      <div class="ben-desc">100% originais com nota fiscal garantida</div>
-    </div>
-    <div class="ben">
-      <div class="ben-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-      <div class="ben-title">Suporte Especializado</div>
-      <div class="ben-desc">Atendimento dedicado de especialistas</div>
-    </div>
-  </div>`;
+  <section class="ofertas">
+    <div class="of-title">Ofertas e Promoções</div>
+    <div class="of-grid">${ofertasHtml()}</div>
+  </section>`;
 
   /* ── RIGHT ── */
-  const install=selected.length?(total/12).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):null;
-
   document.getElementById('rightCol').innerHTML=`
   <div class="summary">
     <div class="sum-body">
-      <div class="sum-title">Resumo do Pedido</div>
-      <div class="sum-items-count"><strong>${selected.length}</strong> de ${cart.length} item${cart.length!==1?'s':''} selecionado${selected.length!==1?'s':''}</div>
+      <div class="sum-title">Resumo</div>
+      <div class="sum-plain-row"><span>SubTotal</span><span>${fmt(subtotal)}</span></div>
+      ${appliedDiscount?`<div class="sum-plain-row" style="color:var(--success);"><span>Desconto (${appliedDiscount*100}%)</span><span>− ${fmt(discount)}</span></div>`:''}
+      <div class="sum-plain-row"><span>Frete</span><span id="freteVal">${fretePrice===null?'A calcular':fretePrice==='Grátis'?'Grátis':fretePrice}</span></div>
+      <div class="sum-total-row"><span>Total</span><span>${fmt(total)}</span></div>
 
-      <div class="seclabel">Cupom de desconto</div>
-      <div class="sinput-row">
-        <input class="sinput" type="text" id="couponInput" placeholder="Código do cupom">
-        <button class="sbtn" onclick="applyCoupon()">Aplicar</button>
+      <div class="pix-block">
+        <div class="pix-price">${fmt(pixTotal)}</div>
+        <div class="pix-cap">No PIX com 15% de desconto</div>
+      </div>
+      <div class="or-div"><div class="or-circ">Ou</div></div>
+      <div class="card-block">
+        <div class="card-price">${fmt(total)}</div>
+        <div class="card-cap">Em até 12x de R$ ${install} sem juros no cartão</div>
       </div>
 
-      <div class="seclabel">Calcular frete</div>
-      <div class="sinput-row">
-        <input class="sinput" type="text" id="cepInput" placeholder="00000-000" maxlength="9">
-        <button class="sbtn" onclick="calcFrete()">Calcular</button>
-      </div>
-      <div id="freteOptions"></div>
-
-      <div class="sdiv"></div>
-      <div class="sum-rows">
-        <div class="srow"><span class="srow-l">Produtos (${selected.length})</span><span class="srow-r">${fmt(subtotal)}</span></div>
-        ${appliedDiscount?`<div class="srow srow-discount"><span class="srow-l">Desconto (${appliedDiscount*100}%)</span><span class="srow-r">− ${fmt(discount)}</span></div>`:''}
-        <div class="srow"><span class="srow-l">Frete</span><span class="srow-r" id="freteVal">${fretePrice===null?'A calcular':fretePrice==='Grátis'?'Grátis':fretePrice}</span></div>
-      </div>
-      <div class="sdiv"></div>
-
-      <div class="total-block">
-        <div class="total-row">
-          <span class="total-l">Total</span>
-          <span class="total-r">${fmt(total)}</span>
-        </div>
-        ${install?`<p class="installment">ou 12x de R$ ${install} sem juros</p>`:'<p class="installment" style="opacity:0">&nbsp;</p>'}
-      </div>
-
-      <button class="btn-ck" ${!selected.length?'disabled':''} onclick="goCheckout()">
-        ${!selected.length?'Selecione ao menos 1 item':`FINALIZAR COMPRA
-        <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`}
+      <button class="btn-ck" onclick="goCheckout()">
+        FINALIZAR PEDIDO
+        <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
-
-      <div class="security">
-        <div class="sec">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <span>SSL Seguro</span>
-        </div>
-        <div class="sec">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Compra protegida</span>
-        </div>
-        <div class="sec">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-          <span>Originais</span>
-        </div>
-        <div class="sec">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          <span>Garantia Alfa</span>
-        </div>
-      </div>
+      <a href="alfa-replica.html" class="btn-continue" style="display:block;text-align:center;line-height:46px;text-decoration:none;">Continuar Comprando</a>
     </div>
 
-    <div class="payments">
-      <div class="pay-label">Formas de pagamento</div>
-      <div class="pay-row">
-        <span class="pay-chip">Visa</span>
-        <span class="pay-chip">Mastercard</span>
-        <span class="pay-chip">Pix</span>
-        <span class="pay-chip">Boleto</span>
-        <span class="pay-chip">Elo</span>
-        <span class="pay-chip">Mercado Pago</span>
+    <div class="acc-list">
+      <div class="acc-item ${openAcc.frete?'open':''}">
+        <div class="acc-head" onclick="toggleAccCart('frete')">
+          <svg class="acc-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <span class="acc-head-txt">Frete e Prazos</span>
+          <svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="acc-body"><div class="acc-body-in">
+          <div class="sinput-row">
+            <input class="sinput" type="text" id="cepInput" placeholder="00000-000" maxlength="9">
+            <button class="sbtn" onclick="calcFrete()">Calcular</button>
+          </div>
+          <div id="freteOptions"></div>
+        </div></div>
+      </div>
+      <div class="acc-item ${openAcc.cupom?'open':''}">
+        <div class="acc-head" onclick="toggleAccCart('cupom')">
+          <svg class="acc-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.59 13.41L11 3.83A2 2 0 009.59 3.24H4a1 1 0 00-1 1v5.59a2 2 0 00.59 1.41l9.58 9.59a2 2 0 002.83 0l4.59-4.59a2 2 0 000-2.83z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span class="acc-head-txt">Cupom de desconto</span>
+          <svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="acc-body"><div class="acc-body-in">
+          <div class="sinput-row">
+            <input class="sinput" type="text" id="couponInput" placeholder="Código do cupom">
+            <button class="sbtn" onclick="applyCoupon()">Aplicar</button>
+          </div>
+        </div></div>
+      </div>
+      <div class="acc-item ${openAcc.afiliado?'open':''}">
+        <div class="acc-head" onclick="toggleAccCart('afiliado')">
+          <svg class="acc-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <span class="acc-head-txt">Cupom de afiliado</span>
+          <svg class="acc-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="acc-body"><div class="acc-body-in">
+          <div class="sinput-row">
+            <input class="sinput" type="text" id="affInput" placeholder="Código do afiliado">
+            <button class="sbtn" onclick="applyAffiliate()">Aplicar</button>
+          </div>
+        </div></div>
       </div>
     </div>
   </div>`;
+}
+
+function applyAffiliate(){
+  const code=document.getElementById('affInput')?.value.trim();
+  if(code){ showToast('✓ Cupom de afiliado "'+code+'" aplicado!'); }
 }
 
 function applyCoupon(){
@@ -815,5 +602,9 @@ document.head.appendChild(_su);
 
 render();
 </script>
+
+<a href="https://wa.me/5565992655883" class="wpp-float" target="_blank" rel="noopener noreferrer" title="Fale conosco no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
 </body>
 </html>
