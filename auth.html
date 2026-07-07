@@ -28,74 +28,6 @@ a{color:inherit;text-decoration:none;}
 img{display:block;max-width:100%;}
 button{font-family:inherit;cursor:pointer;}
 
-/* ══ TOPBAR ══ */
-.topbar{background:var(--bg-header);height:33px;border-bottom:1px solid rgba(255,255,255,.07);}
-.topbar-in{max-width:1600px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:100%;}
-.topbar-left{display:flex;align-items:center;height:100%;}
-.topbar-lk{font-size:11.5px;color:rgba(255,255,255,.48);padding:0 12px;height:100%;display:flex;align-items:center;gap:5px;transition:color .15s;text-decoration:none;border-right:1px solid rgba(255,255,255,.08);}
-.topbar-lk:first-child{padding-left:0;}
-.topbar-lk:last-child{border-right:none;}
-.topbar-lk:hover{color:rgba(255,255,255,.85);}
-.topbar-right{display:flex;align-items:center;gap:12px;}
-.theme-toggle{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 10px;border-radius:8px;transition:background .15s;}
-.theme-toggle:hover{background:rgba(128,128,128,.12);}
-.theme-toggle-track{width:38px;height:20px;border-radius:10px;background:var(--border-color);position:relative;flex-shrink:0;transition:background .2s;}
-.theme-toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
-.theme-toggle.is-dark .theme-toggle-track{background:var(--primary);}
-.theme-toggle.is-dark .theme-toggle-knob{left:20px;}
-.theme-toggle-label{font-size:12.5px;font-weight:700;color:var(--text-secondary);white-space:nowrap;}
-
-/* ══ HEADER ══ */
-.hdr{background:var(--bg-header);position:sticky;top:0;z-index:200;}
-.hdr-top{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:96px;align-items:center;gap:28px;height:96px;padding:0 24px 0 28px;}
-.hdr-logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
-.hdr-logo img{height:130px;width:auto;object-fit:contain;max-width:300px;}
-.search-wrap{position:relative;flex:1;}
-.hdr-search{display:flex;height:47px;border:1px solid var(--border-color);border-radius:6px;overflow:hidden;background:var(--bg-card);transition:border-color .2s,box-shadow .2s;}
-.hdr-search:focus-within{border-color:rgba(37,99,255,.55);box-shadow:0 0 0 3px rgba(37,99,255,.08);}
-.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 16px;font-size:14px;font-family:inherit;color:var(--text-main);outline:none;height:100%;}
-.hdr-search-in::placeholder{color:var(--text-secondary);}
-.hdr-search-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--primary);color:#fff;border:none;width:130px;flex-shrink:0;font-size:13px;font-weight:700;letter-spacing:.3px;cursor:pointer;transition:background .18s;height:100%;}
-.hdr-search-btn:hover{background:var(--primary-hover);}
-.search-drop{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:600;background:linear-gradient(160deg,var(--bg-section) 0%,var(--bg-card) 100%);border:1px solid var(--border-color);border-top:2px solid var(--primary);border-radius:0 0 14px 14px;box-shadow:0 28px 70px rgba(0,0,0,.9);overflow:hidden;max-height:460px;overflow-y:auto;}
-.search-drop.open{display:block;}
-.search-drop-head{padding:11px 18px 9px;font-size:9px;font-weight:800;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;background:rgba(0,0,0,.3);border-bottom:1px solid var(--border-color);display:flex;align-items:center;gap:8px;}
-.search-drop-head::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--primary);flex-shrink:0;}
-.search-item{display:flex;align-items:center;gap:14px;padding:11px 18px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border-color);text-decoration:none;position:relative;}
-.search-item:last-child{border-bottom:none;}
-.search-item:hover,.search-item.active{background:rgba(37,99,255,.09);}
-.search-item-img{width:52px;height:52px;flex-shrink:0;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.search-item-img img{width:100%;height:100%;object-fit:contain;padding:5px;}
-.search-item-img-ph{font-size:22px;opacity:.15;}
-.search-item-info{flex:1;min-width:0;}
-.search-item-brand{font-size:9px;font-weight:800;color:#3b82f6;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;}
-.search-item-name{font-size:13px;font-weight:600;color:var(--text-main);line-height:1.38;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.search-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
-.search-item-price{font-size:14px;font-weight:800;color:var(--success);white-space:nowrap;}
-.search-none{padding:28px 18px;text-align:center;font-size:13px;color:var(--text-muted);}
-.search-none b{color:var(--text-secondary);}
-.hdr-acts-group{display:flex;align-items:center;gap:4px;}
-.hdr-act{display:flex;align-items:center;gap:10px;text-decoration:none;padding:8px 14px;border-radius:8px;transition:background .15s,color .15s;color:var(--text-secondary);}
-.hdr-act:hover{background:rgba(128,128,128,.1);color:var(--text-main);}
-.hdr-act.hdr-act-current{color:var(--text-main);background:rgba(0,102,255,.14);}
-.hdr-act-icon{color:currentColor;flex-shrink:0;}
-.hdr-act-text{display:flex;flex-direction:column;gap:2px;}
-.hdr-act-line1{font-size:12.5px;font-weight:700;color:inherit;line-height:1.2;white-space:nowrap;}
-.hdr-act-line2{font-size:10.5px;color:var(--text-muted);line-height:1.2;white-space:nowrap;}
-.hdr-act-cart{background:var(--primary);border-radius:10px;padding:0 22px;height:54px;gap:14px;color:#fff;flex-shrink:0;}
-.hdr-act-cart:hover{background:var(--primary-hover);color:#fff;}
-.hdr-act-cart .hdr-act-line1{font-size:14px;font-weight:800;letter-spacing:.5px;color:#fff;}
-.hdr-act-cart .hdr-act-line2{font-size:11px;color:rgba(255,255,255,.75);}
-.hdr-act-cart .hdr-act-icon{color:#fff;}
-.hdr-nav{background:var(--bg-menu);border:none;border-bottom:1px solid var(--border-color);}
-.hdr-nav-inner{display:flex;align-items:stretch;max-width:1600px;margin:0 auto;padding:0 28px;height:48px;overflow-x:auto;}
-.hdr-nav-inner::-webkit-scrollbar{display:none;}
-.hdr-nav-inner a{font-size:13px;font-weight:700;color:rgba(255,255,255,.9);padding:0 18px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.4px;transition:background .15s,color .15s;white-space:nowrap;flex-shrink:0;text-decoration:none;border-right:1px solid rgba(255,255,255,.18);}
-.hdr-nav-inner a:last-child{border-right:none;}
-.hdr-nav-inner a:hover{background:rgba(0,0,0,.18);color:#fff;}
-.hdr-nav-inner a.nav-promo{color:#FFE14D;}
-.hdr-nav-inner a.nav-promo:hover{color:#FFE14D;background:rgba(0,0,0,.18);}
-
 /* ══ MAIN WRAP ══ */
 .acc-wrap{max-width:1200px;margin:0 auto;padding:56px 24px 80px;}
 
@@ -193,8 +125,8 @@ button{font-family:inherit;cursor:pointer;}
 .of-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;overflow:hidden;position:relative;transition:transform .2s,border-color .2s;}
 .of-card:hover{transform:translateY(-3px);border-color:rgba(0,102,255,.35);}
 .of-badge{position:absolute;top:10px;left:10px;background:var(--primary);color:#fff;font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:6px;z-index:2;}
-.of-img{background:#CFCFCF;height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.of-img img{width:100%;height:100%;object-fit:contain;padding:10px;}
+.of-img{background:#CFCFCF;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.of-img img{width:100%;height:100%;object-fit:cover;}
 .of-body{padding:14px;}
 .of-name{font-size:12.5px;font-weight:600;color:var(--text-main);line-height:1.35;min-height:34px;margin-bottom:8px;}
 .of-old{font-size:11px;color:var(--text-secondary);text-decoration:line-through;}
@@ -249,62 +181,11 @@ button{font-family:inherit;cursor:pointer;}
 .wpp-float svg{width:30px;height:30px;}
 @media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
+<link rel="stylesheet" href="header.css">
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-in">
-    <div class="topbar-left">
-      <a href="#" class="topbar-lk">Atendimento ao cliente</a>
-      <a href="#" class="topbar-lk">Suporte</a>
-      <a href="#" class="topbar-lk">Rastrear pedido</a>
-    </div>
-    <div class="topbar-right">
-      <button class="theme-toggle" id="themeToggle" onclick="Store.toggleTheme()" type="button">
-        <span class="theme-toggle-track"><span class="theme-toggle-knob"></span></span>
-        <span class="theme-toggle-label">Modo Claro</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<header class="hdr">
-<div class="hdr-top">
-  <a href="alfa-replica.html" class="hdr-logo"><img src="logo.png" alt="Alfa Informática"></a>
-  <div class="search-wrap" id="searchWrap">
-    <div class="hdr-search">
-      <input class="hdr-search-in" id="searchIn" type="text" placeholder="Digite o que você procura..." autocomplete="off">
-      <button class="hdr-search-btn" onclick="doSearch()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> BUSCAR</button>
-    </div>
-    <div class="search-drop" id="searchDrop"></div>
-  </div>
-  <div class="hdr-acts-group">
-    <a href="alfa-replica.html" class="hdr-act hdr-act-current">
-      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <div class="hdr-act-text"><span class="hdr-act-line1">Minha Conta</span><span class="hdr-act-line2">Você está aqui</span></div>
-    </a>
-    <a href="favoritos.html" class="hdr-act">
-      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <div class="hdr-act-text"><span class="hdr-act-line1">Favoritos</span><span class="hdr-act-line2">Lista de desejos</span></div>
-    </a>
-    <a href="carrinho.html" class="hdr-act hdr-act-cart">
-      <svg class="hdr-act-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <div class="hdr-act-text"><span class="hdr-act-line1">CARRINHO</span><span class="hdr-act-line2" id="cart-count-lbl">0 produtos</span></div>
-    </a>
-  </div>
-</div>
-<nav class="hdr-nav">
-  <div class="hdr-nav-inner">
-    <a href="categoria.html"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><rect width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="4.6" width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="9.2" width="14" height="1.8" rx=".9" fill="currentColor"/></svg> DEPARTAMENTOS</a>
-    <a href="categoria.html?q=monte+seu+pc">MONTE SEU PC</a>
-    <a href="categoria.html?cat=pc-gamer">PCs GAMER</a>
-    <a href="categoria.html?cat=notebooks">NOTEBOOKS</a>
-    <a href="categoria.html?cat=monitores-gaming">MONITORES</a>
-    <a href="categoria.html?cat=perifericos">PERIFÉRICOS</a>
-    <a href="categoria.html?cat=promocoes" class="nav-promo">PROMOÇÕES</a>
-  </div>
-</nav>
-</header>
+<div id="site-header"></div>
 
 <main class="acc-wrap">
 
@@ -514,7 +395,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="ft2-grid">
 
 <div>
-<img src="logo.png" alt="Alfa Informática" class="ft2-logo">
+<img src="logo-dark.png" alt="Alfa Informática" class="ft2-logo theme-logo">
 <span class="ft2-tag">Hardware &bull; Periféricos &bull; Setup Gamer</span>
 <p class="ft2-about">Especialistas em hardware, periféricos e computadores gamer de alta performance.</p>
 <a href="tel:+5565992655883" class="ft2-phone">
@@ -566,46 +447,10 @@ button{font-family:inherit;cursor:pointer;}
 </div>
 </footer>
 
-<script src="products.js"></script>
 <script src="store.js"></script>
+<script src="products.js"></script>
+<script src="header.js"></script>
 <script>
-/* ═══ THEME ═══ */
-Store.syncThemeUI();
-
-/* ═══ HEADER SEARCH (autocomplete) ═══ */
-(function(){
-  var inp=document.getElementById('searchIn');
-  var drop=document.getElementById('searchDrop');
-  var wrap=document.getElementById('searchWrap');
-  var products=(window.PRODUCTS_DB||[]).map(function(p){
-    return {name:p.name,brand:p.brand,price:'R$ '+p.price.toLocaleString('pt-BR',{minimumFractionDigits:2}),img:p.images&&p.images[0]?p.images[0]:''};
-  });
-  var selIdx=-1;
-  function renderDrop(q){
-    q=q.trim().toLowerCase();
-    if(!q){drop.classList.remove('open');return;}
-    var res=products.filter(function(p){return p.name.toLowerCase().indexOf(q)>-1||p.brand.toLowerCase().indexOf(q)>-1;}).slice(0,8);
-    selIdx=-1;
-    if(!res.length){drop.innerHTML='<div class="search-none">Nenhum produto encontrado para "<b>'+q+'</b>"</div>';drop.classList.add('open');return;}
-    drop.innerHTML='<div class="search-drop-head">'+res.length+' resultado'+(res.length!==1?'s':'')+'</div>'+
-      res.map(function(p,i){
-        return '<a class="search-item" href="produto.html?q='+encodeURIComponent(p.name)+'" data-idx="'+i+'">'+
-          '<div class="search-item-img">'+(p.img?'<img src="'+p.img+'" alt="">':'<span class="search-item-img-ph">📦</span>')+'</div>'+
-          '<div class="search-item-info"><div class="search-item-brand">'+p.brand+'</div><div class="search-item-name">'+p.name+'</div></div>'+
-          '<div class="search-item-right"><span class="search-item-price">'+p.price+'</span></div>'+
-        '</a>';
-      }).join('');
-    drop.classList.add('open');
-  }
-  inp.addEventListener('input',function(){renderDrop(this.value);});
-  inp.addEventListener('focus',function(){if(this.value.trim())renderDrop(this.value);});
-  document.addEventListener('click',function(e){if(!wrap.contains(e.target))drop.classList.remove('open');});
-  window.doSearch=function(){var q=inp.value.trim();if(q)location.href='categoria.html?q='+encodeURIComponent(q);};
-})();
-function updateCartCount(){ document.getElementById('cart-count-lbl').textContent = Store.cartCount()+' produto'+(Store.cartCount()!==1?'s':''); }
-updateCartCount();
-Store.on('cart', updateCartCount);
-
 /* ═══ MASKS ═══ */
 function maskCPF(el){let v=el.value.replace(/\D/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');el.value=v;}
 function maskTel(el){let v=el.value.replace(/\D/g,'').slice(0,11);v=v.replace(/(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d{1,4})$/,'$1-$2');el.value=v;}
@@ -720,7 +565,7 @@ function renderFavorites(){
   if(!favs.length){grid.innerHTML='<div class="fav-empty">Você ainda não tem favoritos.</div>';return;}
   grid.innerHTML=favs.map(f=>
     '<div class="fav-card"><div class="fav-name">'+f.name+'</div><div class="fav-price">'+(typeof f.price==='number'?Store.fmt(f.price):f.price)+'</div>'+
-    '<a class="fav-btn" href="produto.html?q='+encodeURIComponent(f.name)+'">Ver produto</a></div>'
+    '<a class="fav-btn" href="produto.html?q='+encodeURIComponent(f.name).replace(/[!'()*]/g,c=>'%'+c.charCodeAt(0).toString(16))+'">Ver produto</a></div>'
   ).join('');
 }
 
@@ -735,7 +580,7 @@ function renderFavorites(){
       '<div class="of-img">'+(img?'<img src="'+img+'" alt="'+p.name+'">':'')+'</div>'+
       '<div class="of-body"><div class="of-name">'+p.name+'</div>'+
       '<div class="of-old">'+Store.fmt(p.old)+'</div><div class="of-price">'+Store.fmt(p.price)+'</div>'+
-      '<a class="of-btn" href="produto.html?q='+encodeURIComponent(p.name)+'">Ver produto</a></div></div>';
+      '<a class="of-btn" href="produto.html?q='+encodeURIComponent(p.name).replace(/[!'()*]/g,c=>'%'+c.charCodeAt(0).toString(16))+'">Ver produto</a></div></div>';
   }).join('');
 })();
 

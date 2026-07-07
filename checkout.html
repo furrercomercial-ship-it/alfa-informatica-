@@ -23,24 +23,17 @@
 }
 body{background:var(--bg-main);color:var(--text-main);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
 a{color:inherit;text-decoration:none;}
-.hdr{background:var(--bg-header);border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;position:sticky;top:0;z-index:100;}
-.hdr-logo{font-size:16px;font-weight:900;letter-spacing:.02em;}
-.hdr-back{display:flex;align-items:center;gap:8px;color:var(--text-secondary);font-size:13px;font-weight:600;transition:color .2s;}
-.hdr-back:hover{color:var(--text-main);}
-.hdr-secure{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary);}
-.theme-toggle{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 10px;border-radius:8px;transition:background .15s;}
-.theme-toggle:hover{background:rgba(128,128,128,.12);}
-.theme-toggle-track{width:38px;height:20px;border-radius:10px;background:var(--border-color);position:relative;flex-shrink:0;transition:background .2s;}
-.theme-toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
-.theme-toggle.is-dark .theme-toggle-track{background:var(--primary);}
-.theme-toggle.is-dark .theme-toggle-knob{left:20px;}
-.theme-toggle-label{font-size:12.5px;font-weight:700;color:var(--text-secondary);white-space:nowrap;}
 /* Layout */
 .layout{max-width:1080px;margin:0 auto;padding:36px 24px 72px;display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start;}
 /* Form card */
 .form-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:28px 32px;}
-.section-head{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;color:var(--text-main);margin-bottom:22px;}
+.section-head{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;color:var(--text-main);margin-bottom:22px;text-transform:uppercase;letter-spacing:.04em;}
 .section-head svg{color:var(--primary);}
+.section-head.faded{color:var(--text-muted);}
+.section-ico-badge{width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-ico-badge svg{width:16px;height:16px;color:#fff;}
+.section-ico-badge.faded{background:var(--border-color);color:var(--text-muted);}
+.section-ico-badge.faded svg{color:var(--text-muted);}
 .divider{height:1px;background:var(--border-color);margin:26px 0;}
 .field{margin-bottom:16px;}
 .field label{display:block;font-size:10px;font-weight:800;color:var(--text-muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:7px;}
@@ -134,7 +127,6 @@ a{color:inherit;text-decoration:none;}
   .summary{position:static;}
   .two-col{grid-template-columns:1fr;}
   .addr-form-grid{grid-template-columns:1fr;}
-  .hdr{padding:0 16px;}
 }
 
 /* ══ SUPORTE FLUTUANTE ══ */
@@ -143,25 +135,10 @@ a{color:inherit;text-decoration:none;}
 .wpp-float svg{width:30px;height:30px;}
 @media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
+<link rel="stylesheet" href="header.css">
 </head>
 <body>
-<header class="hdr">
-  <a href="carrinho.html" class="hdr-back">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    Voltar ao carrinho
-  </a>
-  <div class="hdr-logo">ALFA INFORMÁTICA</div>
-  <div style="display:flex;align-items:center;gap:16px;">
-    <div class="hdr-secure">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      Checkout seguro
-    </div>
-    <button class="theme-toggle" id="themeToggle" onclick="Store.toggleTheme()" type="button">
-      <span class="theme-toggle-track"><span class="theme-toggle-knob"></span></span>
-      <span class="theme-toggle-label">Modo Claro</span>
-    </button>
-  </div>
-</header>
+<div id="site-header"></div>
 
 <div class="layout" id="mainLayout">
   <div id="formArea"></div>
@@ -169,6 +146,8 @@ a{color:inherit;text-decoration:none;}
 </div>
 
 <script src="store.js"></script>
+<script src="products.js"></script>
+<script src="header.js"></script>
 <script>
 var WPP = 'https://wa.me/5565992655883';
 var items = [];
@@ -206,7 +185,6 @@ function maskCPF(cpf) {
 }
 
 function init() {
-  Store.syncThemeUI();
   items = Store.getCheckoutItems();
   if (!items.length) items = Store.getCart().filter(function(i){ return i.selected; });
   if (!items.length) items = Store.getCart();
@@ -228,7 +206,7 @@ function renderAll(){
   var ship = shipOpts.find(function(s){ return s.id === state.shipId; });
 
   var contatoHtml = '<div class="form-card ck-card">' +
-    '<div class="ck-head-row"><div class="section-head" style="margin:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Contato</div><div class="ck-check">' + checkIco() + '</div></div>' +
+    '<div class="ck-head-row"><div class="section-head" style="margin:0;"><div class="section-ico-badge"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Contato</div><div class="ck-check">' + checkIco() + '</div></div>' +
     (user.email ?
       '<div class="contact-row"><span>Nome</span><span>' + (user.name||'—') + '</span></div>' +
       '<div class="contact-row"><span>E-mail</span><span>' + user.email + '</span></div>' +
@@ -262,7 +240,7 @@ function renderAll(){
     }).join('') + '<button class="btn-link" onclick="state.addingAddress=true;renderAll();">+ Adicionar novo endereço</button>';
   }
   var entregaHtml = '<div class="form-card ck-card">' +
-    '<div class="ck-head-row"><div class="section-head" style="margin:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Entrega</div>' + (state.addressId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
+    '<div class="ck-head-row"><div class="section-head" style="margin:0;"><div class="section-ico-badge"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>Entrega</div>' + (state.addressId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
     addrBody + '</div>';
 
   var envioBody;
@@ -279,7 +257,7 @@ function renderAll(){
     }).join('');
   }
   var envioHtml = '<div class="form-card ck-card">' +
-    '<div class="ck-head-row"><div class="section-head" style="margin:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Método de Envio</div>' + (state.shipId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
+    '<div class="ck-head-row"><div class="section-head' + (!state.addressId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.addressId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>Método de Envio</div>' + (state.shipId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
     envioBody + '</div>';
 
   var pagBody;
@@ -298,7 +276,7 @@ function renderAll(){
     }).join('') + '</div>';
   }
   var pagHtml = '<div class="form-card ck-card">' +
-    '<div class="ck-head-row"><div class="section-head" style="margin:0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagamento</div>' + (state.payId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
+    '<div class="ck-head-row"><div class="section-head' + (!state.shipId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.shipId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>Pagamento</div>' + (state.payId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
     pagBody + '</div>';
 
   document.getElementById('formArea').innerHTML = contatoHtml + entregaHtml + envioHtml + pagHtml;

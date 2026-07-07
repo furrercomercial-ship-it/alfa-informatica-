@@ -103,6 +103,9 @@ const Store = {
       const lbl = btn.querySelector('.theme-toggle-label');
       if (lbl) lbl.textContent = dark ? 'Modo Claro' : 'Modo Escuro';
     });
+    document.querySelectorAll('.theme-logo').forEach(img => {
+      img.src = dark ? 'logo-dark.png' : 'logo-light.png';
+    });
   },
 
   // ── ORDERS (mock) ─────────────────────────────────────
@@ -127,6 +130,50 @@ const Store = {
   },
   removeAddress:  (id) => {
     localStorage.setItem('alfa_addresses', JSON.stringify(Store.getAddresses().filter(a => a.id !== id)));
+  },
+
+  // ── REVIEWS (mock — trocar por tabela real quando houver backend) ──
+  // Fotos/vídeos anexados pelo cliente viram data URL (base64) via FileReader
+  // no formulário, já que não há upload de arquivo real neste projeto.
+  getReviews: () => JSON.parse(localStorage.getItem('alfa_reviews') || '[]'),
+  getReviewsByProduct: (productId, opts) => {
+    const onlyApproved = !opts || opts.onlyApproved !== false;
+    return Store.getReviews().filter(r =>
+      String(r.product_id) === String(productId) && (!onlyApproved || r.status === 'approved')
+    );
+  },
+  addReview: (data) => {
+    const list = Store.getReviews();
+    const now = new Date().toISOString();
+    const review = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+      product_id: data.product_id,
+      user_id: data.user_id || null,
+      customer_name: data.customer_name,
+      rating: data.rating,
+      title: data.title,
+      comment: data.comment,
+      media_urls: data.media_urls || [],
+      created_at: now,
+      updated_at: now,
+      // Usuário com conta logada: publica direto. Visitante sem login: fica pendente até aprovação no painel admin.
+      status: data.user_id ? 'approved' : 'pending',
+    };
+    list.unshift(review);
+    localStorage.setItem('alfa_reviews', JSON.stringify(list));
+    Store.emit('reviews');
+    return review;
+  },
+  updateReviewStatus: (id, status) => {
+    const list = Store.getReviews();
+    const r = list.find(x => x.id === id);
+    if (r) { r.status = status; r.updated_at = new Date().toISOString(); }
+    localStorage.setItem('alfa_reviews', JSON.stringify(list));
+    Store.emit('reviews');
+  },
+  deleteReview: (id) => {
+    localStorage.setItem('alfa_reviews', JSON.stringify(Store.getReviews().filter(r => r.id !== id)));
+    Store.emit('reviews');
   },
 
   // ── EVENTS ────────────────────────────────────────────

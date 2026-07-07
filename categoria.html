@@ -27,211 +27,6 @@
 body{background:var(--bg-main);color:var(--text-main);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
 a{color:inherit;text-decoration:none;}
 
-/* === HEADER === */
-.topbar{background:var(--bg-header);height:33px;border-bottom:1px solid var(--border-color);}
-.topbar-in{max-width:1600px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:100%;}
-.topbar-lk{font-size:11.5px;color:var(--text-muted);padding:0 12px;height:100%;display:flex;align-items:center;gap:5px;transition:color .15s;text-decoration:none;border-right:1px solid var(--border-color);}
-.topbar-lk:first-child{padding-left:0;}
-.topbar-lk:last-child{border-right:none;}
-.topbar-lk:hover{color:var(--text-main);}
-.topbar-right{display:flex;align-items:center;gap:12px;}
-.theme-toggle{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 10px;border-radius:8px;transition:background .15s;}
-.theme-toggle:hover{background:rgba(128,128,128,.12);}
-.theme-toggle-track{width:38px;height:20px;border-radius:10px;background:var(--border-color);position:relative;flex-shrink:0;transition:background .2s;}
-.theme-toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
-.theme-toggle.is-dark .theme-toggle-track{background:var(--primary);}
-.theme-toggle.is-dark .theme-toggle-knob{left:20px;}
-.theme-toggle-label{font-size:12.5px;font-weight:700;color:var(--text-secondary);white-space:nowrap;}
-.topbar-acct{font-size:11.5px;color:var(--text-muted);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .15s;}
-.topbar-acct:hover{color:var(--text-main);}
-.hdr{background:var(--bg-header);position:sticky;top:0;z-index:200;}
-.hdr-top{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:96px;align-items:center;gap:28px;height:96px;padding:0 24px 0 28px;}
-.hdr-logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0;}
-.hdr-logo img{height:130px;width:auto;object-fit:contain;max-width:300px;}
-.search-wrap{position:relative;flex:1;}
-.hdr-search{display:flex;height:47px;border:1px solid var(--border-color);border-radius:6px;overflow:hidden;background:var(--bg-card);transition:border-color .2s,box-shadow .2s;}
-.hdr-search:focus-within{border-color:rgba(37,99,255,.55);box-shadow:0 0 0 3px rgba(37,99,255,.08);}
-.hdr-search-in{flex:1;min-width:0;background:transparent;border:none;padding:0 16px;font-size:14px;font-family:inherit;color:var(--text-main);outline:none;height:100%;}
-.hdr-search-in::placeholder{color:var(--text-muted);}
-.hdr-search-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#1D4ED8;color:#fff;border:none;width:130px;flex-shrink:0;font-size:13px;font-weight:700;letter-spacing:.3px;cursor:pointer;transition:background .18s;height:100%;}
-.hdr-search-btn:hover{background:#2563eb;}
-.search-drop{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:600;background:var(--bg-card);border:1px solid var(--border-color);border-top:2px solid #1d4ed8;border-radius:0 0 14px 14px;box-shadow:0 28px 70px rgba(0,0,0,.35);overflow:hidden;max-height:460px;overflow-y:auto;}
-.search-drop.open{display:block;}
-.search-drop-head{padding:11px 18px 9px;font-size:9px;font-weight:800;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;background:var(--bg-section);border-bottom:1px solid var(--border-color);display:flex;align-items:center;gap:8px;}
-.search-drop-head::before{content:'';width:6px;height:6px;border-radius:50%;background:#1d4ed8;flex-shrink:0;}
-.search-item{display:flex;align-items:center;gap:14px;padding:11px 18px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border-color);text-decoration:none;position:relative;}
-.search-item:last-child{border-bottom:none;}
-.search-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:#1d4ed8;opacity:0;transition:opacity .15s;}
-.search-item:hover::before,.search-item.active::before{opacity:1;}
-.search-item:hover,.search-item.active{background:rgba(37,99,255,.09);}
-.search-item-img{width:52px;height:52px;flex-shrink:0;border-radius:10px;background:var(--bg-section);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.search-item-img img{width:100%;height:100%;object-fit:contain;padding:5px;}
-.search-item-img-ph{font-size:22px;opacity:.15;}
-.search-item-info{flex:1;min-width:0;}
-.search-item-brand{font-size:9px;font-weight:800;color:#3b82f6;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;}
-.search-item-name{font-size:13px;font-weight:600;color:var(--text-main);line-height:1.38;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.search-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
-.search-item-price{font-size:14px;font-weight:800;color:#22c55e;white-space:nowrap;}
-.search-item-arrow{font-size:13px;color:rgba(37,99,255,.4);opacity:0;transition:opacity .15s,transform .15s;}
-.search-item:hover .search-item-arrow,.search-item.active .search-item-arrow{opacity:1;transform:translateX(3px);color:#3b82f6;}
-.search-none{padding:28px 18px;text-align:center;font-size:13px;color:var(--text-muted);}
-.search-none b{color:var(--text-secondary);}
-.search-drop::-webkit-scrollbar{width:4px;}
-.search-drop::-webkit-scrollbar-track{background:transparent;}
-.search-drop::-webkit-scrollbar-thumb{background:rgba(37,99,255,.35);border-radius:4px;}
-.hdr-acts-group{display:flex;align-items:center;gap:4px;}
-.hdr-act{display:flex;align-items:center;gap:10px;text-decoration:none;padding:8px 14px;border-radius:8px;transition:background .15s,color .15s;color:var(--text-secondary);}
-.hdr-act:hover{background:rgba(128,128,128,.1);color:var(--text-main);}
-.hdr-act-icon{color:currentColor;flex-shrink:0;}
-.hdr-act-text{display:flex;flex-direction:column;gap:2px;}
-.hdr-act-line1{font-size:12.5px;font-weight:700;color:inherit;line-height:1.2;white-space:nowrap;}
-.hdr-act-line2{font-size:10.5px;color:var(--text-muted);line-height:1.2;white-space:nowrap;}
-.hdr-act-cart{background:var(--primary);border-radius:10px;padding:0 22px;height:54px;gap:14px;color:#fff;flex-shrink:0;}
-.hdr-act-cart:hover{background:var(--primary-hover);color:#fff;}
-.hdr-act-cart .hdr-act-line1{font-size:14px;font-weight:800;letter-spacing:.5px;color:#fff;}
-.hdr-act-cart .hdr-act-line2{font-size:11px;color:rgba(255,255,255,.75);}
-.hdr-act-cart .hdr-act-icon{color:#fff;}
-.hdr-nav{background:var(--bg-menu);border:none;border-bottom:1px solid var(--border-color);}
-.hdr-nav-inner{display:flex;align-items:stretch;max-width:1600px;margin:0 auto;padding:0 28px;height:48px;overflow-x:auto;}
-.hdr-nav-inner::-webkit-scrollbar{display:none;}
-.hdr-nav-inner a{font-size:13px;font-weight:700;color:rgba(255,255,255,.9);padding:0 18px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.4px;transition:background .15s,color .15s;white-space:nowrap;flex-shrink:0;text-decoration:none;border-right:1px solid rgba(255,255,255,.18);}
-.hdr-nav-inner a:last-child{border-right:none;}
-.hdr-nav-inner a:hover{background:rgba(0,0,0,.18);color:#fff;}
-.hdr-nav-inner a.nav-cat{background:rgba(0,0,0,.22);font-weight:800;color:#fff;}
-.hdr-nav-inner a.nav-promo{color:#FFE14D;}
-.hdr-nav-inner a.nav-promo:hover{color:#FFE14D;background:rgba(0,0,0,.18);}
-.hdr-nav-inner a.nav-atend{color:rgba(255,255,255,.9);}
-.hdr-nav-inner a.nav-atend::before{content:'';width:7px;height:7px;min-width:7px;background:#4ade80;border-radius:50%;}
-
-/* ══ MEGA MENU (igual à home) ══ */
-.cat-wrap{position:relative;display:flex;align-items:stretch;flex-shrink:0;}
-.megamenu{display:none;position:fixed;top:0;left:0;width:1280px;padding-top:10px;background:transparent;z-index:500;flex-direction:column;}
-.megamenu-inner{
-  display:flex;flex-direction:row;
-  background:var(--bg-card);
-  border:1px solid var(--border-color);
-  border-radius:20px;
-  overflow:hidden;
-  box-shadow:0 40px 90px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.02);
-  animation:megaSlide .25s cubic-bezier(.4,0,.2,1) both;
-}
-@keyframes megaSlide{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
-@keyframes megaIn{from{opacity:0;}to{opacity:1;}}
-.mega-left{
-  width:300px;flex-shrink:0;
-  background:var(--bg-section);
-  border-right:1px solid var(--border-color);
-  padding:24px 16px;overflow-y:auto;
-}
-.mega-left-head{
-  padding:4px 12px 18px;
-  font-size:10.5px;font-weight:800;letter-spacing:1.8px;
-  color:var(--text-muted);text-transform:uppercase;
-}
-.mega-cat{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 16px;margin-bottom:6px;
-  font-size:13px;font-weight:700;
-  color:var(--text-secondary);
-  text-decoration:none;text-transform:uppercase;letter-spacing:.3px;
-  border-left:3px solid transparent;
-  border-radius:12px;
-  white-space:nowrap;
-  transition:background .25s ease,color .25s ease,border-color .25s ease,transform .25s ease;
-  cursor:pointer;position:relative;
-}
-.mega-cat:hover{
-  background:var(--bg-card);
-  color:var(--text-main);
-  transform:translateX(2px);
-  box-shadow:0 2px 10px rgba(0,0,0,.04);
-}
-.mega-cat.mm-active{
-  background:var(--bg-card);
-  color:var(--primary);font-weight:800;
-  border-left-color:var(--primary);
-  box-shadow:0 2px 12px rgba(0,102,255,.1);
-}
-.mega-cat-icon{
-  width:36px;height:36px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:0;
-  background:var(--bg-card);
-  border:1px solid var(--border-color);
-  transition:all .25s ease;
-  color:var(--text-muted);
-}
-.mega-cat-icon svg{width:18px;height:18px;}
-.mega-cat:hover .mega-cat-icon{
-  border-color:rgba(0,102,255,.35);
-  color:var(--primary);
-}
-.mega-cat.mm-active .mega-cat-icon{
-  background:var(--primary);
-  border-color:var(--primary);
-  color:#fff;
-}
-.mega-cat-arrow{
-  margin-left:auto;opacity:0;
-  color:var(--primary);
-  transition:opacity .2s,transform .2s;
-  font-size:15px;
-}
-.mega-cat:hover .mega-cat-arrow,.mega-cat.mm-active .mega-cat-arrow{opacity:1;}
-.mega-cat.mm-active .mega-cat-arrow{transform:translateX(2px);}
-.mega-right{flex:1;padding:36px 40px;min-height:460px;display:flex;flex-direction:column;background:var(--bg-main);}
-.mega-subs{display:none;flex:1;}
-.mega-subs.mm-active{display:flex;flex-direction:column;animation:megaIn .25s ease both;}
-.mega-sub-title{
-  font-size:29px;font-weight:800;color:var(--text-main);
-  letter-spacing:-.6px;
-  margin:0 0 26px;
-}
-.mega-sub-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:20px;
-  align-content:start;
-}
-.mega-sub-card{
-  display:flex;flex-direction:column;align-items:flex-start;gap:10px;
-  min-height:132px;
-  padding:24px;
-  background:var(--bg-card);
-  border:1px solid var(--border-color);
-  border-radius:18px;
-  text-decoration:none;
-  position:relative;
-  box-shadow:0 2px 6px rgba(0,0,0,.03);
-  transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s cubic-bezier(.4,0,.2,1),border-color .28s ease;
-}
-.mega-sub-card:hover{
-  transform:translateY(-6px) scale(1.015);
-  border-color:var(--primary);
-  box-shadow:0 22px 44px rgba(0,102,255,.16);
-}
-.mega-sub-ico{
-  flex-shrink:0;width:48px;height:48px;border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(0,102,255,.08);color:var(--primary);
-  transition:transform .28s cubic-bezier(.4,0,.2,1);
-}
-.mega-sub-ico svg{width:26px;height:26px;}
-.mega-sub-card:hover .mega-sub-ico{transform:scale(1.1);}
-.mega-sub-body{min-width:0;}
-.mega-sub-name{display:block;font-size:15.5px;font-weight:800;color:var(--text-main);letter-spacing:-.1px;margin-bottom:5px;}
-.mega-sub-desc{display:block;font-size:12.5px;color:var(--text-muted);line-height:1.45;}
-.mega-sub-go{position:absolute;top:22px;right:22px;color:var(--border-color);transition:color .25s,transform .25s;opacity:0;transform:translateX(-4px);}
-.mega-sub-go svg{width:16px;height:16px;}
-.mega-sub-card:hover .mega-sub-go{color:var(--primary);opacity:1;transform:translateX(0);}
-.mega-foot{
-  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
-  margin-top:28px;padding-top:20px;border-top:1px solid var(--border-color);
-}
-.mega-foot-item{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--text-muted);white-space:nowrap;}
-.mega-foot-item svg{width:15px;height:15px;color:var(--primary);flex-shrink:0;}
-@media(max-width:1400px){.megamenu{width:1040px;}.mega-sub-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:1150px){.megamenu{width:660px;}.mega-left{width:220px;}.mega-sub-grid{grid-template-columns:repeat(2,1fr);}.mega-cat span:not(.mega-cat-icon):not(.mega-cat-arrow){font-size:11.5px;}.mega-foot{display:none;}}
-
 /* === PAGE LAYOUT === */
 .page{max-width:1600px;margin:0 auto;padding:22px 24px 60px;display:grid;grid-template-columns:282px 1fr;gap:24px;align-items:start;}
 
@@ -266,17 +61,17 @@ a{color:inherit;text-decoration:none;}
 .sb-s-inner svg{position:absolute;left:14px;pointer-events:none;color:var(--text-muted);}
 .sb-s-inner input{width:100%;background:var(--bg-main);border:1px solid var(--border-color);border-radius:6px;height:50px;padding:0 14px 0 42px;color:var(--text-main);font-size:13px;font-family:inherit;outline:none;transition:border-color .18s;}
 .sb-s-inner input::placeholder{color:var(--text-muted);}
-.sb-s-inner input:focus{border-color:rgba(215,25,32,.5);}
+.sb-s-inner input:focus{border-color:rgba(0,102,255,.5);}
 
 /* === DUAL RANGE SLIDER === */
 .range-cont{position:relative;padding:8px 0 4px;margin-bottom:14px;}
 .range-bar{position:relative;height:5px;background:var(--border-color);border-radius:3px;margin:10px 0;}
-.range-fill{position:absolute;top:0;height:100%;background:#D71920;border-radius:3px;pointer-events:none;}
+.range-fill{position:absolute;top:0;height:100%;background:var(--primary);border-radius:3px;pointer-events:none;}
 .range-inputs-wrap{position:relative;height:24px;}
 .r-inp{position:absolute;width:100%;top:50%;transform:translateY(-50%);height:5px;background:transparent;border:none;outline:none;-webkit-appearance:none;appearance:none;pointer-events:none;z-index:3;}
-.r-inp::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#D71920;border:2.5px solid #fff;cursor:pointer;pointer-events:all;box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .12s;}
+.r-inp::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--primary);border:2.5px solid #fff;cursor:pointer;pointer-events:all;box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .12s;}
 .r-inp::-webkit-slider-thumb:hover{transform:scale(1.12);}
-.r-inp::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#D71920;border:2.5px solid #fff;cursor:pointer;pointer-events:all;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.r-inp::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--primary);border:2.5px solid #fff;cursor:pointer;pointer-events:all;box-shadow:0 2px 8px rgba(0,0,0,.4);}
 .r-inp::-webkit-slider-runnable-track{background:transparent;}
 .r-inp::-moz-range-track{background:transparent;}
 
@@ -304,7 +99,7 @@ a{color:inherit;text-decoration:none;}
 /* Custom visual checkbox */
 .cb-box{width:17px;height:17px;border:1.5px solid var(--border-color);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .14s,border-color .14s;background:transparent;}
 .cb-chk{width:9px;height:7px;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:0;transition:opacity .12s;}
-.cb-inp:checked+.cb-box{background:#D71920;border-color:#D71920;}
+.cb-inp:checked+.cb-box{background:var(--primary);border-color:var(--primary);}
 .cb-inp:checked+.cb-box .cb-chk{opacity:1;}
 
 .cb-lbl{font-size:12.5px;color:var(--text-secondary);flex:1;line-height:1.3;transition:color .14s;}
@@ -324,7 +119,7 @@ a{color:inherit;text-decoration:none;}
 .cat-hdr{margin-bottom:0;}
 .cat-title-wrap{display:inline-block;}
 .cat-ttl{font-size:30px;font-weight:700;color:var(--text-main);letter-spacing:-.4px;display:block;}
-.cat-ttl-line{display:block;height:3px;background:#D71920;margin-top:6px;border-radius:1px;}
+.cat-ttl-line{display:block;height:3px;background:var(--primary);margin-top:6px;border-radius:1px;}
 
 /* Meta bar */
 .cat-meta{display:flex;align-items:center;justify-content:space-between;margin-top:18px;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
@@ -332,14 +127,14 @@ a{color:inherit;text-decoration:none;}
 .sort-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
 .sort-lbl{font-size:10px;color:var(--text-muted);letter-spacing:.3px;}
 .sort-sel{background:var(--bg-card);border:1px solid var(--border-color);border-radius:5px;color:var(--text-main);padding:8px 34px 8px 14px;font-size:13px;font-family:inherit;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:border-color .18s;min-width:160px;}
-.sort-sel:focus{border-color:rgba(215,25,32,.4);}
+.sort-sel:focus{border-color:rgba(0,102,255,.4);}
 .sort-sel option{background:var(--bg-card);color:var(--text-main);}
 
 /* Subcats */
 .subcats{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px;}
-.scat-btn{padding:7px 16px;background:transparent;border:1px solid #D71920;border-radius:3px;font-size:12px;font-weight:700;color:#D71920;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:background .15s,color .15s;}
-.scat-btn:hover{background:rgba(215,25,32,.12);}
-.scat-btn.active{background:#D71920;color:#fff;}
+.scat-btn{padding:7px 16px;background:transparent;border:1px solid var(--primary);border-radius:3px;font-size:12px;font-weight:700;color:var(--primary);cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:background .15s,color .15s;}
+.scat-btn:hover{background:rgba(0,102,255,.12);}
+.scat-btn.active{background:var(--primary);color:#fff;}
 
 /* === PRODUCT GRID === */
 .pg{display:grid;grid-template-columns:repeat(6,1fr);gap:32px 24px;}
@@ -352,8 +147,8 @@ a{color:inherit;text-decoration:none;}
 .pc-bdg{position:absolute;top:7px;left:7px;display:flex;gap:4px;z-index:2;}
 .bdg-d{background:#D71920;color:#fff;font-size:10px;font-weight:700;padding:3px 7px;border-radius:3px;line-height:1.4;}
 .pc-body{padding:12px 12px 18px;display:flex;flex-direction:column;flex:1;}
-.pc-name{font-size:14.5px;font-weight:600;color:var(--text-main);line-height:1.28;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;}
-.pc-old{font-size:12px;color:#D71920;text-decoration:line-through;margin-bottom:2px;}
+.pc-name{font-size:14.5px;font-weight:600;color:var(--text-main);line-height:1.28;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;min-height:calc(14.5px*1.28*3);}
+.pc-old{font-size:12px;color:var(--text-muted);text-decoration:line-through;margin-bottom:2px;}
 .pc-price{font-size:20px;font-weight:800;color:var(--success);line-height:1.1;margin-bottom:3px;}
 .pc-av{font-size:11px;color:var(--success);margin-bottom:2px;}
 .pc-pix{font-size:11px;font-weight:700;color:var(--text-main);}
@@ -410,161 +205,11 @@ a{color:inherit;text-decoration:none;}
 .wpp-float svg{width:30px;height:30px;}
 @media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
+<link rel="stylesheet" href="header.css">
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-in">
-    <div></div>
-    <div class="topbar-right">
-      <button class="theme-toggle" id="themeToggle" onclick="Store.toggleTheme()" type="button">
-        <span class="theme-toggle-track"><span class="theme-toggle-knob"></span></span>
-        <span class="theme-toggle-label">Modo Claro</span>
-      </button>
-      <a href="auth.html" class="topbar-acct"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Minha Conta</a>
-    </div>
-  </div>
-</div>
-<header class="hdr">
-<div class="hdr-top">
-  <a href="alfa-replica.html" class="hdr-logo"><img src="logo.png" alt="Alfa Informática"></a>
-  <div class="search-wrap" id="searchWrap">
-    <div class="hdr-search">
-      <input class="hdr-search-in" id="searchIn" type="text" placeholder="Digite o que você procura..." autocomplete="off">
-      <button class="hdr-search-btn" onclick="doSearch()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> BUSCAR</button>
-    </div>
-    <div class="search-drop" id="searchDrop"></div>
-  </div>
-  <div class="hdr-acts-group">
-    <a href="https://wa.me/5565992655883?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20no%20site%20da%20Alfa%20Inform%C3%A1tica." class="hdr-act" target="_blank" rel="noopener noreferrer">
-      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.4 8.4 0 0 1-4.2-1.1L3 20l1.1-5.3A8.4 8.4 0 0 1 3 11.5 8.5 8.5 0 0 1 11.5 3 8.5 8.5 0 0 1 21 11.5z"/><path d="M8.5 10.5c.5 2.5 2.5 4.5 5 5"/></svg>
-      <div class="hdr-act-text"><span class="hdr-act-line1">Suporte</span><span class="hdr-act-line2">Fale no WhatsApp</span></div>
-    </a>
-    <a href="auth.html" class="hdr-act">
-      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <div class="hdr-act-text"><span class="hdr-act-line1">Minha Conta</span><span class="hdr-act-line2">Entrar / Cadastrar</span></div>
-    </a>
-    <a href="#" class="hdr-act">
-      <svg class="hdr-act-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <div class="hdr-act-text"><span class="hdr-act-line1">Favoritos</span><span class="hdr-act-line2">Lista de desejos</span></div>
-    </a>
-    <a href="carrinho.html" class="hdr-act hdr-act-cart">
-      <svg class="hdr-act-icon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <div class="hdr-act-text"><span class="hdr-act-line1">CARRINHO</span><span class="hdr-act-line2" id="cart-count-lbl">0 produtos</span></div>
-    </a>
-  </div>
-</div>
-<nav class="hdr-nav">
-  <div class="hdr-nav-inner">
-    <div class="cat-wrap">
-      <a href="categoria.html" class="nav-cat"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><rect width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="4.6" width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="9.2" width="14" height="1.8" rx=".9" fill="currentColor"/></svg> CATEGORIAS</a>
-      <nav class="megamenu"><div class="megamenu-inner">
-        <div class="mega-left">
-          <div class="mega-left-head">Departamentos</div>
-          <a class="mega-cat" data-cat="computadores" href="categoria.html?cat=computadores"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>Computadores<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="hardware" href="categoria.html?cat=hardware"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="14" x2="4" y2="14"/></svg></span>Hardware<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="perifericos" href="categoria.html?cat=perifericos"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9 L7 15 L17 15 L18 9 Z"/><path d="M5 5 L19 5 L18 9 L6 9 Z"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg></span>Periféricos<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="monitores" href="categoria.html?cat=monitores"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>Monitores<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="celulares" href="categoria.html?cat=celulares"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>Celulares<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="redes" href="categoria.html?cat=redes"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 7.76a6 6 0 0 0 0 8.49"/><path d="M20.07 4.93a10 10 0 0 1 0 14.14"/><path d="M3.93 4.93a10 10 0 0 0 0 14.14"/></svg></span>Redes<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="impressao" href="categoria.html?cat=impressao"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span>Impressão<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="moveis" href="categoria.html?cat=moveis"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 9V6a2 2 0 00-2-2H6a2 2 0 00-2 2v3"/><path d="M2 11v5a2 2 0 002 2h16a2 2 0 002-2v-5a2 2 0 00-4 0v2H6v-2a2 2 0 00-4 0z"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/></svg></span>Móveis<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="audio" href="categoria.html?cat=audio"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>Áudio<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="games" href="categoria.html?cat=games"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><path d="M17.32 5H6.68a4 4 0 00-3.978 3.59l-.99 8.5A4 4 0 005.69 21h.01a4 4 0 003.23-1.63l.68-1.01a2 2 0 011.62-.84h1.54a2 2 0 011.62.84l.68 1.01A4 4 0 0018.3 21h.01a4 4 0 003.978-3.91l-.99-8.5A4 4 0 0017.32 5z"/></svg></span>Games<span class="mega-cat-arrow">›</span></a>
-          <a class="mega-cat" data-cat="outros" href="categoria.html?cat=outros"><span class="mega-cat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Outros<span class="mega-cat-arrow">›</span></a>
-        </div>
-        <div class="mega-right">
-          <div class="mega-subs" id="subs-computadores"><p class="mega-sub-title">Computadores</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=pc-gamer"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="10" height="18" rx="1.5"/><circle cx="10" cy="7" r="1"/><line x1="7.5" y1="17" x2="12.5" y2="17"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">PC Gamer</span><span class="mega-sub-desc">Alta performance para jogar</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=pc-office"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">PC Office</span><span class="mega-sub-desc">Produtividade sem limites</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=notebooks"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="11" rx="1.5"/><path d="M1 18h22"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Notebooks</span><span class="mega-sub-desc">Mobilidade e desempenho</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=servidores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><line x1="7" y1="7.5" x2="7.01" y2="7.5"/><line x1="7" y1="16.5" x2="7.01" y2="16.5"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Servidores</span><span class="mega-sub-desc">Estabilidade para sua empresa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=seminovos"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Seminovos</span><span class="mega-sub-desc">Qualidade com preço menor</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-hardware"><p class="mega-sub-title">Hardware</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=processadores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="2" x2="9" y2="5"/><line x1="15" y1="2" x2="15" y2="5"/><line x1="9" y1="19" x2="9" y2="22"/><line x1="15" y1="19" x2="15" y2="22"/><line x1="19" y1="9" x2="22" y2="9"/><line x1="19" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="5" y2="9"/><line x1="2" y1="14" x2="5" y2="14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Processadores</span><span class="mega-sub-desc">O cérebro do seu setup</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=placas-mae"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M13 8h5"/><path d="M13 13h5"/><path d="M6 14v4h4"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas-mãe</span><span class="mega-sub-desc">A base de tudo</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=placas-de-video"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="1.5"/><circle cx="7" cy="12" r="2"/><line x1="13" y1="10" x2="18" y2="10"/><line x1="13" y1="14" x2="16" y2="14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas de Vídeo</span><span class="mega-sub-desc">Gráficos de alta performance</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=memorias-ram"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="7" rx="1"/><line x1="7" y1="9" x2="7" y2="6"/><line x1="11" y1="9" x2="11" y2="6"/><line x1="15" y1="9" x2="15" y2="6"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Memórias RAM</span><span class="mega-sub-desc">Mais velocidade multitarefa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=ssd-hd"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5"/><path d="M3 12a9 3 0 0018 0"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">SSD / HD</span><span class="mega-sub-desc">Armazenamento rápido e seguro</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=fontes"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Fontes</span><span class="mega-sub-desc">Energia estável pro seu PC</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=gabinetes"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="1.5"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Gabinetes</span><span class="mega-sub-desc">Estilo e ventilação</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=coolers-gabinete"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 12c0-3 2-5 4-5s2 2 0 4-4 1-4 1z"/><path d="M12 12c0 3-2 5-4 5s-2-2 0-4 4-1 4-1z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Coolers p/ Gabinete</span><span class="mega-sub-desc">Fluxo de ar eficiente</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=coolers-processador"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Coolers p/ Processador</span><span class="mega-sub-desc">Temperatura sob controle</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=water-coolers"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2s6 7 6 12a6 6 0 01-12 0c0-5 6-12 6-12z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Water Coolers</span><span class="mega-sub-desc">Refrigeração líquida silenciosa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-perifericos"><p class="mega-sub-title">Periféricos</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=mouse"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="2" width="10" height="20" rx="5"/><line x1="12" y1="6" x2="12" y2="10"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mouse</span><span class="mega-sub-desc">Precisão em cada clique</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=mousepad"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mousepad</span><span class="mega-sub-desc">Conforto e deslize perfeito</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=teclados"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="6" y1="9" x2="6" y2="9.01"/><line x1="10" y1="9" x2="10" y2="9.01"/><line x1="14" y1="9" x2="14" y2="9.01"/><line x1="18" y1="9" x2="18" y2="9.01"/><line x1="6" y1="13" x2="18" y2="13.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Teclados</span><span class="mega-sub-desc">Mecânicos e membrana</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=headsets"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 14v-2a9 9 0 0118 0v2"/><rect x="1" y="14" width="6" height="7" rx="2"/><rect x="17" y="14" width="6" height="7" rx="2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Headsets</span><span class="mega-sub-desc">Áudio imersivo para jogos</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=fones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14v-3a8 8 0 0116 0v3"/><path d="M2 14a2 2 0 012-2 2 2 0 012 2v3a2 2 0 01-2 2 2 2 0 01-2-2z"/><path d="M22 14a2 2 0 00-2-2 2 2 0 00-2 2v3a2 2 0 002 2 2 2 0 002-2z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Fones de Ouvido</span><span class="mega-sub-desc">Para música e chamadas</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=microfones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Microfones</span><span class="mega-sub-desc">Voz clara para streaming</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=webcam"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M4 20c2-2 5-3 8-3s6 1 8 3"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Webcam</span><span class="mega-sub-desc">Imagem nítida em video calls</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-monitores"><p class="mega-sub-title">Monitores</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=monitores-gaming"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Monitores</span><span class="mega-sub-desc">Alta taxa de atualização</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=tvs"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="6" width="20" height="13" rx="2"/><polyline points="8 2 12 6 16 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">TVs</span><span class="mega-sub-desc">Entretenimento em grande tela</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-celulares"><p class="mega-sub-title">Celulares</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=celulares-smartphones"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Celulares</span><span class="mega-sub-desc">Os últimos lançamentos</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=cabos-celular"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9a3 3 0 003 3h10a3 3 0 003-3"/><path d="M4 9V6a2 2 0 012-2"/><path d="M20 9V6a2 2 0 00-2-2"/><line x1="8" y1="15" x2="8" y2="21"/><line x1="16" y1="15" x2="16" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cabos para Celular</span><span class="mega-sub-desc">Carregamento rápido</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=adaptadores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="9" width="6" height="6"/><path d="M9 3v4"/><path d="M15 3v4"/><path d="M9 17v4"/><path d="M15 17v4"/><path d="M3 9h4"/><path d="M3 15h4"/><path d="M17 9h4"/><path d="M17 15h4"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Adaptadores</span><span class="mega-sub-desc">Compatibilidade total</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-redes"><p class="mega-sub-title">Redes</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=switch"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="8" width="20" height="8" rx="1.5"/><line x1="6" y1="12" x2="6.01" y2="12"/><line x1="10" y1="12" x2="10.01" y2="12"/><line x1="14" y1="12" x2="14.01" y2="12"/><line x1="18" y1="12" x2="18.01" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Switch</span><span class="mega-sub-desc">Rede cabeada estável</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=repetidores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M7.76 7.76a6 6 0 000 8.49"/><path d="M20.07 4.93a10 10 0 010 14.14"/><path d="M3.93 4.93a10 10 0 000 14.14"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Repetidores</span><span class="mega-sub-desc">Wi-Fi em toda a casa</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=placas-rede"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M8 8h4"/><path d="M8 16h6"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Placas de Rede</span><span class="mega-sub-desc">Mais velocidade de conexão</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=cabos-rede"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9a3 3 0 003 3h10a3 3 0 003-3"/><path d="M4 9V6a2 2 0 012-2"/><path d="M20 9V6a2 2 0 00-2-2"/><line x1="8" y1="15" x2="8" y2="21"/><line x1="16" y1="15" x2="16" y2="21"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cabos de Rede</span><span class="mega-sub-desc">Conexão estável e rápida</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-impressao"><p class="mega-sub-title">Impressão</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=impressoras"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Impressoras</span><span class="mega-sub-desc">Para casa e escritório</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-moveis"><p class="mega-sub-title">Móveis</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=cadeiras"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 10V4a1 1 0 011-1h10a1 1 0 011 1v6"/><path d="M6 10h12v6H6z"/><line x1="7" y1="16" x2="6" y2="22"/><line x1="17" y1="16" x2="18" y2="22"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Cadeiras</span><span class="mega-sub-desc">Conforto para longas sessões</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=mesas"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 8h20"/><path d="M4 8v13"/><path d="M20 8v13"/><path d="M2 8l2-5h16l2 5"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Mesas</span><span class="mega-sub-desc">Setup organizado</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-audio"><p class="mega-sub-title">Áudio</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=caixas-de-som"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Caixas de Som</span><span class="mega-sub-desc">Som potente pro seu ambiente</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-games"><p class="mega-sub-title">Games</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=video-games"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><path d="M17.32 5H6.68a4 4 0 00-3.978 3.59l-.99 8.5A4 4 0 005.69 21h.01a4 4 0 003.23-1.63l.68-1.01a2 2 0 011.62-.84h1.54a2 2 0 011.62.84l.68 1.01A4 4 0 0018.3 21h.01a4 4 0 003.978-3.91l-.99-8.5A4 4 0 0017.32 5z"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Video Games</span><span class="mega-sub-desc">Consoles e acessórios</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-subs" id="subs-outros"><p class="mega-sub-title">Outros</p><div class="mega-sub-grid">
-            <a class="mega-sub-card" href="categoria.html?cat=projetores"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="9" cy="12" r="2.5"/><line x1="17" y1="10" x2="17" y2="10.01"/><line x1="17" y1="14" x2="17" y2="14.01"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Projetores</span><span class="mega-sub-desc">Telas grandes onde quiser</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=eletronicos"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Eletrônicos</span><span class="mega-sub-desc">Gadgets pro dia a dia</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=licencas"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M10.5 12.5L20 3"/><path d="M17 6l3 3"/><path d="M14 9l2 2"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Licenças</span><span class="mega-sub-desc">Softwares originais</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-            <a class="mega-sub-card" href="categoria.html?cat=acessorios"><span class="mega-sub-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span><span class="mega-sub-body"><span class="mega-sub-name">Acessórios de Informática</span><span class="mega-sub-desc">Complementos essenciais</span></span><span class="mega-sub-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span></a>
-          </div></div>
-
-          <div class="mega-foot">
-            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Compra 100% Segura</div>
-            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Entrega para todo Brasil</div>
-            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Produtos Originais</div>
-            <div class="mega-foot-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 14v-3a9 9 0 0118 0v3"/><path d="M21 14a2 2 0 00-2-2 2 2 0 00-2 2v3a2 2 0 002 2 2 2 0 002-2z"/><path d="M3 14a2 2 0 012-2 2 2 0 012 2v3a2 2 0 01-2 2 2 2 0 01-2-2z"/></svg>Suporte Especializado</div>
-          </div>
-        </div>
-      </div></nav>
-    </div>
-    <a href="categoria.html?q=monte+seu+pc">MONTE SEU PC</a>
-    <a href="categoria.html?cat=pc-gamer">PCs GAMER</a>
-    <a href="categoria.html?cat=notebooks">NOTEBOOKS</a>
-    <a href="categoria.html?cat=monitores-gaming">MONITORES</a>
-    <a href="categoria.html?cat=perifericos">PERIFÉRICOS</a>
-    <a href="categoria.html?cat=promocoes" class="nav-promo">PROMOÇÕES</a>
-  </div>
-</nav>
-</header>
+<div id="site-header"></div>
 
 <!-- Mobile overlay -->
 <div class="mob-overlay" id="mobOverlay" onclick="closeDrawer()"></div>
@@ -697,12 +342,9 @@ a{color:inherit;text-decoration:none;}
 </div>
 
 <script src="store.js"></script>
+<script src="products.js"></script>
+<script src="header.js"></script>
 <script>
-Store.syncThemeUI();
-function updateCartCount(){ document.getElementById('cart-count-lbl').textContent = Store.cartCount()+' produto'+(Store.cartCount()!==1?'s':''); }
-updateCartCount();
-Store.on('cart', updateCartCount);
-
 // ─── CATEGORY MAP ───────────────────────────────────────────────────────────
 const CATS = {
   'computadores':{label:'Computadores',parent:null,children:['pc-gamer','pc-office','notebooks','servidores','seminovos']},
@@ -798,55 +440,6 @@ const PRODUCTS = [
   {id:42,name:'Cadeira Gamer DXRacer Drifting D-series Couro PU',brand:'DXRacer',price:1299,old:1599,cat:'cadeiras'},
   {id:43,name:'Cadeira Gamer ThunderX3 TC5 Reclinável 175°',brand:'ThunderX3',price:1099,old:1399,cat:'cadeiras'},
 ];
-
-// ─── HEADER SEARCH (autocomplete) ────────────────────────────────────────────
-(function(){
-  var inp=document.getElementById('searchIn');
-  var drop=document.getElementById('searchDrop');
-  var wrap=document.getElementById('searchWrap');
-  if(!inp||!drop) return;
-  var products=PRODUCTS.map(function(p){
-    return {name:p.name,brand:p.brand,price:'R$ '+p.price.toLocaleString('pt-BR',{minimumFractionDigits:2})};
-  });
-  var selIdx=-1;
-  function renderDrop(q){
-    q=q.trim().toLowerCase();
-    if(!q){drop.classList.remove('open');return;}
-    var res=products.filter(function(p){return p.name.toLowerCase().indexOf(q)>-1||p.brand.toLowerCase().indexOf(q)>-1;}).slice(0,8);
-    selIdx=-1;
-    if(!res.length){drop.innerHTML='<div class="search-none">Nenhum produto encontrado para "<b>'+q+'</b>"</div>';drop.classList.add('open');return;}
-    drop.innerHTML='<div class="search-drop-head">'+res.length+' resultado'+(res.length!==1?'s':'')+'</div>'+
-      res.map(function(p,i){
-        return '<a class="search-item" href="produto.html?q='+encodeURIComponent(p.name)+'" data-idx="'+i+'">'+
-          '<div class="search-item-img"><span class="search-item-img-ph">📦</span></div>'+
-          '<div class="search-item-info"><div class="search-item-brand">'+p.brand+'</div><div class="search-item-name">'+p.name+'</div></div>'+
-          '<div class="search-item-right"><span class="search-item-price">'+p.price+'</span><span class="search-item-arrow">›</span></div>'+
-        '</a>';
-      }).join('');
-    drop.classList.add('open');
-  }
-  inp.addEventListener('input',function(){renderDrop(this.value);});
-  inp.addEventListener('focus',function(){if(this.value.trim())renderDrop(this.value);});
-  inp.addEventListener('keydown',function(e){
-    var items=drop.querySelectorAll('.search-item');
-    if(e.key==='ArrowDown'){e.preventDefault();selIdx=Math.min(selIdx+1,items.length-1);}
-    else if(e.key==='ArrowUp'){e.preventDefault();selIdx=Math.max(selIdx-1,-1);}
-    else if(e.key==='Escape'){drop.classList.remove('open');return;}
-    else if(e.key==='Enter'){if(selIdx>-1&&items[selIdx]){items[selIdx].click();}else doSearch();return;}
-    items.forEach(function(it,i){it.classList.toggle('active',i===selIdx);});
-    if(selIdx>-1&&items[selIdx])items[selIdx].scrollIntoView({block:'nearest'});
-  });
-  document.addEventListener('click',function(e){if(!wrap.contains(e.target))drop.classList.remove('open');});
-  window.doSearch=function(){
-    var q=inp.value.trim();
-    if(!q) return;
-    drop.classList.remove('open');
-    searchQuery=q.toLowerCase();
-    var sfSearch=document.getElementById('sfSearch');
-    if(sfSearch) sfSearch.value=q;
-    applyFilters();
-  };
-})();
 
 // ─── STATE ──────────────────────────────────────────────────────────────────
 const RANGE_MAX = 15000;
@@ -1094,7 +687,7 @@ function applyFilters() {
       </div>
       <div class="pc-body">
         <div class="pc-name">${p.name}</div>
-        ${p.old ? `<div class="pc-old">de R$ ${fmt(p.old)} por</div>` : ''}
+        <div class="pc-old" style="${p.old ? '' : 'visibility:hidden'}">de R$ ${fmt(p.old || p.price)} por</div>
         <div class="pc-price">R$ ${fmt(p.price)}</div>
         <div class="pc-av">à vista</div>
         <div class="pc-pix">15% de desconto no PIX</div>
@@ -1131,50 +724,6 @@ function viewProduct(id) {
 }
 
 init();
-</script>
-<script>
-(function(){
-  const wrap = document.querySelector('.cat-wrap');
-  const menu = document.querySelector('.megamenu');
-  const cats = document.querySelectorAll('.mega-cat');
-  const subs = document.querySelectorAll('.mega-subs');
-  let closeTimer = null;
-
-  function activate(cat){
-    cats.forEach(c=>c.classList.remove('mm-active'));
-    subs.forEach(s=>s.classList.remove('mm-active'));
-    cat.classList.add('mm-active');
-    const t = document.getElementById('subs-'+cat.dataset.cat);
-    if(t) t.classList.add('mm-active');
-  }
-
-  function openMenu(){
-    clearTimeout(closeTimer);
-    const r = wrap.getBoundingClientRect();
-    menu.style.left = r.left + 'px';
-    menu.style.top = r.bottom + 'px';
-    menu.style.display = 'flex';
-    const first = cats[0];
-    if(first && !document.querySelector('.mega-cat.mm-active')) activate(first);
-  }
-
-  function scheduleClose(){
-    closeTimer = setTimeout(()=>{ menu.style.display = 'none'; }, 300);
-  }
-
-  if(wrap){
-    wrap.addEventListener('mouseenter', openMenu);
-    wrap.addEventListener('mouseleave', scheduleClose);
-  }
-  if(menu){
-    menu.addEventListener('mouseenter', openMenu);
-    menu.addEventListener('mouseleave', scheduleClose);
-  }
-
-  cats.forEach(cat=>{
-    cat.addEventListener('mouseenter',()=>activate(cat));
-  });
-})();
 </script>
 
 <a href="https://wa.me/5565992655883" class="wpp-float" target="_blank" rel="noopener noreferrer" title="Fale conosco no WhatsApp">
