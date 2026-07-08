@@ -1,5 +1,16 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/alfa-replica.html" }
+    { "source": "/", "destination": "/alfa-replica.html" },
+    { "source": "/computadores", "destination": "/categoria.html?cat=computadores" },
+    { "source": "/hardware", "destination": "/categoria.html?cat=hardware" },
+    { "source": "/perifericos", "destination": "/categoria.html?cat=perifericos" },
+    { "source": "/monitores", "destination": "/categoria.html?cat=monitores" },
+    { "source": "/celulares", "destination": "/categoria.html?cat=celulares" },
+    { "source": "/redes", "destination": "/categoria.html?cat=redes" },
+    { "source": "/impressao", "destination": "/categoria.html?cat=impressao" },
+    { "source": "/moveis", "destination": "/categoria.html?cat=moveis" },
+    { "source": "/audio", "destination": "/categoria.html?cat=audio" },
+    { "source": "/games", "destination": "/categoria.html?cat=games" },
+    { "source": "/outros", "destination": "/categoria.html?cat=outros" }
   ]
 }
