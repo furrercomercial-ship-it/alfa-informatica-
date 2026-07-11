@@ -36,13 +36,6 @@ window.AlfaConsent = (function () {
   function acceptAll() { return set({ analytics: true, marketing: true, personalizacao: true }); }
   function rejectNonEssential() { return set({ analytics: false, marketing: false, personalizacao: false }); }
 
-  var CATS = [
-    { key: 'essencial', label: 'Essenciais', desc: 'Necessários pro site funcionar (carrinho, login, tema). Não podem ser desligados.', locked: true },
-    { key: 'analytics', label: 'Analytics', desc: 'Ajudam a entender como os visitantes usam o site (ex: Google Analytics).' },
-    { key: 'marketing', label: 'Marketing', desc: 'Usados por anúncios pra medir resultado de campanhas (ex: Meta Pixel, TikTok Pixel).' },
-    { key: 'personalizacao', label: 'Personalização', desc: 'Lembram preferências pra deixar sua experiência mais relevante.' },
-  ];
-
   function el(html) { var d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; }
 
   function hideBanner() {
@@ -52,29 +45,16 @@ window.AlfaConsent = (function () {
 
   function renderBanner() {
     if (document.getElementById('alfaConsentBanner')) return;
-    var consent = get();
     var banner = el(
       '<div class="alfa-consent-banner" id="alfaConsentBanner">' +
         '<div class="alfa-consent-main">' +
           '<div class="alfa-consent-txt">' +
-            '<strong>Usamos cookies</strong>' +
-            '<span>Usamos cookies essenciais pro site funcionar e, com sua permissão, cookies de analytics e marketing pra melhorar sua experiência.</span>' +
+            '<span><strong>Usamos cookies.</strong> Essenciais pro site funcionar e, com sua permissão, analytics e marketing pra melhorar sua experiência.</span>' +
           '</div>' +
           '<div class="alfa-consent-btns">' +
-            '<button type="button" class="alfa-consent-btn alfa-consent-ghost" data-act="prefs">Personalizar</button>' +
             '<button type="button" class="alfa-consent-btn alfa-consent-outline" data-act="reject">Rejeitar não essenciais</button>' +
             '<button type="button" class="alfa-consent-btn alfa-consent-primary" data-act="accept">Aceitar tudo</button>' +
           '</div>' +
-        '</div>' +
-        '<div class="alfa-consent-prefs" id="alfaConsentPrefs" hidden>' +
-          CATS.map(function (c) {
-            var checked = c.locked || consent[c.key];
-            return '<label class="alfa-consent-cat' + (c.locked ? ' locked' : '') + '">' +
-              '<div class="alfa-consent-cat-txt"><b>' + c.label + '</b><span>' + c.desc + '</span></div>' +
-              '<input type="checkbox" data-cat="' + c.key + '" ' + (checked ? 'checked' : '') + (c.locked ? ' disabled' : '') + '>' +
-            '</label>';
-          }).join('') +
-          '<button type="button" class="alfa-consent-btn alfa-consent-primary" data-act="save-prefs">Salvar preferências</button>' +
         '</div>' +
       '</div>'
     );
@@ -86,18 +66,11 @@ window.AlfaConsent = (function () {
       var act = btn.dataset.act;
       if (act === 'accept') acceptAll();
       else if (act === 'reject') rejectNonEssential();
-      else if (act === 'prefs') document.getElementById('alfaConsentPrefs').hidden = false;
-      else if (act === 'save-prefs') {
-        var patch = {};
-        banner.querySelectorAll('[data-cat]').forEach(function (input) { patch[input.dataset.cat] = input.checked; });
-        set(patch);
-      }
     });
   }
 
   function showPreferences() {
     renderBanner();
-    document.getElementById('alfaConsentPrefs').hidden = false;
   }
 
   function mountReopenButton() {
