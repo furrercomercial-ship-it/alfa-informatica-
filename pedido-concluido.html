@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pedido Confirmado — Alfa Informática</title>
+<script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg-main:#202020; --bg-section:#2B2B2B; --bg-card:#303030;
+  --bg-header:#1F1F1F; --bg-menu:#0052CC;
+  --text-main:#FFFFFF; --text-secondary:#D1D5DB; --text-muted:#9CA3AF;
+  --border-color:#404040;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+}
+[data-theme="light"]{
+  --bg-main:#F5F7FA; --bg-section:#FFFFFF; --bg-card:#FFFFFF;
+  --bg-header:#FFFFFF; --bg-menu:#0066FF;
+  --text-main:#111827; --text-secondary:#4B5563; --text-muted:#6B7280;
+  --border-color:#E5E7EB;
+  --primary:#0066FF; --primary-hover:#0052CC; --success:#16A34A; --success-hover:#15803D;
+}
+body{background:var(--bg-main);color:var(--text-main);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+.oc-wrap{max-width:760px;margin:0 auto;padding:56px 24px 80px;text-align:center;}
+.oc-icon{width:78px;height:78px;border-radius:50%;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;color:var(--success);}
+.oc-icon svg{width:38px;height:38px;}
+.oc-title{font-size:26px;font-weight:800;margin-bottom:10px;}
+.oc-sub{font-size:14.5px;color:var(--text-secondary);margin-bottom:34px;line-height:1.6;}
+.oc-card{background:var(--bg-card);border:1px solid var(--border-color);padding:24px;text-align:left;margin-bottom:24px;}
+.oc-order-num{font-size:12px;color:var(--text-muted);margin-bottom:16px;}
+.oc-item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color);font-size:13.5px;}
+.oc-item:last-child{border-bottom:none;}
+.oc-total-row{display:flex;justify-content:space-between;padding-top:14px;margin-top:6px;border-top:1px solid var(--border-color);font-size:16px;font-weight:800;}
+.oc-actions{display:flex;gap:12px;justify-content:center;margin-bottom:50px;}
+.btn-home{display:inline-block;padding:13px 28px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;}
+.btn-outline{display:inline-block;padding:13px 28px;border:1.5px solid var(--border-color);color:var(--text-main);font-size:13px;font-weight:700;}
+.oc-rec-title{font-size:18px;font-weight:800;margin-bottom:18px;text-align:left;}
+.oc-rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;text-align:left;}
+.oc-rec-card{background:var(--bg-card);border:1px solid var(--border-color);overflow:hidden;}
+.oc-rec-img{height:120px;background:var(--bg-section);}
+.oc-rec-img img{width:100%;height:100%;object-fit:cover;}
+.oc-rec-name{padding:10px 12px 4px;font-size:12px;font-weight:600;}
+.oc-rec-price{padding:0 12px 12px;font-size:14px;font-weight:800;color:var(--success);}
+</style>
+<link rel="stylesheet" href="header.css?v=2">
+<link rel="stylesheet" href="footer.css?v=3">
+<link rel="stylesheet" href="popups.css">
+<link rel="stylesheet" href="consent.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<div class="oc-wrap">
+  <div class="oc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+  <h1 class="oc-title" id="ocTitle">Pedido Confirmado!</h1>
+  <p class="oc-sub" id="ocSub">Obrigado pela sua compra. Em breve nossa equipe entra em contato pra confirmar os detalhes.</p>
+
+  <div class="oc-card" id="ocOrderCard"></div>
+
+  <div class="oc-actions">
+    <a href="alfa-replica.html" class="btn-home">Continuar comprando</a>
+    <a href="auth.html" class="btn-outline">Ver meus pedidos</a>
+  </div>
+
+  <div id="ocRec"></div>
+</div>
+
+<div id="site-footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script src="site-meta.js"></script>
+<script src="consent.js"></script>
+<script src="event-manager.js"></script>
+<script src="script-engine.js"></script>
+<script src="theme-loader.js?v=4"></script>
+<script src="site-texts.js"></script>
+<script src="header.js"></script>
+<script>
+function fmt(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
+
+async function load() {
+  const params = new URLSearchParams(location.search);
+  const numero = params.get('pedido');
+
+  const { data: pag } = await window.sb.from('paginas_cms').select('*').eq('slug', 'pedido-concluido').maybeSingle();
+  if (pag) { document.getElementById('ocTitle').textContent = pag.titulo || 'Pedido Confirmado!'; document.getElementById('ocSub').textContent = pag.subtitulo || document.getElementById('ocSub').textContent; }
+
+  if (numero) {
+    const { data: order } = await window.sb.from('orders').select('*,order_items(*)').eq('order_number', numero).maybeSingle();
+    if (order) {
+      document.getElementById('ocOrderCard').innerHTML =
+        `<div class="oc-order-num">Pedido <b>${order.order_number}</b> — ${new Date(order.created_at).toLocaleDateString('pt-BR')}</div>` +
+        (order.order_items || []).map(i => `<div class="oc-item"><span>${i.qty}x ${i.product_name_snapshot}</span><span>${fmt(i.line_total)}</span></div>`).join('') +
+        `<div class="oc-total-row"><span>Total</span><span>${fmt(order.total)}</span></div>`;
+    }
+  } else {
+    document.getElementById('ocOrderCard').style.display = 'none';
+  }
+
+  const { data: destaque } = await window.sb.from('products').select('id,name,price,images').eq('active', true).eq('featured', true).limit(4);
+  if (destaque && destaque.length) {
+    document.getElementById('ocRec').innerHTML = '<div class="oc-rec-title">Você também pode gostar</div><div class="oc-rec-grid">' +
+      destaque.map(p => `
+        <a class="oc-rec-card" href="produto.html?id=${p.id}">
+          <div class="oc-rec-img">${(p.images && p.images[0]) ? `<img src="${p.images[0]}" alt="">` : ''}</div>
+          <div class="oc-rec-name">${p.name}</div>
+          <div class="oc-rec-price">${fmt(p.price)}</div>
+        </a>`).join('') + '</div>';
+  }
+}
+load();
+</script>
+<script src="footer.js?v=3"></script>
+</body>
+</html>

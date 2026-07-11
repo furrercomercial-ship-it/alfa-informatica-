@@ -117,7 +117,7 @@ input,button{font-family:inherit;}
 
 /* price column */
 .item-price-col{text-align:right;}
-.item-unit{font-size:13px;font-weight:700;color:var(--success);margin-bottom:5px;white-space:nowrap;}
+.item-unit{font-size:13px;font-weight:700;color:var(--alfa-price-pix,var(--success));margin-bottom:5px;white-space:nowrap;}
 .item-total-lbl{font-size:12px;color:var(--text-secondary);}
 .item-total-val{font-size:12.5px;font-weight:800;color:var(--text-main);}
 
@@ -134,7 +134,7 @@ input,button{font-family:inherit;}
 .of-body{padding:14px;}
 .of-name{font-size:12.5px;font-weight:600;color:var(--text-main);line-height:1.35;min-height:34px;margin-bottom:8px;}
 .of-old{font-size:11px;color:var(--text-secondary);text-decoration:line-through;}
-.of-price{font-size:17px;font-weight:800;color:var(--success);margin-bottom:10px;}
+.of-price{font-size:17px;font-weight:800;color:var(--alfa-price-promo,var(--success));margin-bottom:10px;}
 .of-btn{display:block;text-align:center;font-size:11.5px;font-weight:700;color:#fff;background:var(--primary);border-radius:0;padding:9px;transition:background .15s;}
 .of-btn:hover{background:var(--primary-hover);}
 @media(max-width:900px){.of-grid{grid-template-columns:repeat(3,1fr);}}
@@ -151,7 +151,7 @@ input,button{font-family:inherit;}
 .sum-plain-row{display:flex;justify-content:space-between;font-size:15px;color:var(--text-secondary);padding:9px 0;}
 .sum-total-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg-main);border-radius:0;padding:16px 18px;margin:8px 0 26px;font-size:16px;font-weight:800;color:var(--text-main);}
 .pix-block{text-align:center;margin-bottom:18px;}
-.pix-price{font-size:36px;font-weight:900;color:var(--success);letter-spacing:-.5px;}
+.pix-price{font-size:36px;font-weight:900;color:var(--alfa-price-pix,var(--success));letter-spacing:-.5px;}
 .pix-cap{font-size:13.5px;color:var(--text-secondary);margin-top:6px;}
 .or-div{display:flex;align-items:center;gap:14px;margin:20px 0;}
 .or-div::before,.or-div::after{content:'';flex:1;height:1px;background:var(--border-color);}
@@ -161,13 +161,13 @@ input,button{font-family:inherit;}
 .card-cap{font-size:13.5px;color:var(--text-secondary);margin-top:6px;}
 .btn-ck{
   width:100%;height:62px;
-  background:var(--success);
-  color:#fff;border:none;border-radius:0;
+  background:var(--alfa-btn-buy-bg,var(--success));
+  color:var(--alfa-btn-buy-text,#fff);border:none;border-radius:0;
   font-size:15.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
   cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
   transition:background .2s,transform .2s;
 }
-.btn-ck:hover{background:var(--success-hover);}
+.btn-ck:hover{background:var(--alfa-btn-buy-hover,var(--success-hover));}
 .btn-ck:active{transform:scale(.98);}
 .btn-ck .btn-arrow{width:19px;height:19px;}
 .btn-continue{
@@ -248,6 +248,9 @@ input,button{font-family:inherit;}
 @media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
 <link rel="stylesheet" href="header.css?v=2">
+<link rel="stylesheet" href="footer.css?v=3">
+<link rel="stylesheet" href="popups.css">
+<link rel="stylesheet" href="consent.css">
 </head>
 <body>
 
@@ -262,6 +265,16 @@ input,button{font-family:inherit;}
   <div id="rightCol"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script src="site-meta.js"></script>
+<script src="consent.js"></script>
+<script src="event-manager.js"></script>
+<script src="script-engine.js"></script>
+<script src="popups.js"></script>
+<script src="theme-loader.js?v=4"></script>
+<script src="site-texts.js"></script>
+<script src="page-blocks.js"></script>
 <script src="store.js"></script>
 <script src="products.js"></script>
 <script src="categories.js"></script>
@@ -368,7 +381,7 @@ function render(){
   const install=(total/12).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 
   document.getElementById('leftCol').innerHTML=`
-  <div class="cart-box">
+  <div class="cart-box" data-block="itens">
     <div class="cart-box-head">
       <div class="cart-box-title">Carrinho de Compras</div>
       <button class="btn-clear-cart" onclick="if(confirm('Limpar todos os itens do carrinho?')){Store.clearCart();render();}">Limpar Carrinho</button>
@@ -411,10 +424,11 @@ function render(){
     }).join('')}
   </div>
 
-  <section class="ofertas">
+  <section class="ofertas" data-block="ofertas">
     <div class="of-title">Ofertas e Promoções</div>
     <div class="of-grid">${ofertasHtml()}</div>
   </section>`;
+  if (window.AlfaBlocks) AlfaBlocks.apply('carrinho');
 
   /* ── RIGHT ── */
   document.getElementById('rightCol').innerHTML=`
@@ -549,8 +563,11 @@ document.head.appendChild(_su);
 render();
 </script>
 
+<div id="site-footer"></div>
+
 <a href="https://wa.me/5565992655883" class="wpp-float" target="_blank" rel="noopener noreferrer" title="Fale conosco no WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
 </a>
+<script src="footer.js?v=3"></script>
 </body>
 </html>

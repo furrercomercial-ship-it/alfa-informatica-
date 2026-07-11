@@ -1,304 +1,40 @@
-// products.js — banco de dados central de produtos
-window.PRODUCTS_DB = [
-  {
-    id:1, name:'Intel Core i9-14900K 3.2GHz 24-Core LGA1700', brand:'Intel',
-    price:2799, old:3199, cat:'processadores', stock:8, rating:4.9, reviews:312,
-    images:['img teste.jpg'],
-    description:'O <strong>Intel Core i9-14900K</strong> é o processador topo de linha da 14ª geração Raptor Lake Refresh. Com 24 núcleos (8P+16E), 32 threads e turbo de até 6.0 GHz, entrega performance extrema para jogos AAA, criação de conteúdo 3D, edição de vídeo 4K e multitarefa pesada. Compatível com as principais placas Z790 e B760.',
-    specs:[['Fabricante','Intel'],['Socket','LGA1700'],['Geração','14ª (Raptor Lake Refresh)'],['Núcleos P-Core','8'],['Núcleos E-Core','16'],['Total de Núcleos','24'],['Threads','32'],['Clock Base','3.2 GHz'],['Clock Turbo Máx.','6.0 GHz'],['Cache L3','36 MB'],['TDP Base','125 W'],['TDP Máximo','253 W'],['Gráfico Integrado','Intel UHD 770'],['Cooler Incluso','Não'],['Memória Suportada','DDR4 / DDR5']],
-  },
-  {
-    id:2, name:'AMD Ryzen 9 7950X 4.5GHz 16-Core AM5', brand:'AMD',
-    price:3299, old:3799, cat:'processadores', stock:5, rating:4.8, reviews:197,
-    images:['img teste.jpg'],
-    description:'O <strong>AMD Ryzen 9 7950X</strong> é o processador de workstation da plataforma AM5, com 16 núcleos Zen 4 e frequência turbo de 5.7 GHz. Ideal para renderização 3D, compilação, edição profissional e criação de conteúdo de alta demanda. Suporta DDR5 e PCIe 5.0.',
-    specs:[['Fabricante','AMD'],['Socket','AM5'],['Arquitetura','Zen 4'],['Núcleos','16'],['Threads','32'],['Clock Base','4.5 GHz'],['Clock Turbo Máx.','5.7 GHz'],['Cache L3','64 MB'],['TDP','170 W'],['Gráfico Integrado','AMD Radeon (RDNA 2)'],['Cooler Incluso','Não'],['Memória Suportada','DDR5']],
-  },
-  {
-    id:3, name:'Intel Core i7-14700K 3.4GHz 20-Core LGA1700', brand:'Intel',
-    price:1899, old:2199, cat:'processadores', stock:14, rating:4.8, reviews:241,
-    images:['img teste.jpg'],
-    description:'O <strong>Intel Core i7-14700K</strong> oferece 20 núcleos (8P+12E) e turbo de até 5.6 GHz, equilibrando performance extrema em jogos e produtividade. Perfeito para setups gamers de alto nível com custo-benefício superior ao i9.',
-    specs:[['Fabricante','Intel'],['Socket','LGA1700'],['Geração','14ª (Raptor Lake Refresh)'],['Núcleos P-Core','8'],['Núcleos E-Core','12'],['Total de Núcleos','20'],['Threads','28'],['Clock Base','3.4 GHz'],['Clock Turbo Máx.','5.6 GHz'],['Cache L3','33 MB'],['TDP Base','125 W'],['TDP Máximo','253 W'],['Gráfico Integrado','Intel UHD 770'],['Cooler Incluso','Não']],
-  },
-  {
-    id:4, name:'AMD Ryzen 5 7600X 4.7GHz 6-Core AM5', brand:'AMD',
-    price:1099, old:1299, cat:'processadores', stock:22, rating:4.7, reviews:408,
-    images:['img teste.jpg'],
-    description:'O <strong>AMD Ryzen 5 7600X</strong> é a escolha ideal para gamers que buscam máximo FPS com custo acessível. Com 6 núcleos Zen 4 e turbo de 5.3 GHz, supera gerações anteriores na maioria dos títulos AAA.',
-    specs:[['Fabricante','AMD'],['Socket','AM5'],['Arquitetura','Zen 4'],['Núcleos','6'],['Threads','12'],['Clock Base','4.7 GHz'],['Clock Turbo Máx.','5.3 GHz'],['Cache L3','32 MB'],['TDP','105 W'],['Gráfico Integrado','AMD Radeon (RDNA 2)'],['Cooler Incluso','Não'],['Memória Suportada','DDR5']],
-  },
-  {
-    id:5, name:'Intel Core i5-14600K 3.5GHz 14-Core LGA1700', brand:'Intel',
-    price:1249, old:1499, cat:'processadores', stock:19, rating:4.8, reviews:531,
-    images:['img teste.jpg'],
-    description:'O <strong>Intel Core i5-14600K</strong> é o rei do custo-benefício para gaming. Com 14 núcleos (6P+8E) e turbo de 5.3 GHz, entrega performance que rivaliza com gerações anteriores de i9 a um preço muito mais acessível.',
-    specs:[['Fabricante','Intel'],['Socket','LGA1700'],['Geração','14ª (Raptor Lake Refresh)'],['Núcleos P-Core','6'],['Núcleos E-Core','8'],['Total de Núcleos','14'],['Threads','20'],['Clock Base','3.5 GHz'],['Clock Turbo Máx.','5.3 GHz'],['Cache L3','24 MB'],['TDP Base','125 W'],['Gráfico Integrado','Intel UHD 770'],['Cooler Incluso','Não']],
-  },
-  {
-    id:6, name:'NVIDIA GeForce RTX 4090 24GB GDDR6X', brand:'NVIDIA',
-    price:9999, old:11999, cat:'placas-de-video', stock:3, rating:5.0, reviews:178,
-    images:['img teste.jpg'],
-    description:'A <strong>NVIDIA GeForce RTX 4090</strong> é a placa de vídeo mais poderosa do mercado para consumidores. Com 24 GB GDDR6X, arquitetura Ada Lovelace e suporte a Ray Tracing de 3ª geração, DLSS 3 com Frame Generation e AV1 encode/decode duplo. Domina qualquer jogo em 4K com raytracing ativado.',
-    specs:[['Fabricante','NVIDIA'],['Chipset','GeForce RTX 4090'],['Arquitetura','Ada Lovelace'],['VRAM','24 GB GDDR6X'],['Barramento de Memória','384-bit'],['Clock GPU Base','2235 MHz'],['Clock GPU Boost','2520 MHz'],['CUDA Cores','16.384'],['TDP','450 W'],['Saídas de Vídeo','3x DisplayPort 1.4a, 1x HDMI 2.1'],['Resolução Máxima','8K'],['DirectX','12 Ultimate'],['Comprimento','336 mm']],
-  },
-  {
-    id:7, name:'AMD Radeon RX 7900 XTX 24GB GDDR6', brand:'AMD',
-    price:5999, old:7299, cat:'placas-de-video', stock:4, rating:4.8, reviews:134,
-    images:['img teste.jpg'],
-    description:'A <strong>AMD Radeon RX 7900 XTX</strong> é a placa topo de linha da AMD com 24 GB GDDR6 e arquitetura RDNA 3. Excelente para 4K gaming, edição de vídeo e ray tracing, com suporte a DisplayPort 2.1 para monitores 8K.',
-    specs:[['Fabricante','AMD'],['Chipset','Radeon RX 7900 XTX'],['Arquitetura','RDNA 3'],['VRAM','24 GB GDDR6'],['Barramento de Memória','384-bit'],['Clock GPU Base','1855 MHz'],['Clock GPU Boost','2500 MHz'],['Compute Units','96'],['TDP','355 W'],['Saídas de Vídeo','2x DisplayPort 2.1, 1x HDMI 2.1, 1x USB-C'],['DirectX','12 Ultimate'],['Comprimento','287 mm']],
-  },
-  {
-    id:8, name:'NVIDIA GeForce RTX 4070 Ti 12GB GDDR6X', brand:'NVIDIA',
-    price:4199, old:4999, cat:'placas-de-video', stock:7, rating:4.7, reviews:209,
-    images:['img teste.jpg'],
-    description:'A <strong>NVIDIA GeForce RTX 4070 Ti</strong> com 12 GB GDDR6X entrega performance de 4K gaming a um preço mais acessível que o topo de linha. Suporte completo a DLSS 3, Ray Tracing e AV1.',
-    specs:[['Fabricante','NVIDIA'],['Chipset','GeForce RTX 4070 Ti'],['Arquitetura','Ada Lovelace'],['VRAM','12 GB GDDR6X'],['Barramento de Memória','192-bit'],['Clock GPU Boost','2610 MHz'],['CUDA Cores','7.680'],['TDP','285 W'],['Saídas de Vídeo','3x DisplayPort 1.4a, 1x HDMI 2.1'],['DirectX','12 Ultimate']],
-  },
-  {
-    id:9, name:'NVIDIA GeForce RTX 4060 8GB GDDR6', brand:'NVIDIA',
-    price:1999, old:2399, cat:'placas-de-video', stock:18, rating:4.6, reviews:387,
-    images:['img teste.jpg'],
-    description:'A <strong>NVIDIA GeForce RTX 4060</strong> com 8 GB GDDR6 é ideal para gaming em 1080p com ray tracing e DLSS 3. Ótimo custo-benefício para quem quer entrar na geração Ada Lovelace.',
-    specs:[['Fabricante','NVIDIA'],['Chipset','GeForce RTX 4060'],['Arquitetura','Ada Lovelace'],['VRAM','8 GB GDDR6'],['Barramento de Memória','128-bit'],['Clock GPU Boost','2460 MHz'],['CUDA Cores','3.072'],['TDP','115 W'],['Saídas de Vídeo','3x DisplayPort 1.4a, 1x HDMI 2.1'],['DirectX','12 Ultimate']],
-  },
-  {
-    id:10, name:'AMD Radeon RX 7600 8GB GDDR6', brand:'AMD',
-    price:1399, old:1699, cat:'placas-de-video', stock:11, rating:4.5, reviews:198,
-    images:['img teste.jpg'],
-    description:'A <strong>AMD Radeon RX 7600</strong> com 8 GB GDDR6 e arquitetura RDNA 3 entrega excelente performance em 1080p com suporte a ray tracing e FSR 3.',
-    specs:[['Fabricante','AMD'],['Chipset','Radeon RX 7600'],['Arquitetura','RDNA 3'],['VRAM','8 GB GDDR6'],['Barramento de Memória','128-bit'],['Clock GPU Boost','2655 MHz'],['Compute Units','32'],['TDP','165 W'],['Saídas de Vídeo','1x DisplayPort 2.1, 1x HDMI 2.1, 2x DisplayPort 1.4']],
-  },
-  {
-    id:11, name:'Corsair Vengeance 32GB DDR5 6000MHz Kit (2x16GB)', brand:'Corsair',
-    price:699, old:849, cat:'memorias-ram', stock:23, rating:4.8, reviews:241,
-    images:['img teste.jpg'],
-    description:'O kit <strong>Corsair Vengeance DDR5 32 GB 6000 MHz</strong> oferece performance DDR5 de alto nível com latências otimizadas para plataformas Intel e AMD AM5. Com XMP 3.0 e EXPO para overclock automático.',
-    specs:[['Fabricante','Corsair'],['Tipo','DDR5'],['Capacidade','32 GB (2x 16 GB)'],['Frequência','6000 MHz'],['Latência','CL36-36-36-76'],['Tensão','1.35 V'],['Perfil XMP','XMP 3.0'],['Perfil EXPO','Sim'],['Altura','34 mm'],['Garantia','Lifetime']],
-  },
-  {
-    id:12, name:'Kingston Fury Beast 16GB DDR4 3200MHz', brand:'Kingston',
-    price:289, old:349, cat:'memorias-ram', stock:35, rating:4.7, reviews:512,
-    images:['img teste.jpg'],
-    description:'O <strong>Kingston Fury Beast DDR4 16 GB 3200 MHz</strong> é a memória DDR4 com melhor custo-benefício do mercado. Compatível com Intel XMP 2.0, plug-and-play em qualquer plataforma LGA1200/LGA1700 com suporte a DDR4.',
-    specs:[['Fabricante','Kingston'],['Tipo','DDR4'],['Capacidade','16 GB (1x 16 GB)'],['Frequência','3200 MHz'],['Latência','CL16'],['Tensão','1.35 V'],['Perfil XMP','XMP 2.0'],['Altura','34.1 mm'],['Garantia','Lifetime']],
-  },
-  {
-    id:13, name:'HyperX Fury 32GB DDR4 3600MHz Kit (2x16GB)', brand:'HyperX',
-    price:399, old:479, cat:'memorias-ram', stock:17, rating:4.7, reviews:189,
-    images:['img teste.jpg'],
-    description:'O kit <strong>HyperX Fury DDR4 32 GB 3600 MHz</strong> oferece excelente desempenho para gamers e criadores de conteúdo na plataforma DDR4, com compatibilidade automática via XMP 2.0.',
-    specs:[['Fabricante','HyperX (Kingston)'],['Tipo','DDR4'],['Capacidade','32 GB (2x 16 GB)'],['Frequência','3600 MHz'],['Latência','CL17'],['Tensão','1.35 V'],['Perfil XMP','XMP 2.0'],['Garantia','Lifetime']],
-  },
-  {
-    id:14, name:'Samsung 990 Pro 2TB NVMe PCIe 4.0 M.2', brand:'Samsung',
-    price:799, old:999, cat:'ssd-hd', stock:9, rating:4.9, reviews:408,
-    images:['img teste.jpg'],
-    description:'O <strong>Samsung 990 Pro 2 TB NVMe PCIe 4.0</strong> é um dos SSDs mais rápidos disponíveis, com leitura sequencial de 7.450 MB/s e escrita de 6.900 MB/s. Ideal para sistemas de criação profissional, jogos de alta demanda e workstations.',
-    specs:[['Fabricante','Samsung'],['Capacidade','2 TB'],['Interface','NVMe PCIe 4.0 x4'],['Form Factor','M.2 2280'],['Leitura Sequencial','7.450 MB/s'],['Escrita Sequencial','6.900 MB/s'],['IOPS Leitura','1.400.000'],['IOPS Escrita','1.550.000'],['Controlador','Samsung Elpis'],['Flash NAND','Samsung V-NAND TLC'],['Garantia','5 anos']],
-  },
-  {
-    id:15, name:'Kingston NV2 1TB NVMe M.2 PCIe 4.0', brand:'Kingston',
-    price:299, old:379, cat:'ssd-hd', stock:41, rating:4.6, reviews:634,
-    images:['img teste.jpg'],
-    description:'O <strong>Kingston NV2 1 TB NVMe PCIe 4.0</strong> é o SSD de entrada com excelente custo-benefício. Com leitura de até 3.500 MB/s, é ideal para quem quer sair do HD mecânico sem gastar muito.',
-    specs:[['Fabricante','Kingston'],['Capacidade','1 TB'],['Interface','NVMe PCIe 4.0 x4'],['Form Factor','M.2 2280'],['Leitura Sequencial','3.500 MB/s'],['Escrita Sequencial','2.800 MB/s'],['Garantia','3 anos']],
-  },
-  {
-    id:16, name:'Seagate Barracuda 2TB HD 7200RPM SATA', brand:'Seagate',
-    price:239, old:299, cat:'ssd-hd', stock:28, rating:4.4, reviews:823,
-    images:['img teste.jpg'],
-    description:'O <strong>Seagate Barracuda 2 TB</strong> é o HD mecânico mais vendido do mercado, com 7.200 RPM e cache de 256 MB. Ideal para armazenamento de mídia, backups e arquivos em geral.',
-    specs:[['Fabricante','Seagate'],['Capacidade','2 TB'],['Interface','SATA 6 Gb/s'],['Velocidade de Rotação','7.200 RPM'],['Cache','256 MB'],['Form Factor','3.5"'],['Garantia','2 anos']],
-  },
-  {
-    id:17, name:'ASUS ROG Strix B650-E Gaming WiFi DDR5', brand:'ASUS',
-    price:1599, old:1899, cat:'placas-mae', stock:6, rating:4.8, reviews:156,
-    images:['img teste.jpg'],
-    description:'A <strong>ASUS ROG Strix B650-E Gaming WiFi</strong> é uma placa-mãe premium para a plataforma AM5 com suporte a DDR5 até 6400+ MHz, Wi-Fi 6E, PCIe 5.0 e M.2 PCIe 5.0 para os SSDs mais rápidos.',
-    specs:[['Fabricante','ASUS'],['Chipset','AMD B650E'],['Socket','AM5'],['Form Factor','ATX'],['Memória','4x DDR5, até 128 GB'],['Freq. Memória Suportada','até 6400+ MHz (OC)'],['Slots PCIe','1x PCIe 5.0 x16, 1x PCIe 4.0 x16'],['Slots M.2','4x (1x PCIe 5.0, 3x PCIe 4.0)'],['USB Traseiro','2x USB4, 4x USB 3.2 Gen2, 2x USB 2.0'],['Rede','2.5GbE Intel'],['Wi-Fi','Wi-Fi 6E'],['Áudio','Realtek ALC4082']],
-  },
-  {
-    id:18, name:'MSI MAG B650 TOMAHAWK WiFi DDR5', brand:'MSI',
-    price:1099, old:1299, cat:'placas-mae', stock:10, rating:4.7, reviews:213,
-    images:['img teste.jpg'],
-    description:'A <strong>MSI MAG B650 TOMAHAWK WiFi</strong> é uma placa-mãe custo-benefício para AMD AM5 com DDR5, Wi-Fi 6E, PCIe 5.0 e VRM robusto para overclock moderado do Ryzen 7000.',
-    specs:[['Fabricante','MSI'],['Chipset','AMD B650'],['Socket','AM5'],['Form Factor','ATX'],['Memória','4x DDR5, até 128 GB'],['Slots M.2','3x PCIe 4.0'],['Rede','2.5GbE Realtek'],['Wi-Fi','Wi-Fi 6E']],
-  },
-  {
-    id:19, name:'Gigabyte B760M DS3H DDR4 LGA1700', brand:'Gigabyte',
-    price:649, old:799, cat:'placas-mae', stock:24, rating:4.5, reviews:341,
-    images:['img teste.jpg'],
-    description:'A <strong>Gigabyte B760M DS3H DDR4</strong> é uma placa-mãe Micro-ATX de entrada para Intel 12ª/13ª/14ª geração com suporte a DDR4, ideal para builds de escritório e jogos com custo acessível.',
-    specs:[['Fabricante','Gigabyte'],['Chipset','Intel B760'],['Socket','LGA1700'],['Form Factor','Micro-ATX'],['Memória','4x DDR4, até 128 GB'],['Slots M.2','2x PCIe 4.0'],['Rede','1GbE Realtek']],
-  },
-  {
-    id:20, name:'Cooler Master HAF 700 EVO Mid-Tower ARGB', brand:'Cooler Master',
-    price:1299, old:1599, cat:'gabinetes', stock:5, rating:4.7, reviews:93,
-    images:['img teste.jpg'],
-    description:'O <strong>Cooler Master HAF 700 EVO</strong> é um gabinete Full Tower com três painéis de vidro temperado, suporte a builds de alta performance com até 420 mm de cooler de water, ARGB controlado via software e design icônico.',
-    specs:[['Fabricante','Cooler Master'],['Tipo','Full Tower'],['Material','Aço + Vidro Temperado'],['Suporte a Placas','ATX, E-ATX, Micro-ATX, ITX'],['Bays para HD','2x 3.5"'],['Slots para SSD','4x 2.5"'],['Coolers Pré-instalados','3x 120mm ARGB frontal'],['Suporte Radiador Frontal','até 420 mm'],['Suporte Radiador Superior','até 360 mm'],['Comprimento GPU Máx.','410 mm'],['Altura CPU Cooler Máx.','185 mm'],['Porta Frontal','1x USB 3.2 Gen2 Type-C, 2x USB 3.0, Áudio']],
-  },
-  {
-    id:21, name:'Lian Li PC-O11D XL Branco Vidro Temperado', brand:'Lian Li',
-    price:899, old:1099, cat:'gabinetes', stock:8, rating:4.9, reviews:167,
-    images:['img teste.jpg'],
-    description:'O <strong>Lian Li PC-O11D XL</strong> é um dos gabinetes mais icônicos para water cooling. Com câmara dupla, painéis de vidro laterais e superior, suporta até 3 radiadores simultâneos e builds com múltiplas GPUs.',
-    specs:[['Fabricante','Lian Li'],['Tipo','Mid Tower (grande)'],['Cor','Branco'],['Material','Alumínio + Vidro Temperado'],['Suporte a Placas','E-ATX, ATX, Micro-ATX, ITX'],['Câmara Dupla','Sim'],['Suporte Radiador Frontal','360 mm'],['Suporte Radiador Lateral','360 mm'],['Suporte Radiador Base','360 mm'],['Comprimento GPU Máx.','446 mm'],['Porta Frontal','1x USB 3.1 Type-C, 2x USB 3.0, Áudio']],
-  },
-  {
-    id:22, name:'NZXT H9 Flow Mid-Tower Dual-Chamber', brand:'NZXT',
-    price:799, old:999, cat:'gabinetes', stock:6, rating:4.8, reviews:122,
-    images:['img teste.jpg'],
-    description:'O <strong>NZXT H9 Flow</strong> combina design clean com excelente fluxo de ar graças ao seu painel frontal perfurado e câmara dupla. Suporta radiadores de até 360 mm e GPUs de até 435 mm.',
-    specs:[['Fabricante','NZXT'],['Tipo','Mid Tower'],['Material','Aço + Vidro Temperado'],['Suporte a Placas','ATX, Micro-ATX, ITX'],['Câmara Dupla','Sim'],['Suporte Radiador Frontal','360 mm'],['Comprimento GPU Máx.','435 mm'],['Porta Frontal','1x USB 3.2 Gen2 Type-C, 2x USB 3.0, Áudio']],
-  },
-  {
-    id:23, name:'LG UltraGear 27GP850-B 27" 165Hz IPS Nano', brand:'LG',
-    price:1899, old:2299, cat:'monitores-gaming', stock:7, rating:4.8, reviews:274,
-    images:['img teste.jpg'],
-    description:'O <strong>LG UltraGear 27GP850-B</strong> é um monitor gaming de 27" com painel Nano IPS, resolução QHD (2560x1440), 165 Hz e 1 ms de resposta. Compatible com G-Sync e FreeSync Premium Pro.',
-    specs:[['Fabricante','LG'],['Tamanho','27"'],['Resolução','2560 x 1440 (QHD)'],['Painel','Nano IPS'],['Taxa de Atualização','165 Hz'],['Tempo de Resposta','1 ms (GtG)'],['HDR','HDR10'],['Brilho Máximo','400 cd/m²'],['Cobertura de Cor','98% DCI-P3'],['Entradas','1x HDMI 2.0, 2x DisplayPort 1.4'],['G-Sync Compatible','Sim'],['FreeSync','FreeSync Premium Pro'],['Ajuste de Altura','Sim'],['Rotação','Sim']],
-  },
-  {
-    id:24, name:'ASUS ROG Swift PG279QM 27" QHD 240Hz IPS', brand:'ASUS',
-    price:3299, old:3999, cat:'monitores-gaming', stock:3, rating:4.9, reviews:88,
-    images:['img teste.jpg'],
-    description:'O <strong>ASUS ROG Swift PG279QM</strong> é um monitor premium para gamers competitivos, com QHD 240 Hz e painel Fast IPS de 1 ms. Certificação G-Sync e DisplayHDR 600.',
-    specs:[['Fabricante','ASUS'],['Tamanho','27"'],['Resolução','2560 x 1440 (QHD)'],['Painel','Fast IPS'],['Taxa de Atualização','240 Hz'],['Tempo de Resposta','1 ms (GtG)'],['HDR','DisplayHDR 600'],['Brilho Máximo','600 cd/m²'],['G-Sync','G-Sync'],['Entradas','1x HDMI 2.0, 3x DisplayPort 1.4']],
-  },
-  {
-    id:25, name:'Samsung Odyssey G5 27" VA 144Hz QHD', brand:'Samsung',
-    price:1299, old:1599, cat:'monitores-gaming', stock:12, rating:4.6, reviews:412,
-    images:['img teste.jpg'],
-    description:'O <strong>Samsung Odyssey G5</strong> traz curva de 1000R, QHD 144 Hz e painel VA com alto contraste (2500:1). Ótimo custo-benefício para gamers que buscam imersão.',
-    specs:[['Fabricante','Samsung'],['Tamanho','27"'],['Resolução','2560 x 1440 (QHD)'],['Painel','VA Curvo 1000R'],['Taxa de Atualização','144 Hz'],['Tempo de Resposta','1 ms (MPRT)'],['Contraste','2500:1'],['FreeSync','FreeSync Premium'],['Entradas','1x HDMI 1.4, 1x HDMI 2.0, 1x DisplayPort 1.2']],
-  },
-  {
-    id:26, name:'Logitech G Pro X Superlight 2 60g Sem Fio', brand:'Logitech',
-    price:699, old:849, cat:'mouse', stock:9, rating:4.9, reviews:521,
-    images:['img teste.jpg'],
-    description:'O <strong>Logitech G Pro X Superlight 2</strong> pesa apenas 60 g, tornando-o um dos mice sem fio mais leves para gaming competitivo. Sensor HERO 2 de 32.000 DPI e bateria de até 95 horas.',
-    specs:[['Fabricante','Logitech'],['Conexão','Sem Fio (LIGHTSPEED 2.4GHz)'],['Sensor','HERO 2'],['DPI','100 – 32.000'],['Peso','60 g'],['Botões','5'],['Polling Rate','2000 Hz'],['Bateria','até 95 horas'],['Switches','Logitech Mechanical (80M cliques)']],
-  },
-  {
-    id:27, name:'Redragon Impact M908 RGB 12400 DPI', brand:'Redragon',
-    price:199, old:249, cat:'mouse', stock:38, rating:4.5, reviews:891,
-    images:['img teste.jpg'],
-    description:'O <strong>Redragon M908 Impact</strong> oferece sensor óptico de 12.400 DPI, 12 botões programáveis e iluminação RGB para gamers que buscam performance a um preço acessível.',
-    specs:[['Fabricante','Redragon'],['Conexão','Com Fio (USB)'],['Sensor','Óptico'],['DPI','100 – 12.400'],['Botões','12 programáveis'],['Polling Rate','125/250/500/1000 Hz'],['Peso','130 g'],['Comprimento do Cabo','1.8 m (trançado)']],
-  },
-  {
-    id:28, name:'Logitech G502 X Plus HERO 25K Sensor', brand:'Logitech',
-    price:449, old:549, cat:'mouse', stock:15, rating:4.7, reviews:334,
-    images:['img teste.jpg'],
-    description:'O <strong>Logitech G502 X Plus</strong> é a versão sem fio do lendário G502, com sensor HERO 25K, switches ópticos magnéticos e iluminação LIGHTFORCE RGB.',
-    specs:[['Fabricante','Logitech'],['Conexão','Sem Fio (LIGHTSPEED)'],['Sensor','HERO 25K'],['DPI','100 – 25.600'],['Botões','13 programáveis'],['Polling Rate','1000 Hz'],['Bateria','até 130 horas'],['Peso','106 g']],
-  },
-  {
-    id:29, name:'HyperX Cloud Alpha Wireless 300h', brand:'HyperX',
-    price:799, old:999, cat:'headsets', stock:6, rating:4.9, reviews:289,
-    images:['img teste.jpg'],
-    description:'O <strong>HyperX Cloud Alpha Wireless</strong> é famoso por sua bateria de até 300 horas, drivers duais e áudio premium sem fio a 2.4 GHz. Compatível com PC e PS4/PS5.',
-    specs:[['Fabricante','HyperX (Kingston)'],['Conexão','Sem Fio 2.4 GHz'],['Bateria','até 300 horas'],['Drivers','Duais de 50 mm'],['Resposta em Frequência','15 Hz – 21.000 Hz'],['Microfone','Destacável, cancelamento de ruído'],['Compatibilidade','PC, PS4, PS5'],['Peso','335 g']],
-  },
-  {
-    id:30, name:'Corsair HS80 RGB Wireless Dolby Atmos', brand:'Corsair',
-    price:699, old:849, cat:'headsets', stock:8, rating:4.7, reviews:198,
-    images:['img teste.jpg'],
-    description:'O <strong>Corsair HS80 RGB Wireless</strong> oferece áudio espacial Dolby Atmos, conectividade USB sem fio de baixa latência, RGB e bateria de até 20 horas.',
-    specs:[['Fabricante','Corsair'],['Conexão','Sem Fio 2.4 GHz (USB)'],['Dolby Atmos','Sim'],['Drivers','50 mm'],['Bateria','até 20 horas'],['Microfone','Omnidirecional omni destacável'],['Compatibilidade','PC, Mac, PS4, PS5'],['Peso','340 g']],
-  },
-  {
-    id:31, name:'Logitech G915 TKL Lightspeed Wireless', brand:'Logitech',
-    price:1299, old:1599, cat:'teclados', stock:7, rating:4.8, reviews:312,
-    images:['img teste.jpg'],
-    description:'O <strong>Logitech G915 TKL</strong> é um teclado mecânico TKL sem fio com perfil ultra-baixo, switches GL de alta qualidade e autonomia de até 40 horas. Design premium em alumínio.',
-    specs:[['Fabricante','Logitech'],['Conexão','Sem Fio LIGHTSPEED + Bluetooth'],['Layout','TKL (sem numpad)'],['Switches','Logitech GL (Tactile/Linear/Clicky)'],['Perfil das Teclas','Ultra-baixo'],['Retroiluminação','RGB por tecla'],['Bateria','até 40 horas'],['Material','Alumínio'],['Polling Rate','1000 Hz (com fio)']],
-  },
-  {
-    id:32, name:'Redragon Kumara K552 Mecânico RGB Switch Red', brand:'Redragon',
-    price:229, old:289, cat:'teclados', stock:42, rating:4.5, reviews:1203,
-    images:['img teste.jpg'],
-    description:'O <strong>Redragon K552 Kumara</strong> é um teclado mecânico TKL com switches Red (lineares), retroiluminação RGB e construção em metal. Ótimo custo-benefício para gamers iniciantes.',
-    specs:[['Fabricante','Redragon'],['Conexão','USB com fio'],['Layout','TKL (sem numpad)'],['Switches','Outemu Red (linear)'],['Retroiluminação','RGB'],['Material do Frame','Metal'],['Anti-Ghosting','Full N-Key Rollover'],['Polling Rate','1000 Hz']],
-  },
-  {
-    id:33, name:'ASUS TUF Gaming A15 RTX 4060 144Hz 16GB', brand:'ASUS',
-    price:4999, old:5999, cat:'notebooks', stock:4, rating:4.7, reviews:178,
-    images:['img teste.jpg'],
-    description:'O <strong>ASUS TUF Gaming A15</strong> com RTX 4060 e Ryzen 7 é um notebook gamer durável e poderoso para 1080p em títulos AAA. Tela de 144 Hz, 16 GB DDR5 e SSD NVMe.',
-    specs:[['Fabricante','ASUS'],['Processador','AMD Ryzen 7 7735HS'],['GPU','NVIDIA RTX 4060 8GB'],['RAM','16 GB DDR5'],['Armazenamento','512 GB NVMe PCIe 4.0'],['Tela','15.6" FHD 144Hz IPS'],['Bateria','90 Wh'],['Sistema Operacional','Windows 11 Home'],['Peso','2.2 kg'],['Portas','3x USB-A, 1x USB-C, HDMI 2.1, RJ-45, SD Card']],
-  },
-  {
-    id:34, name:'Lenovo LOQ 15IRH8 i7-13700H RTX 4050', brand:'Lenovo',
-    price:3999, old:4799, cat:'notebooks', stock:6, rating:4.6, reviews:134,
-    images:['img teste.jpg'],
-    description:'O <strong>Lenovo LOQ 15</strong> com Intel i7-13700H e RTX 4050 é um notebook gamer custo-benefício para 1080p. Tela 144 Hz, bateria generosa e ótimo sistema de resfriamento.',
-    specs:[['Fabricante','Lenovo'],['Processador','Intel Core i7-13700H'],['GPU','NVIDIA RTX 4050 6GB'],['RAM','16 GB DDR5 4800 MHz'],['Armazenamento','512 GB NVMe'],['Tela','15.6" FHD 144Hz IPS'],['Bateria','60 Wh'],['Sistema Operacional','Windows 11 Home'],['Peso','2.4 kg']],
-  },
-  {
-    id:35, name:'PC Gamer Intel i9-14900K + RTX 4080 + 32GB DDR5', brand:'Alfa Informática',
-    price:11999, old:13999, cat:'pc-gamer', stock:2, rating:5.0, reviews:47,
-    images:['img teste.jpg'],
-    description:'PC Gamer montado e testado pela <strong>Alfa Informática</strong>. Configuração topo de linha com i9-14900K, RTX 4080, 32 GB DDR5 e SSD NVMe PCIe 4.0. Pronto para 4K gaming e produção de conteúdo de alto nível.',
-    specs:[['Processador','Intel Core i9-14900K'],['GPU','NVIDIA GeForce RTX 4080 16GB'],['RAM','32 GB DDR5 6000 MHz'],['Armazenamento','1 TB NVMe PCIe 4.0'],['Placa-mãe','Z790 DDR5'],['Fonte','850W 80+ Gold Modular'],['Gabinete','Mid Tower com Vidro Temperado'],['Sistema Operacional','Windows 11 Home'],['Garantia','1 ano Alfa Informática']],
-  },
-  {
-    id:36, name:'PC Gamer AMD Ryzen 7 7700X + RX 7800 XT + 32GB', brand:'Alfa Informática',
-    price:7999, old:9499, cat:'pc-gamer', stock:3, rating:4.9, reviews:63,
-    images:['img teste.jpg'],
-    description:'PC Gamer AMD montado pela <strong>Alfa Informática</strong> com Ryzen 7 7700X, RX 7800 XT e 32 GB DDR5. Excelente para 1440p gaming e streaming simultâneo.',
-    specs:[['Processador','AMD Ryzen 7 7700X'],['GPU','AMD Radeon RX 7800 XT 16GB'],['RAM','32 GB DDR5 6000 MHz'],['Armazenamento','1 TB NVMe PCIe 4.0'],['Placa-mãe','B650 DDR5'],['Fonte','750W 80+ Gold'],['Sistema Operacional','Windows 11 Home'],['Garantia','1 ano Alfa Informática']],
-  },
-  {
-    id:37, name:'PC Gamer Intel i5-14600K + RTX 4060 + 16GB DDR5', brand:'Alfa Informática',
-    price:4999, old:5999, cat:'pc-gamer', stock:5, rating:4.8, reviews:91,
-    images:['img teste.jpg'],
-    description:'PC Gamer custo-benefício montado pela <strong>Alfa Informática</strong> com i5-14600K e RTX 4060. Ideal para 1080p e 1440p gaming com ótimo desempenho em jogos AAA.',
-    specs:[['Processador','Intel Core i5-14600K'],['GPU','NVIDIA GeForce RTX 4060 8GB'],['RAM','16 GB DDR5 5600 MHz'],['Armazenamento','512 GB NVMe PCIe 4.0'],['Placa-mãe','B760 DDR5'],['Fonte','650W 80+ Bronze'],['Sistema Operacional','Windows 11 Home'],['Garantia','1 ano Alfa Informática']],
-  },
-  {
-    id:38, name:'PC Office Intel i3-13100 + 8GB + SSD 480GB', brand:'Alfa Informática',
-    price:1599, old:1899, cat:'pc-office', stock:8, rating:4.7, reviews:112,
-    images:['img teste.jpg'],
-    description:'PC para escritório montado pela <strong>Alfa Informática</strong> com Intel i3-13100, 8 GB DDR4 e SSD 480 GB. Roda planilhas, navegação, videochamadas e tarefas do dia a dia com rapidez.',
-    specs:[['Processador','Intel Core i3-13100'],['GPU','Intel UHD 730 (integrada)'],['RAM','8 GB DDR4 3200 MHz'],['Armazenamento','480 GB SSD SATA'],['Placa-mãe','H610 DDR4'],['Fonte','400W 80+ Bronze'],['Sistema Operacional','Windows 11 Home'],['Garantia','1 ano Alfa Informática']],
-  },
-  {
-    id:39, name:'PC Office Intel i5-13400 + 16GB + SSD 1TB', brand:'Alfa Informática',
-    price:2499, old:2999, cat:'pc-office', stock:6, rating:4.8, reviews:78,
-    images:['img teste.jpg'],
-    description:'PC Office avançado da <strong>Alfa Informática</strong> com i5-13400, 16 GB DDR4 e SSD 1 TB. Ideal para pequenas empresas, home office e uso profissional.',
-    specs:[['Processador','Intel Core i5-13400'],['GPU','Intel UHD 730 (integrada)'],['RAM','16 GB DDR4 3200 MHz'],['Armazenamento','1 TB SSD NVMe'],['Placa-mãe','B660 DDR4'],['Fonte','500W 80+ Bronze'],['Sistema Operacional','Windows 11 Pro'],['Garantia','1 ano Alfa Informática']],
-  },
-  {
-    id:40, name:'Corsair RM1000x 1000W 80+ Gold Modular', brand:'Corsair',
-    price:799, old:999, cat:'fontes', stock:10, rating:4.9, reviews:289,
-    images:['img teste.jpg'],
-    description:'A <strong>Corsair RM1000x</strong> com 1000W e certificação 80+ Gold é uma das fontes mais confiáveis do mercado. Totalmente modular, silenciosa em carga leve (modo Zero RPM) e com 10 anos de garantia.',
-    specs:[['Fabricante','Corsair'],['Potência','1000 W'],['Certificação','80+ Gold'],['Modularidade','Total'],['Ventilador','135 mm (Zero RPM < 40% carga)'],['Entrada','100-240 V AC'],['Proteções','OVP, UVP, OCP, OPP, SCP, OTP'],['Garantia','10 anos']],
-  },
-  {
-    id:41, name:'EVGA SuperNOVA 750 G6 750W 80+ Gold', brand:'EVGA',
-    price:549, old:699, cat:'fontes', stock:13, rating:4.8, reviews:198,
-    images:['img teste.jpg'],
-    description:'A <strong>EVGA SuperNOVA 750 G6</strong> com 750W e 80+ Gold oferece eficiência superior, cabo de gerenciamento, modo ECO e 10 anos de garantia.',
-    specs:[['Fabricante','EVGA'],['Potência','750 W'],['Certificação','80+ Gold'],['Modularidade','Total'],['Ventilador','135 mm (modo ECO)'],['Garantia','10 anos']],
-  },
-  {
-    id:42, name:'Cadeira Gamer DXRacer Drifting D-series Couro PU', brand:'DXRacer',
-    price:1299, old:1599, cat:'cadeiras', stock:7, rating:4.6, reviews:234,
-    images:['img teste.jpg'],
-    description:'A <strong>DXRacer Drifting D-series</strong> é uma das cadeiras gamer mais icônicas do mercado com couro PU, reclinação de até 135°, ajuste de altura pneumático e almofadas lombar e cervical inclusas.',
-    specs:[['Fabricante','DXRacer'],['Material','Couro PU'],['Peso Suportado','até 80 kg'],['Reclinação','até 135°'],['Ajuste de Altura','Pneumático'],['Braços','3D ajustável'],['Rodízios','Nylon resistente'],['Garantia','2 anos']],
-  },
-  {
-    id:43, name:'Cadeira Gamer ThunderX3 TC5 Reclinável 175°', brand:'ThunderX3',
-    price:1099, old:1399, cat:'cadeiras', stock:9, rating:4.7, reviews:176,
-    images:['img teste.jpg'],
-    description:'A <strong>ThunderX3 TC5</strong> se recline até 175° para descanso total, com suporte lombar ajustável, apoio de cabeça e braços 4D. Revestimento em couro sintético durável.',
-    specs:[['Fabricante','ThunderX3'],['Material','Couro Sintético'],['Peso Suportado','até 130 kg'],['Reclinação','até 175°'],['Braços','4D ajustável'],['Suporte Lombar','Ajustável com travamento'],['Rodízios','Nylon'],['Garantia','2 anos']],
-  },
-];
+/* Alfa Informática — Produtos (carregado do Supabase)
+   Mantém o mesmo contrato de antes (window.PRODUCTS_DB populado de forma síncrona
+   pro resto do site continuar funcionando sem reescrever cada página): inicializa
+   vazio, busca do banco, popula o array *in place* e dispara o evento
+   'products:ready' no document. Quem consome deve renderizar direto se o array já
+   tiver itens, ou escutar o evento uma vez, senão. */
+window.PRODUCTS_DB = [];
+
+(async function loadProducts() {
+  const { data, error } = await window.sb
+    .from('products')
+    .select('id,name,brand,price,old_price,stock,rating,reviews_count,images,description,specs,subcategories(slug)')
+    .eq('active', true)
+    .order('id', { ascending: true });
+
+  if (error) {
+    console.error('Erro ao carregar produtos do Supabase:', error);
+    document.dispatchEvent(new CustomEvent('products:ready'));
+    return;
+  }
+
+  const mapped = (data || []).map(row => ({
+    id: row.id,
+    name: row.name,
+    brand: row.brand,
+    price: Number(row.price),
+    old: row.old_price != null ? Number(row.old_price) : undefined,
+    cat: row.subcategories ? row.subcategories.slug : null,
+    stock: row.stock,
+    rating: Number(row.rating),
+    reviews: row.reviews_count,
+    images: row.images && row.images.length ? row.images : ['img teste.jpg'],
+    description: row.description,
+    specs: row.specs || [],
+  }));
+
+  window.PRODUCTS_DB.length = 0;
+  window.PRODUCTS_DB.push(...mapped);
+  document.dispatchEvent(new CustomEvent('products:ready'));
+})();

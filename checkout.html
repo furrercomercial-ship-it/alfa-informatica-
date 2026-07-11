@@ -58,7 +58,7 @@ a{color:inherit;text-decoration:none;}
 .pay-txt .pay-desc{font-size:11px;color:var(--text-secondary);margin-top:2px;}
 .pay-badge{margin-left:auto;font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:0;flex-shrink:0;}
 /* Submit */
-.btn-submit{width:100%;padding:16px;background:var(--success);color:#fff;border:none;border-radius:0;font-size:14px;font-weight:800;letter-spacing:.3px;cursor:pointer;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:11px;transition:filter .2s,transform .15s;box-shadow:0 8px 28px rgba(34,197,94,.25);}
+.btn-submit{width:100%;padding:16px;background:var(--alfa-btn-buy-bg,var(--success));color:var(--alfa-btn-buy-text,#fff);border:none;border-radius:0;font-size:14px;font-weight:800;letter-spacing:.3px;cursor:pointer;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:11px;transition:filter .2s,transform .15s;box-shadow:0 8px 28px rgba(34,197,94,.25);}
 .btn-submit:hover{filter:brightness(1.08);}
 .btn-submit:active{transform:scale(.98);}
 /* Summary */
@@ -73,7 +73,17 @@ a{color:inherit;text-decoration:none;}
 .sum-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-secondary);margin-bottom:8px;}
 .sum-total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--border-color);padding-top:14px;margin-top:4px;}
 .sum-total .lbl{font-size:14px;font-weight:700;color:var(--text-main);}
-.sum-total .val{font-size:20px;font-weight:800;color:var(--success);}
+.sum-total .val{font-size:20px;font-weight:800;color:var(--alfa-price-pix,var(--success));}
+.sum-cupom{margin-bottom:14px;}
+.sum-cupom-row{display:flex;gap:8px;}
+.sum-cupom-row input{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--border-color);background:var(--bg-main);color:var(--text-main);font-size:12.5px;border-radius:0;}
+.sum-cupom-row .btn-secondary{padding:0 16px;font-size:12px;font-weight:700;white-space:nowrap;border:1px solid var(--border-color);background:transparent;color:var(--text-main);cursor:pointer;}
+.sum-cupom-row .btn-secondary:disabled{opacity:.5;cursor:default;}
+.sum-cupom-applied{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);font-size:12.5px;color:var(--text-main);}
+.sum-cupom-applied span{display:flex;align-items:center;gap:7px;}
+.sum-cupom-applied svg{width:14px;height:14px;color:var(--success);flex-shrink:0;}
+.sum-cupom-applied button{background:none;border:none;color:var(--text-secondary);font-size:11.5px;text-decoration:underline;cursor:pointer;}
+.sum-cupom-erro{font-size:11.5px;color:#e5484d;margin-top:6px;}
 /* Empty / Success */
 .center-msg{grid-column:1/-1;text-align:center;padding:80px 20px;}
 .success-icon{width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-size:32px;}
@@ -136,6 +146,9 @@ a{color:inherit;text-decoration:none;}
 @media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
 <link rel="stylesheet" href="header.css?v=2">
+<link rel="stylesheet" href="footer.css?v=3">
+<link rel="stylesheet" href="popups.css">
+<link rel="stylesheet" href="consent.css">
 </head>
 <body>
 <div id="site-header"></div>
@@ -145,6 +158,16 @@ a{color:inherit;text-decoration:none;}
   <div id="summaryArea"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script src="site-meta.js"></script>
+<script src="consent.js"></script>
+<script src="event-manager.js"></script>
+<script src="script-engine.js"></script>
+<script src="popups.js"></script>
+<script src="theme-loader.js?v=4"></script>
+<script src="site-texts.js"></script>
+<script src="page-blocks.js"></script>
 <script src="store.js"></script>
 <script src="products.js"></script>
 <script src="categories.js"></script>
@@ -153,7 +176,7 @@ a{color:inherit;text-decoration:none;}
 var WPP = 'https://wa.me/5565992655883';
 var items = [];
 
-var state = { addressId:null, addingAddress:false, shipId:null, payId:null, terms:false };
+var state = { addressId:null, addingAddress:false, shipId:null, payId:null, terms:false, cupom:null, cupomErro:'', cupomChecking:false };
 
 var shipOpts = [
   {id:'economico', name:'Econômico',       price:18.90, days:'7–10 dias úteis'},
@@ -197,16 +220,54 @@ function init() {
   var addrs0 = Store.getAddresses();
   if (addrs0.length && !state.addressId) state.addressId = addrs0[0].id;
   renderAll();
+  if (window.AlfaEvents) {
+    window.AlfaEvents.track('begin_checkout', {
+      value: items.reduce(function(s,i){ return s + i.price*i.qty; }, 0),
+      items: items.map(function(i){ return { id: i.id, name: i.name, price: i.price, qty: i.qty }; }),
+    });
+  }
 }
 
 function checkIco(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'; }
+
+function cupomDiscountValue(cupom, subtotal) {
+  if (!cupom) return 0;
+  var d = cupom.tipo === 'percentual' ? subtotal * (cupom.valor / 100) : cupom.valor;
+  return Math.min(d, subtotal);
+}
+
+async function applyCupom() {
+  var input = document.getElementById('cupomInput');
+  var codigo = (input.value || '').trim().toUpperCase();
+  if (!codigo) return;
+  state.cupomChecking = true; state.cupomErro = '';
+  renderAll();
+
+  var subtotal = items.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
+  var { data, error } = await window.sb.from('cupons').select('*').eq('codigo', codigo).eq('ativo', true).maybeSingle();
+  state.cupomChecking = false;
+
+  if (error || !data) { state.cupom = null; state.cupomErro = 'Cupom inválido ou inativo.'; renderAll(); return; }
+  var now = new Date();
+  if (data.validade_inicio && new Date(data.validade_inicio) > now) { state.cupom = null; state.cupomErro = 'Este cupom ainda não está válido.'; renderAll(); return; }
+  if (data.validade_fim && new Date(data.validade_fim) < now) { state.cupom = null; state.cupomErro = 'Este cupom expirou.'; renderAll(); return; }
+  if (data.limite_uso && data.usos >= data.limite_uso) { state.cupom = null; state.cupomErro = 'Este cupom já atingiu o limite de uso.'; renderAll(); return; }
+  if (data.valor_minimo && subtotal < data.valor_minimo) { state.cupom = null; state.cupomErro = 'Pedido mínimo de ' + fmt(data.valor_minimo) + ' para usar este cupom.'; renderAll(); return; }
+
+  state.cupom = data;
+  state.cupomErro = '';
+  renderAll();
+  if (window.AlfaEvents) window.AlfaEvents.track('cupom_usado', { coupon: data.codigo, value: cupomDiscountValue(data, subtotal) });
+}
+
+function removeCupom() { state.cupom = null; state.cupomErro = ''; renderAll(); }
 
 function renderAll(){
   var user = Store.getUser() || {};
   var addrs = Store.getAddresses();
   var ship = shipOpts.find(function(s){ return s.id === state.shipId; });
 
-  var contatoHtml = '<div class="form-card ck-card">' +
+  var contatoHtml = '<div class="form-card ck-card" data-block="contato">' +
     '<div class="ck-head-row"><div class="section-head" style="margin:0;"><div class="section-ico-badge"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>Contato</div><div class="ck-check">' + checkIco() + '</div></div>' +
     (user.email ?
       '<div class="contact-row"><span>Nome</span><span>' + (user.name||'—') + '</span></div>' +
@@ -240,7 +301,7 @@ function renderAll(){
         '</div>';
     }).join('') + '<button class="btn-link" onclick="state.addingAddress=true;renderAll();">+ Adicionar novo endereço</button>';
   }
-  var entregaHtml = '<div class="form-card ck-card">' +
+  var entregaHtml = '<div class="form-card ck-card" data-block="entrega">' +
     '<div class="ck-head-row"><div class="section-head" style="margin:0;"><div class="section-ico-badge"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>Entrega</div>' + (state.addressId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
     addrBody + '</div>';
 
@@ -257,7 +318,7 @@ function renderAll(){
         '</div>';
     }).join('');
   }
-  var envioHtml = '<div class="form-card ck-card">' +
+  var envioHtml = '<div class="form-card ck-card" data-block="envio">' +
     '<div class="ck-head-row"><div class="section-head' + (!state.addressId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.addressId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>Método de Envio</div>' + (state.shipId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
     envioBody + '</div>';
 
@@ -276,14 +337,17 @@ function renderAll(){
         '</label></div>';
     }).join('') + '</div>';
   }
-  var pagHtml = '<div class="form-card ck-card">' +
+  var pagHtml = '<div class="form-card ck-card" data-block="pagamento">' +
     '<div class="ck-head-row"><div class="section-head' + (!state.shipId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.shipId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>Pagamento</div>' + (state.payId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
     pagBody + '</div>';
 
   document.getElementById('formArea').innerHTML = contatoHtml + entregaHtml + envioHtml + pagHtml;
+  if (window.AlfaBlocks) AlfaBlocks.apply('checkout');
 
   var subtotal = items.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
-  var discount = state.payId === 'pix' ? subtotal * .05 : 0;
+  var pixDiscount = state.payId === 'pix' ? subtotal * .05 : 0;
+  var cupomDiscount = cupomDiscountValue(state.cupom, subtotal);
+  var discount = pixDiscount + cupomDiscount;
   var freight = ship ? ship.price : 0;
   var total = subtotal - discount + freight;
 
@@ -305,9 +369,18 @@ function renderAll(){
     missing.map(function(m){ return '<li>' + m + '</li>'; }).join('') + '</ul></div>'
   ) : '';
 
+  var cupomHtml = '<div class="sum-cupom">' +
+    (state.cupom
+      ? '<div class="sum-cupom-applied"><span>' + checkIco() + ' Cupom <b>' + state.cupom.codigo + '</b> aplicado</span><button type="button" onclick="removeCupom()">Remover</button></div>'
+      : '<div class="sum-cupom-row"><input type="text" id="cupomInput" placeholder="Código do cupom" style="text-transform:uppercase;" onkeydown="if(event.key===\'Enter\'){event.preventDefault();applyCupom();}"><button type="button" class="btn-secondary" ' + (state.cupomChecking?'disabled':'') + ' onclick="applyCupom()">' + (state.cupomChecking?'Verificando...':'Aplicar') + '</button></div>') +
+    (state.cupomErro ? '<div class="sum-cupom-erro">' + state.cupomErro + '</div>' : '') +
+    '</div>';
+
   var summaryHtml = '<div class="summary"><div class="sum-head">Resumo do pedido</div><div class="sum-items">' + itemsHtml + '</div>' +
+    cupomHtml +
     '<div class="sum-row"><span>Subtotal (' + items.length + ' item' + (items.length>1?'s':'') + ')</span><span>' + fmt(subtotal) + '</span></div>' +
-    (discount ? '<div class="sum-row"><span>Desconto Pix (5%)</span><span style="color:var(--success);">− ' + fmt(discount) + '</span></div>' : '') +
+    (pixDiscount ? '<div class="sum-row"><span>Desconto Pix (5%)</span><span style="color:var(--success);">− ' + fmt(pixDiscount) + '</span></div>' : '') +
+    (cupomDiscount ? '<div class="sum-row"><span>Cupom ' + state.cupom.codigo + '</span><span style="color:var(--success);">− ' + fmt(cupomDiscount) + '</span></div>' : '') +
     '<div class="sum-row"><span>Frete</span><span>' + (state.shipId ? (freight?fmt(freight):'Grátis') : 'A calcular') + '</span></div>' +
     '<div class="sum-total"><span class="lbl">Total</span><span class="val">' + fmt(total) + '</span></div>' +
     alertHtml +
@@ -341,10 +414,18 @@ function saveAddress(){
   renderAll();
 }
 
-function selectShip(id){ state.shipId = id; renderAll(); }
-function selectPay(id){ state.payId = id; renderAll(); }
+function selectShip(id){
+  state.shipId = id; renderAll();
+  var ship = shipOpts.find(function(s){ return s.id === id; });
+  if (window.AlfaEvents && ship) window.AlfaEvents.track('add_shipping_info', { shipping_tier: ship.name, value: ship.price });
+}
+function selectPay(id){
+  state.payId = id; renderAll();
+  var pay = payOpts.find(function(p){ return p.id === id; });
+  if (window.AlfaEvents && pay) window.AlfaEvents.track('add_payment_info', { method: pay.label });
+}
 
-function finalize(){
+async function finalize(){
   var addrs = Store.getAddresses();
   var addr = addrs.find(function(a){ return a.id === state.addressId; });
   var ship = shipOpts.find(function(s){ return s.id === state.shipId; });
@@ -352,28 +433,29 @@ function finalize(){
   var user = Store.getUser() || {};
 
   var subtotal = items.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
-  var discount = state.payId === 'pix' ? subtotal * .05 : 0;
-  var total = subtotal - discount + (ship?ship.price:0);
+  var pixDiscount = state.payId === 'pix' ? subtotal * .05 : 0;
+  var cupomDiscount = cupomDiscountValue(state.cupom, subtotal);
+  var discount = pixDiscount + cupomDiscount;
+  var freight = ship ? ship.price : 0;
+  var total = subtotal - discount + freight;
 
-  var prodSummary = items.map(function(i){ return i.qty + 'x ' + i.name; }).join(', ');
+  var submitBtn = document.querySelector('.btn-submit');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando pedido...'; }
 
-  Store.addOrder({
-    id: String(Date.now()).slice(-6),
-    date: new Date().toLocaleDateString('pt-BR'),
-    status: 'Em preparação',
-    total: fmt(total),
-    items: prodSummary
+  var created = await Store.addOrder({
+    items: items,
+    address: addr || null,
+    shippingMethod: ship ? ship.name : null,
+    freight: freight,
+    paymentMethod: pay ? pay.label : null,
+    subtotal: subtotal,
+    discount: discount,
+    total: total,
+    couponCode: state.cupom ? state.cupom.codigo : null,
   });
+  if (state.cupom) await window.sb.rpc('incrementar_uso_cupom', { p_codigo: state.cupom.codigo });
   Store.clearCart();
   Store.setCheckoutItems([]);
-
-  document.getElementById('mainLayout').innerHTML =
-    '<div class="center-msg">' +
-      '<div class="success-icon">✓</div>' +
-      '<h2>Pedido confirmado!</h2>' +
-      '<p>Seu pedido foi registrado e já aparece em "Meus Pedidos" na sua conta.<br>Em breve nossa equipe entrará em contato para confirmar os detalhes.</p>' +
-      '<a href="alfa-replica.html" class="btn-home">Continuar comprando</a>' +
-    '</div>';
 
   var prodLines = items.map(function(i){ return '• ' + i.qty + 'x ' + i.name + ' — ' + fmt(i.price*i.qty); }).join('\n');
   var msg = '🛒 *NOVO PEDIDO — ALFA INFORMÁTICA*\n\n'
@@ -385,13 +467,20 @@ function finalize(){
     + '*💳 Pagamento: ' + (pay?pay.label:'—') + '*'
     + '\n\n_Pedido confirmado via site Alfa Informática_';
   window.open(WPP + '?text=' + encodeURIComponent(msg), '_blank');
+
+  // Página dedicada de pedido concluído (resumo real + recomendações), no
+  // lugar de só trocar o HTML desta mesma tela.
+  location.href = 'pedido-concluido.html' + (created && created.order_number ? '?pedido=' + encodeURIComponent(created.order_number) : '');
 }
 
 init();
 </script>
 
+<div id="site-footer"></div>
+
 <a href="https://wa.me/5565992655883" class="wpp-float" target="_blank" rel="noopener noreferrer" title="Fale conosco no WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
 </a>
+<script src="footer.js?v=3"></script>
 </body>
 </html>

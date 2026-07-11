@@ -14,7 +14,8 @@
    ══════════════════════════════════════════════════════════════ */
 (function(){
 
-  var HEADER_HTML = '<header class="hdr">'
+  var HEADER_HTML = '<div class="hdr-announce" id="hdrAnnounce" style="display:none"><a id="hdrAnnounceLink" href="#"><span id="hdrAnnounceTxt"></span></a></div>'
+  +'<header class="hdr">'
   +'<div class="hdr-top">'
   +'  <button class="mob-menu-btn" id="mobMenuBtn" type="button" aria-label="Abrir menu de categorias"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>'
   +'  <a href="alfa-replica.html" class="hdr-logo"><img class="theme-logo" src="'+(Store.getTheme()==='dark'?'logo-dark.png':'logo-light.png')+'" alt="Alfa Informática"></a>'
@@ -34,7 +35,7 @@
   +'    <svg class="hdr-act-icon" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
   +'    <div class="hdr-act-text">'
   +'      <span class="hdr-act-line1" id="hdr-user-lbl">Minha Conta</span>'
-  +'      <span class="hdr-act-line2">Entrar / Cadastrar</span>'
+  +'      <span class="hdr-act-line2" id="hdr-user-line2">Entrar / Cadastrar</span>'
   +'    </div>'
   +'  </a>'
   +'  <a href="carrinho.html" class="hdr-act hdr-act-cart">'
@@ -85,14 +86,16 @@
     var drop = document.getElementById('searchDrop');
     var wrap = document.getElementById('searchWrap');
     if (!inp || !drop) return;
-    var products = (window.PRODUCTS_DB || []).map(function(p){
-      return {name:p.name, brand:p.brand, price:'R$ '+p.price.toLocaleString('pt-BR',{minimumFractionDigits:2}), img:p.images&&p.images[0]?p.images[0]:''};
-    });
+    function getProducts(){
+      return (window.PRODUCTS_DB || []).map(function(p){
+        return {name:p.name, brand:p.brand, price:'R$ '+p.price.toLocaleString('pt-BR',{minimumFractionDigits:2}), img:p.images&&p.images[0]?p.images[0]:''};
+      });
+    }
     var selIdx = -1;
     function renderDrop(q){
       q = q.trim().toLowerCase();
       if (!q){ drop.classList.remove('open'); return; }
-      var res = products.filter(function(p){
+      var res = getProducts().filter(function(p){
         return p.name.toLowerCase().indexOf(q)>-1 || p.brand.toLowerCase().indexOf(q)>-1;
       }).slice(0,8);
       selIdx = -1;
@@ -213,11 +216,35 @@
     var user = Store.getUser ? Store.getUser() : null;
     var lbl = document.getElementById('hdr-user-lbl');
     if (lbl && user) lbl.textContent = user.name.split(' ')[0];
+    var lbl2 = document.getElementById('hdr-user-line2');
+    if (lbl2) lbl2.textContent = user ? 'Minha Conta' : 'Entrar / Cadastrar';
   }
   Store.syncThemeUI();
   Store.on('cart', updateHdrBadges);
   Store.on('favorites', updateHdrBadges);
   Store.on('user', updateHdrBadges);
   updateHdrBadges();
+
+  /* ── BARRA DE AVISO + STICKY (Aparência > Header) ── */
+  if (window.sb) {
+    window.sb.from('site_settings').select('header_sticky,announcement_ativo,announcement_texto,announcement_link_url').eq('id', 1).single().then(function (res) {
+      var data = res.data;
+      if (!data) return;
+      if (data.header_sticky === false) {
+        var hdr = document.querySelector('.hdr');
+        if (hdr) hdr.style.position = 'static';
+      }
+      if (data.announcement_ativo && data.announcement_texto) {
+        var bar = document.getElementById('hdrAnnounce');
+        var txt = document.getElementById('hdrAnnounceTxt');
+        var link = document.getElementById('hdrAnnounceLink');
+        if (bar && txt) {
+          txt.textContent = data.announcement_texto;
+          if (link) link.href = data.announcement_link_url || '#';
+          bar.style.display = 'block';
+        }
+      }
+    }).catch(function (e) { console.error('header settings', e); });
+  }
 
 })();

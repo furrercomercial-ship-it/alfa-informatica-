@@ -5,6 +5,9 @@
    estas regras no <style> de nenhuma página — só linkar este arquivo.
    ══════════════════════════════════════════════════════════════ */
 
+.hdr-announce{background:var(--primary);text-align:center;padding:8px 16px;position:relative;z-index:101;}
+.hdr-announce a{color:#fff;font-size:12.5px;font-weight:700;}
+.hdr-announce a:hover{text-decoration:underline;}
 .hdr{background:var(--bg-header);border-bottom:none;position:sticky;top:0;z-index:100;}
 .hdr-top{position:relative;display:grid;grid-template-columns:15fr 53fr 33fr;align-items:center;height:96px;border-bottom:1px solid var(--border-color);}
 .hdr-logo{display:flex;align-items:center;justify-content:center;padding:0 16px;height:100%;text-decoration:none;}

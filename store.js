@@ -1,35 +1,51 @@
-/* Alfa Informática — Global Store (localStorage) */
-/* Trocar os métodos de user por Supabase Auth quando disponível */
+/* Alfa Informática — Global Store
+   USER fala com o Supabase (banco real); CART/FAVORITES/CHECKOUT temporário/
+   THEME/ORDERS/ADDRESSES/REVIEWS continuam em localStorage por enquanto. */
 const Store = {
-  // ── USER ──────────────────────────────────────────────
+  // ── USER (Supabase Auth) ─────────────────────────────
+  // Store.getUser() continua síncrono pro resto do site (header.js etc.):
+  // a sessão real do Supabase é espelhada pra cá via Store._syncSession(),
+  // chamado pelo listener supabase.auth.onAuthStateChange no fim deste arquivo.
   getUser:     () => JSON.parse(localStorage.getItem('alfa_user') || 'null'),
   setUser:     (u) => { localStorage.setItem('alfa_user', JSON.stringify(u)); Store.emit('user'); },
   clearUser:   () => { localStorage.removeItem('alfa_user'); Store.emit('user'); },
   isLoggedIn:  () => !!Store.getUser(),
 
-  // Mock auth — substituir por Supabase.auth.signIn()
-  mockLogin: (email, pass) => {
-    const users = JSON.parse(localStorage.getItem('alfa_users') || '[]');
-    const u = users.find(u => u.email === email && u.pass === pass);
-    if (!u) return { ok: false, msg: 'E-mail ou senha incorretos.' };
-    Store.setUser({ name: u.name, email: u.email, cpf: u.cpf || '', phone: u.phone || '' });
+  mockLogin: async (email, pass) => {
+    const { error } = await window.sb.auth.signInWithPassword({ email, password: pass });
+    if (error) return { ok: false, msg: 'E-mail ou senha incorretos.' };
     return { ok: true };
   },
-  mockRegister: (name, email, pass, cpf, phone) => {
-    const users = JSON.parse(localStorage.getItem('alfa_users') || '[]');
-    if (users.find(u => u.email === email)) return { ok: false, msg: 'E-mail já cadastrado.' };
-    users.push({ name, email, pass, cpf: cpf || '', phone: phone || '' });
-    localStorage.setItem('alfa_users', JSON.stringify(users));
-    Store.setUser({ name, email, cpf: cpf || '', phone: phone || '' });
-    if (!Store.getOrders().length) Store._seedOrders();
+  mockRegister: async (name, email, pass, cpf, phone) => {
+    const { data, error } = await window.sb.auth.signUp({ email, password: pass, options: { data: { full_name: name } } });
+    if (error) return { ok: false, msg: /already|registered|exists/i.test(error.message) ? 'E-mail já cadastrado.' : error.message };
+    if (data.user) await window.sb.from('profiles').update({ full_name: name, cpf: cpf || '', phone: phone || '' }).eq('id', data.user.id);
     return { ok: true };
   },
-  updateUser: (patch) => {
-    const u = { ...(Store.getUser() || {}), ...patch };
-    Store.setUser(u);
-    const users = JSON.parse(localStorage.getItem('alfa_users') || '[]');
-    const idx = users.findIndex(x => x.email === (Store.getUser().email));
-    if (idx >= 0) { users[idx] = { ...users[idx], ...patch }; localStorage.setItem('alfa_users', JSON.stringify(users)); }
+  updateUser: async (patch) => {
+    Store.setUser({ ...(Store.getUser() || {}), ...patch });
+    const { data } = await window.sb.auth.getUser();
+    if (data.user) await window.sb.from('profiles').update({ full_name: patch.name, cpf: patch.cpf, phone: patch.phone }).eq('id', data.user.id);
+  },
+  resetPassword: async (email) => {
+    const { error } = await window.sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname.replace(/[^/]*$/, '') + 'auth.html?mode=reset' });
+    if (error) return { ok: false, msg: error.message };
+    return { ok: true };
+  },
+  setNewPassword: async (pass) => {
+    const { error } = await window.sb.auth.updateUser({ password: pass });
+    if (error) return { ok: false, msg: error.message };
+    return { ok: true };
+  },
+  _syncSession: async (session) => {
+    if (!session) { localStorage.removeItem('alfa_user'); Store.emit('user'); return; }
+    const { data: profile } = await window.sb.from('profiles').select('full_name,cpf,phone').eq('id', session.user.id).single();
+    Store.setUser({
+      name: (profile && profile.full_name) || session.user.email,
+      email: session.user.email,
+      cpf: (profile && profile.cpf) || '',
+      phone: (profile && profile.phone) || '',
+    });
   },
 
   // ── CART ──────────────────────────────────────────────
@@ -40,10 +56,13 @@ const Store = {
     if (ex) ex.qty += 1; else cart.push({ ...product, qty: 1, selected: true });
     localStorage.setItem('alfa_cart', JSON.stringify(cart));
     Store.emit('cart');
+    if (window.AlfaEvents) window.AlfaEvents.track('add_to_cart', { value: product.price, items: [{ id: product.id, name: product.name, category: product.category, price: product.price, qty: 1 }] });
   },
   removeFromCart: (id) => {
+    const removed = Store.getCart().find(i => i.id === id);
     localStorage.setItem('alfa_cart', JSON.stringify(Store.getCart().filter(i => i.id !== id)));
     Store.emit('cart');
+    if (window.AlfaEvents && removed) window.AlfaEvents.track('remove_from_cart', { value: removed.price, items: [{ id: removed.id, name: removed.name, price: removed.price, qty: removed.qty }] });
   },
   updateQty: (id, qty) => {
     if (qty <= 0) { Store.removeFromCart(id); return; }
@@ -108,17 +127,65 @@ const Store = {
     });
   },
 
-  // ── ORDERS (mock) ─────────────────────────────────────
-  getOrders: () => JSON.parse(localStorage.getItem('alfa_orders') || '[]'),
-  addOrder:  (order) => {
-    const orders = Store.getOrders();
-    orders.unshift(order);
-    localStorage.setItem('alfa_orders', JSON.stringify(orders));
+  // ── ORDERS (Supabase) ─────────────────────────────────
+  ORDER_STATUS_LABELS: {
+    aguardando_pagamento: 'Aguardando Pagamento', pago: 'Pago', preparando: 'Em Preparação',
+    enviado: 'Em Transporte', entregue: 'Entregue', cancelado: 'Cancelado',
   },
-  _seedOrders: () => {
-    const fmt = Store.fmt;
-    Store.addOrder({ id: '48213', date: '28/06/2026', status: 'Entregue', total: fmt(1249), items: 'Intel Core i5-14600K 3.5GHz 14-Core LGA1700' });
-    Store.addOrder({ id: '48097', date: '14/06/2026', status: 'Em transporte', total: fmt(699), items: 'Corsair Vengeance 32GB DDR5 6000MHz Kit (2x16GB)' });
+  getOrders: async () => {
+    const { data: { session } } = await window.sb.auth.getSession();
+    if (!session) return [];
+    const { data, error } = await window.sb
+      .from('orders')
+      .select('id,order_number,status,total,created_at,order_items(product_name_snapshot,qty)')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false });
+    if (error) { console.error(error); return []; }
+    return (data || []).map(o => ({
+      id: o.order_number || o.id,
+      date: new Date(o.created_at).toLocaleDateString('pt-BR'),
+      status: Store.ORDER_STATUS_LABELS[o.status] || o.status,
+      total: Store.fmt(Number(o.total)),
+      items: (o.order_items || []).map(i => i.qty + 'x ' + i.product_name_snapshot).join(', '),
+    }));
+  },
+  // order: { items:[{id,name,price,qty,images}], address, shippingMethod, freight, paymentMethod, subtotal, discount, total }
+  addOrder: async (order) => {
+    const { data: { session } } = await window.sb.auth.getSession();
+    const orderNumber = 'ALFA-' + Date.now().toString(36).toUpperCase();
+    const { data: created, error } = await window.sb.from('orders').insert({
+      order_number: orderNumber,
+      user_id: session ? session.user.id : null,
+      status: 'aguardando_pagamento',
+      subtotal: order.subtotal, discount: order.discount || 0, freight: order.freight || 0, total: order.total,
+      shipping_method: order.shippingMethod, payment_method: order.paymentMethod,
+      address_snapshot: order.address || null,
+    }).select().single();
+    if (error) { console.error(error); return null; }
+
+    // Congela o preço de custo de cada produto no momento da venda, senão o
+    // lucro de pedidos antigos mudaria toda vez que o custo for atualizado.
+    const ids = (order.items || []).map(i => i.id).filter(Boolean);
+    let costMap = {};
+    if (ids.length) {
+      const { data: prods } = await window.sb.from('products').select('id,cost_price').in('id', ids);
+      (prods || []).forEach(p => { costMap[p.id] = p.cost_price; });
+    }
+
+    const items = (order.items || []).map(i => ({
+      order_id: created.id, product_id: i.id, product_name_snapshot: i.name,
+      product_image_snapshot: i.images && i.images[0] ? i.images[0] : null,
+      unit_price: i.price, qty: i.qty, line_total: i.price * i.qty,
+      cost_price_snapshot: costMap[i.id] ?? null,
+    }));
+    if (items.length) await window.sb.from('order_items').insert(items);
+    if (window.AlfaEvents) {
+      window.AlfaEvents.track('purchase', {
+        value: order.total, order_id: created.order_number || created.id, coupon: order.couponCode || undefined,
+        items: (order.items || []).map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+      });
+    }
+    return created;
   },
 
   // ── ADDRESSES (mock) ──────────────────────────────────
@@ -132,47 +199,46 @@ const Store = {
     localStorage.setItem('alfa_addresses', JSON.stringify(Store.getAddresses().filter(a => a.id !== id)));
   },
 
-  // ── REVIEWS (mock — trocar por tabela real quando houver backend) ──
+  // ── REVIEWS (Supabase) ────────────────────────────────
   // Fotos/vídeos anexados pelo cliente viram data URL (base64) via FileReader
   // no formulário, já que não há upload de arquivo real neste projeto.
-  getReviews: () => JSON.parse(localStorage.getItem('alfa_reviews') || '[]'),
-  getReviewsByProduct: (productId, opts) => {
-    const onlyApproved = !opts || opts.onlyApproved !== false;
-    return Store.getReviews().filter(r =>
-      String(r.product_id) === String(productId) && (!onlyApproved || r.status === 'approved')
-    );
+  getReviews: async () => {
+    const { data, error } = await window.sb.from('reviews').select('*').order('created_at', { ascending: false });
+    if (error) { console.error(error); return []; }
+    return data || [];
   },
-  addReview: (data) => {
-    const list = Store.getReviews();
-    const now = new Date().toISOString();
-    const review = {
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+  getReviewsByProduct: async (productId, opts) => {
+    const onlyApproved = !opts || opts.onlyApproved !== false;
+    let q = window.sb.from('reviews').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+    if (onlyApproved) q = q.eq('status', 'approved');
+    const { data, error } = await q;
+    if (error) { console.error(error); return []; }
+    return data || [];
+  },
+  addReview: async (data) => {
+    const { data: { session } } = await window.sb.auth.getSession();
+    const payload = {
       product_id: data.product_id,
-      user_id: data.user_id || null,
+      user_id: session ? session.user.id : null,
       customer_name: data.customer_name,
       rating: data.rating,
       title: data.title,
       comment: data.comment,
       media_urls: data.media_urls || [],
-      created_at: now,
-      updated_at: now,
       // Usuário com conta logada: publica direto. Visitante sem login: fica pendente até aprovação no painel admin.
-      status: data.user_id ? 'approved' : 'pending',
+      status: session ? 'approved' : 'pending',
     };
-    list.unshift(review);
-    localStorage.setItem('alfa_reviews', JSON.stringify(list));
+    const { data: created, error } = await window.sb.from('reviews').insert(payload).select().single();
+    if (error) { console.error(error); return null; }
     Store.emit('reviews');
-    return review;
+    return created;
   },
-  updateReviewStatus: (id, status) => {
-    const list = Store.getReviews();
-    const r = list.find(x => x.id === id);
-    if (r) { r.status = status; r.updated_at = new Date().toISOString(); }
-    localStorage.setItem('alfa_reviews', JSON.stringify(list));
+  updateReviewStatus: async (id, status) => {
+    await window.sb.from('reviews').update({ status }).eq('id', id);
     Store.emit('reviews');
   },
-  deleteReview: (id) => {
-    localStorage.setItem('alfa_reviews', JSON.stringify(Store.getReviews().filter(r => r.id !== id)));
+  deleteReview: async (id) => {
+    await window.sb.from('reviews').delete().eq('id', id);
     Store.emit('reviews');
   },
 
@@ -184,3 +250,5 @@ const Store = {
   // ── HELPERS ───────────────────────────────────────────
   fmt: (v) => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
 };
+
+window.sb.auth.onAuthStateChange((_event, session) => { Store._syncSession(session); });

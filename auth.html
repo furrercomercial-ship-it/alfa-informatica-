@@ -113,7 +113,7 @@ button{font-family:inherit;cursor:pointer;}
 .fav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
 .fav-card{background:var(--bg-section);border:1px solid var(--border-color);border-radius:0;padding:14px;}
 .fav-name{font-size:12.5px;font-weight:600;color:var(--text-main);line-height:1.35;margin-bottom:8px;min-height:34px;}
-.fav-price{font-size:15px;font-weight:800;color:var(--success);margin-bottom:10px;}
+.fav-price{font-size:15px;font-weight:800;color:var(--alfa-price-pix,var(--success));margin-bottom:10px;}
 .fav-btn{display:block;text-align:center;font-size:11.5px;font-weight:700;color:#7fb0ff;border:1px solid rgba(0,102,255,.4);border-radius:0;padding:7px;transition:all .15s;}
 .fav-btn:hover{background:rgba(0,102,255,.1);}
 .cli-save-msg{display:none;font-size:12.5px;color:#86efac;margin-top:10px;}
@@ -130,39 +130,15 @@ button{font-family:inherit;cursor:pointer;}
 .of-body{padding:14px;}
 .of-name{font-size:12.5px;font-weight:600;color:var(--text-main);line-height:1.35;min-height:34px;margin-bottom:8px;}
 .of-old{font-size:11px;color:var(--text-secondary);text-decoration:line-through;}
-.of-price{font-size:17px;font-weight:800;color:var(--success);margin-bottom:10px;}
+.of-price{font-size:17px;font-weight:800;color:var(--alfa-price-pix,var(--success));margin-bottom:10px;}
 .of-btn{display:block;text-align:center;font-size:11.5px;font-weight:700;color:#fff;background:var(--primary);border-radius:0;padding:9px;transition:background .15s;}
 .of-btn:hover{background:var(--primary-hover);}
 @media(max-width:1100px){.of-grid{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:580px){.of-grid{grid-template-columns:repeat(2,1fr);}}
 
-/* ══ FOOTER (ft2 — igual à alfa-replica.html) ══ */
-.sec-wrap{max-width:1650px;margin:0 auto;padding:0 20px;}
-.ft2-main{background:var(--bg-section);border-top:1px solid var(--border-color);position:relative;}
-.ft2-main::before{content:'';position:absolute;top:-1px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,102,255,.52) 50%,transparent);pointer-events:none;}
-.ft2-grid{display:grid;grid-template-columns:2fr 1.3fr 1.3fr 1.6fr;gap:56px;padding:56px 0 50px;}
-.ft2-logo{height:44px;width:auto;display:block;margin-bottom:14px;}
-.ft2-tag{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);margin-bottom:16px;display:block;}
-.ft2-about{font-size:12.5px;color:var(--text-muted);line-height:1.78;margin:0 0 22px;max-width:268px;}
-.ft2-phone{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--text-muted);text-decoration:none;margin-bottom:16px;}
-.ft2-col-h{font-size:9.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin:0 0 20px;display:flex;align-items:center;gap:10px;}
-.ft2-col-h::after{content:'';flex:1;height:1px;background:var(--border-color);}
-.ft2-link{font-size:13px;color:var(--text-muted);text-decoration:none;display:block;margin-bottom:11px;transition:color .2s;}
-.ft2-link:hover{color:#7fa8d9;}
-.ft2-pay-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;}
-.ft2-pay-chip{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:#fff;border:1px solid rgba(0,0,0,.14);border-radius:0;padding:0 11px;height:32px;min-width:48px;transition:transform .15s,box-shadow .15s;}
-.ft2-pay-chip:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.18);}
-.fpc-elo-logo{position:relative;width:26px;height:18px;}
-.fpc-elo-y{position:absolute;left:0;top:2px;width:12px;height:12px;border-radius:50%;background:#FFCB05;}
-.fpc-elo-c{position:absolute;left:5px;top:4px;width:12px;height:12px;border-radius:50%;background:#00A4E0;mix-blend-mode:multiply;}
-.fpc-elo-k{position:absolute;left:11px;top:1px;width:12px;height:12px;border-radius:50%;background:#000;mix-blend-mode:multiply;opacity:.85;}
-.ft2-seal-list{display:flex;flex-direction:column;gap:9px;}
-.ft2-seal-item{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--text-muted);font-weight:600;}
-.ft2-bottom{border-top:1px solid var(--border-color);padding:20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.ft2-bottom p{margin:0;font-size:11px;color:var(--text-muted);font-weight:500;}
-@media(max-width:960px){.ft2-grid{grid-template-columns:repeat(2,1fr);gap:36px;}}
+/* Rodapé agora vem de footer.js/footer.css (componente compartilhado). */
 @media(max-width:900px){.acc-split{grid-template-columns:1fr;}.acc-divider{width:auto;height:1px;flex-direction:row;padding:0;}.acc-divider span{position:static;margin:24px 0;}.cli-wrap{grid-template-columns:1fr;}.cli-menu{position:static;}}
-@media(max-width:580px){.ft2-grid{grid-template-columns:1fr;text-align:center;padding:40px 0 32px;}.ft2-col-h{justify-content:center;}.ft2-col-h::after{display:none;}.ft2-pay-grid{justify-content:center;}.ft2-seal-list{align-items:center;}.nlt-in{flex-direction:column;text-align:center;}.acc-col{padding:34px 24px;}}
+@media(max-width:580px){.nlt-in{flex-direction:column;text-align:center;}.acc-col{padding:34px 24px;}}
 
 /* ══ SUPORTE FLUTUANTE ══ */
 .wpp-float{position:fixed;bottom:26px;right:26px;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35);color:#fff;z-index:9999;transition:transform .2s,box-shadow .2s;}
@@ -171,6 +147,9 @@ button{font-family:inherit;cursor:pointer;}
 @media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
 <link rel="stylesheet" href="header.css?v=2">
+<link rel="stylesheet" href="footer.css?v=3">
+<link rel="stylesheet" href="popups.css">
+<link rel="stylesheet" href="consent.css">
 </head>
 <body>
 
@@ -291,6 +270,28 @@ button{font-family:inherit;cursor:pointer;}
       <button class="btn" onclick="doFgt()">ENVIAR INSTRUÇÕES &nbsp;→</button>
       <div class="lnks"><button class="lsm" onclick="spanel('login')">← Voltar ao login</button></div>
     </div>
+
+    <!-- NEW PASSWORD (acessado via link do e-mail de recuperação) -->
+    <div class="tp acc-col" id="panel-newpass" style="max-width:440px;margin:0 auto;">
+      <div class="acc-title" style="font-size:22px;">Definir nova senha</div>
+      <div class="acc-sub">Escolha uma nova senha para sua conta.</div>
+      <div class="msg" id="newPassMsg"></div>
+      <div class="field">
+        <label class="flabel">Nova Senha</label>
+        <div class="fw">
+          <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <input type="password" id="npP" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="field">
+        <label class="flabel">Confirmar Nova Senha</label>
+        <div class="fw">
+          <span class="fil"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <input type="password" id="npC" placeholder="Repita a nova senha" autocomplete="new-password">
+        </div>
+      </div>
+      <button class="btn" onclick="doNewPass()">SALVAR NOVA SENHA &nbsp;→</button>
+    </div>
   </div>
 
   <!-- ══ ÁREA DO CLIENTE ══ -->
@@ -302,16 +303,16 @@ button{font-family:inherit;cursor:pointer;}
           <div class="cli-uname" id="cliName"></div>
           <div class="cli-uemail" id="cliEmail"></div>
         </div>
-        <button class="cli-item active" onclick="cliPanel('pedidos',this)">Meus Pedidos</button>
-        <button class="cli-item" onclick="cliPanel('dados',this)">Meus Dados</button>
-        <button class="cli-item" onclick="cliPanel('enderecos',this)">Endereços</button>
-        <button class="cli-item" onclick="cliPanel('favoritos',this)">Favoritos</button>
+        <button class="cli-item active" onclick="cliPanel('pedidos',this)" data-text="meus_pedidos" data-block="pedidos">Meus Pedidos</button>
+        <button class="cli-item" onclick="cliPanel('dados',this)" data-block="dados">Meus Dados</button>
+        <button class="cli-item" onclick="cliPanel('enderecos',this)" data-block="enderecos">Endereços</button>
+        <button class="cli-item" onclick="cliPanel('favoritos',this)" data-text="favoritos" data-block="favoritos">Favoritos</button>
         <button class="cli-item cli-out" onclick="doOut()">Sair da conta</button>
       </aside>
       <div class="cli-content">
 
         <div class="cli-panel on" id="cli-pedidos">
-          <div class="cli-h">Meus Pedidos</div>
+          <div class="cli-h" data-text="meus_pedidos">Meus Pedidos</div>
           <div id="ordersList"></div>
         </div>
 
@@ -343,7 +344,7 @@ button{font-family:inherit;cursor:pointer;}
         </div>
 
         <div class="cli-panel" id="cli-favoritos">
-          <div class="cli-h">Favoritos</div>
+          <div class="cli-h" data-text="favoritos">Favoritos</div>
           <div id="favGrid" class="fav-grid"></div>
         </div>
 
@@ -359,67 +360,23 @@ button{font-family:inherit;cursor:pointer;}
 
 </main>
 
-<footer class="ft2-main">
-<div class="sec-wrap">
-<div class="ft2-grid">
+<div id="site-footer"></div>
 
-<div>
-<img src="logo-dark.png" alt="Alfa Informática" class="ft2-logo theme-logo">
-<span class="ft2-tag">Hardware &bull; Periféricos &bull; Setup Gamer</span>
-<p class="ft2-about">Especialistas em hardware, periféricos e computadores gamer de alta performance.</p>
-<a href="tel:+5565992655883" class="ft2-phone">
-<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-(65) 99265-5883
-</a>
-</div>
-
-<div>
-<p class="ft2-col-h">Atendimento</p>
-<a href="#" class="ft2-link">Central de Ajuda</a>
-<a href="#" class="ft2-link">Trocas e Devoluções</a>
-<a href="#" class="ft2-link">Garantia</a>
-<a href="#" class="ft2-link">Fale Conosco</a>
-</div>
-
-<div>
-<p class="ft2-col-h">Departamentos</p>
-<a href="categoria.html?cat=processadores" class="ft2-link">Processadores</a>
-<a href="categoria.html?cat=placas-de-video" class="ft2-link">Placas de Vídeo</a>
-<a href="categoria.html?cat=notebooks" class="ft2-link">Notebooks</a>
-<a href="categoria.html?cat=perifericos" class="ft2-link">Periféricos</a>
-<a href="categoria.html?cat=monitores-gaming" class="ft2-link">Monitores</a>
-</div>
-
-<div>
-<p class="ft2-col-h">Formas de Pagamento</p>
-<div class="ft2-pay-grid">
-<div class="ft2-pay-chip"><svg width="36" height="13" viewBox="0 0 40 14"><text x="1" y="13" font-family="Arial,Helvetica,sans-serif" font-style="italic" font-weight="900" font-size="16" fill="#1A1F71" letter-spacing="-1">VISA</text></svg></div>
-<div class="ft2-pay-chip"><svg width="28" height="18" viewBox="0 0 32 20"><circle cx="12" cy="10" r="9" fill="#EB001B"/><circle cx="20" cy="10" r="9" fill="#F79E1B" style="mix-blend-mode:multiply"/></svg></div>
-<div class="ft2-pay-chip"><div class="fpc-elo-logo"><div class="fpc-elo-y"></div><div class="fpc-elo-c"></div><div class="fpc-elo-k"></div></div></div>
-<div class="ft2-pay-chip"><svg width="42" height="13" viewBox="0 0 56 18" fill="none"><path d="M9 9L15 3L21 9L15 15Z" fill="#32BCAD"/><text x="27" y="14" font-family="Arial,sans-serif" font-weight="800" font-size="13" fill="#32BCAD" letter-spacing=".4">Pix</text></svg></div>
-<div class="ft2-pay-chip"><svg width="22" height="17" viewBox="0 0 24 18"><rect x="0" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="4" y="0" width="1" height="18" fill="#1a1a1a"/><rect x="6.5" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="10" y="0" width="1.5" height="18" fill="#1a1a1a"/><rect x="13" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="17" y="0" width="1" height="18" fill="#1a1a1a"/><rect x="19.5" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="23" y="0" width="1" height="18" fill="#1a1a1a"/></svg></div>
-</div>
-<p class="ft2-col-h" style="margin-top:4px;">Segurança</p>
-<div class="ft2-seal-list">
-<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Compra 100% Segura</div>
-<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>SSL Certificado</div>
-<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Garantia Oficial</div>
-</div>
-</div>
-
-</div>
-
-<div class="ft2-bottom">
-<p class="ft2-bottom-txt">&copy; 2026 Alfa Informática. Todos os direitos reservados.</p>
-<p class="ft2-bottom-txt">Desenvolvido por Alfa Informática</p>
-</div>
-</div>
-</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script src="site-meta.js"></script>
+<script src="consent.js"></script>
+<script src="event-manager.js"></script>
+<script src="script-engine.js"></script>
+<script src="popups.js"></script>
+<script src="theme-loader.js?v=4"></script>
+<script src="site-texts.js"></script>
+<script src="page-blocks.js"></script>
 <script src="store.js"></script>
 <script src="products.js"></script>
 <script src="categories.js"></script>
 <script src="header.js"></script>
+<script src="footer.js?v=3"></script>
 <script>
 /* ═══ MASKS ═══ */
 function maskCPF(el){let v=el.value.replace(/\D/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');el.value=v;}
@@ -436,17 +393,18 @@ function spanel(p){
 }
 function smsg(id,type,txt){const el=document.getElementById(id);el.className='msg '+type;el.textContent=txt;el.style.display='block';}
 
-function doLogin(){
+async function doLogin(){
   const e=document.getElementById('lE').value.trim(),p=document.getElementById('lP').value;
   if(!e||!p){smsg('loginMsg','error','Preencha e-mail e senha.');return;}
-  const r=Store.mockLogin(e,p);
+  const r=await Store.mockLogin(e,p);
   if(!r.ok){smsg('loginMsg','error',r.msg);return;}
   if(document.getElementById('rc').classList.contains('on')) localStorage.setItem('alfa_remember_email',e);
   else localStorage.removeItem('alfa_remember_email');
   smsg('loginMsg','success','Login realizado! Redirecionando...');
+  if (window.AlfaEvents) window.AlfaEvents.track('login', { method: 'email' });
   setTimeout(showClient,700);
 }
-function doReg(){
+async function doReg(){
   const n=document.getElementById('rN').value.trim(),cpf=document.getElementById('rCpf').value.trim(),
         tel=document.getElementById('rTel').value.trim(),e=document.getElementById('rE').value.trim(),
         p=document.getElementById('rP').value,c=document.getElementById('rC').value;
@@ -456,17 +414,29 @@ function doReg(){
   if(p.length<6){smsg('registerMsg','error','Senha deve ter ao menos 6 caracteres.');return;}
   if(p!==c){smsg('registerMsg','error','As senhas não coincidem.');return;}
   if(!document.getElementById('rt').classList.contains('on')){smsg('registerMsg','error','Você precisa aceitar os termos de uso.');return;}
-  const r=Store.mockRegister(n,e,p,cpf,tel);
+  const r=await Store.mockRegister(n,e,p,cpf,tel);
   if(!r.ok){smsg('registerMsg','error',r.msg);return;}
   smsg('registerMsg','success','Conta criada! Redirecionando...');
+  if (window.AlfaEvents) window.AlfaEvents.track('sign_up', { method: 'email' });
   setTimeout(showClient,700);
 }
-function doFgt(){
+async function doFgt(){
   const e=document.getElementById('fE').value.trim();
   if(!e){smsg('forgotMsg','error','Informe o e-mail.');return;}
-  smsg('forgotMsg','success','Instruções enviadas para '+e+' (simulado).');
+  const r=await Store.resetPassword(e);
+  if(!r.ok){smsg('forgotMsg','error',r.msg);return;}
+  smsg('forgotMsg','success','Instruções enviadas para '+e+'. Verifique sua caixa de entrada.');
 }
-function doOut(){Store.clearUser();location.reload();}
+async function doNewPass(){
+  const p=document.getElementById('npP').value,c=document.getElementById('npC').value;
+  if(!p||p.length<6){smsg('newPassMsg','error','Senha deve ter ao menos 6 caracteres.');return;}
+  if(p!==c){smsg('newPassMsg','error','As senhas não coincidem.');return;}
+  const r=await Store.setNewPassword(p);
+  if(!r.ok){smsg('newPassMsg','error',r.msg);return;}
+  smsg('newPassMsg','success','Senha alterada! Redirecionando...');
+  setTimeout(()=>{ history.replaceState(null,'','auth.html'); showClient(); },900);
+}
+function doOut(){Store.clearUser();window.sb.auth.signOut();location.reload();}
 
 /* ═══ CLIENT AREA ═══ */
 function cliPanel(p,btn){
@@ -487,10 +457,11 @@ function showClient(){
   renderDados();
   renderAddresses();
   renderFavorites();
+  if (window.AlfaBlocks) AlfaBlocks.apply('minha_conta');
 }
-function renderOrders(){
+async function renderOrders(){
   const list=document.getElementById('ordersList');
-  const orders=Store.getOrders();
+  const orders=await Store.getOrders();
   if(!orders.length){list.innerHTML='<div class="ord-empty">Você ainda não tem pedidos.</div>';return;}
   list.innerHTML=orders.map(o=>
     '<div class="ord-item"><div><div class="ord-id">Pedido #'+o.id+' &middot; '+o.date+'</div><div class="ord-name">'+o.items+'</div></div>'+
@@ -540,7 +511,7 @@ function renderFavorites(){
 }
 
 /* ═══ OFERTAS ═══ */
-(function(){
+function renderOfertas(){
   const grid=document.getElementById('ofGrid');
   const items=(window.PRODUCTS_DB||[]).filter(p=>p.old && p.old>p.price).slice(0,6);
   grid.innerHTML=items.map(p=>{
@@ -552,12 +523,16 @@ function renderFavorites(){
       '<div class="of-old">'+Store.fmt(p.old)+'</div><div class="of-price">'+Store.fmt(p.price)+'</div>'+
       '<a class="of-btn" href="produto.html?q='+encodeURIComponent(p.name).replace(/[!'()*]/g,c=>'%'+c.charCodeAt(0).toString(16))+'">Ver produto</a></div></div>';
   }).join('');
-})();
+}
+if(window.PRODUCTS_DB && window.PRODUCTS_DB.length) renderOfertas();
+else document.addEventListener('products:ready', renderOfertas, {once:true});
 
 /* ═══ INIT ═══ */
 (function(){
   const remembered=localStorage.getItem('alfa_remember_email');
   if(remembered) document.getElementById('lE').value=remembered;
+  const mode=new URLSearchParams(location.search).get('mode');
+  if(mode==='reset'){ spanel('newpass'); return; }
   if(Store.isLoggedIn()) showClient();
 })();
 document.addEventListener('keydown',e=>{
@@ -567,6 +542,7 @@ document.addEventListener('keydown',e=>{
   if(a.id==='panel-login')doLogin();
   else if(a.id==='panel-register')doReg();
   else if(a.id==='panel-forgot')doFgt();
+  else if(a.id==='panel-newpass')doNewPass();
 });
 </script>
 

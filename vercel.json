@@ -11,6 +11,15 @@
     { "source": "/moveis", "destination": "/categoria.html?cat=moveis" },
     { "source": "/audio", "destination": "/categoria.html?cat=audio" },
     { "source": "/games", "destination": "/categoria.html?cat=games" },
-    { "source": "/outros", "destination": "/categoria.html?cat=outros" }
+    { "source": "/outros", "destination": "/categoria.html?cat=outros" },
+
+    { "source": "/categorias", "destination": "/categorias.html" },
+    { "source": "/contato", "destination": "/contato.html" },
+    { "source": "/suporte", "destination": "/suporte.html" },
+    { "source": "/sobre", "destination": "/pagina.html?slug=sobre" },
+    { "source": "/politica-de-privacidade", "destination": "/pagina.html?slug=politica-de-privacidade" },
+    { "source": "/termos-de-uso", "destination": "/pagina.html?slug=termos-de-uso" },
+    { "source": "/garantia", "destination": "/pagina.html?slug=garantia" },
+    { "source": "/trocas-e-devolucoes", "destination": "/pagina.html?slug=trocas-e-devolucoes" }
   ]
 }

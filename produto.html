@@ -28,6 +28,11 @@ a{color:inherit;text-decoration:none;}
 /* ── PAGE ── */
 .page{max-width:1500px;margin:0 auto;padding:22px 28px 80px;}
 
+/* ── LOADING ── */
+.prod-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:120px 20px;color:var(--text-muted);font-size:14px;}
+.prod-loading-spinner{width:34px;height:34px;border:3px solid var(--border-color);border-top-color:var(--primary);border-radius:50%;animation:prod-spin .7s linear infinite;}
+@keyframes prod-spin{to{transform:rotate(360deg);}}
+
 /* ── BREADCRUMB ── */
 .bc{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-muted);margin-bottom:20px;flex-wrap:wrap;}
 .bc a{color:var(--text-muted);transition:color .15s;}
@@ -56,12 +61,12 @@ a{color:inherit;text-decoration:none;}
 .pinfo{}
 
 /* Frete badge */
-.frete-badge{display:inline-flex;align-items:center;gap:7px;background:#3B9EFF;color:#fff;font-size:13.5px;font-weight:700;padding:7px 15px;border-radius:0;margin-bottom:18px;}
+.frete-badge{display:inline-flex;align-items:center;gap:7px;background:var(--alfa-badge-bg,#3B9EFF);color:var(--alfa-badge-text,#fff);font-size:13.5px;font-weight:700;padding:7px 15px;border-radius:0;margin-bottom:18px;}
 
 /* Stars */
 .rating-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
 .stars-empty{color:var(--text-muted);font-size:18px;letter-spacing:2px;}
-.stars-filled{color:#F59E0B;font-size:18px;letter-spacing:2px;}
+.stars-filled{color:var(--alfa-rating-star,#F59E0B);font-size:18px;letter-spacing:2px;}
 .rating-num{font-size:15px;color:var(--text-secondary);}
 .rating-count{font-size:13.5px;color:var(--text-muted);}
 
@@ -82,24 +87,24 @@ a{color:inherit;text-decoration:none;}
 .price-col{flex:1;padding:8px 26px;display:flex;flex-direction:column;gap:6px;}
 .price-col:first-child{padding-left:0;}
 .price-col-sep{width:1px;background:var(--border-color);align-self:stretch;flex-shrink:0;}
-.p-old-price{font-size:12.5px;color:var(--text-muted);margin-bottom:2px;display:block;}
-.p-old-price s{color:var(--text-muted);}
+.p-old-price{font-size:12.5px;color:var(--alfa-price-old,var(--text-muted));margin-bottom:2px;display:block;}
+.p-old-price s{color:var(--alfa-price-old,var(--text-muted));}
 .p-avista-lbl{font-size:12px;color:var(--text-secondary);font-weight:400;}
-.p-main-val{font-size:37px;font-weight:600;color:var(--success);line-height:1;letter-spacing:-.5px;}
+.p-main-val{font-size:37px;font-weight:600;color:var(--alfa-price-pix,var(--success));line-height:1;letter-spacing:-.5px;}
 .p-pix-note{font-size:12px;color:var(--text-muted);}
-.p-card-val{font-size:27px;font-weight:600;color:var(--success);line-height:1;margin-bottom:2px;}
+.p-card-val{font-size:27px;font-weight:600;color:var(--alfa-price-installment,var(--success));line-height:1;margin-bottom:2px;}
 .p-inst-info{font-size:12.5px;color:var(--text-secondary);line-height:1.7;}
 
 /* ── COMPRAR BUTTON ── */
-.btn-comprar{width:100%;height:60px;background:var(--success);border:none;border-radius:0;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:16px;transition:background .18s;margin-bottom:12px;}
-.btn-comprar:hover{background:var(--success-hover);}
+.btn-comprar{width:100%;height:60px;background:var(--alfa-btn-buy-bg,var(--success));border:none;border-radius:0;color:var(--alfa-btn-buy-text,#fff);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:16px;transition:background .18s;margin-bottom:12px;}
+.btn-comprar:hover{background:var(--alfa-btn-buy-hover,var(--success-hover));}
 .btn-comprar-left{display:flex;flex-direction:column;align-items:flex-start;}
 .btn-comprar-main{font-size:18px;font-weight:700;letter-spacing:.4px;}
 .btn-comprar-sub{font-size:10.5px;font-weight:500;opacity:.8;}
 
 /* Add to cart (secondary) */
-.btn-add-cart{width:100%;height:46px;background:transparent;border:2px solid var(--primary);border-radius:0;color:var(--primary);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:600;transition:border-color .18s,color .18s,background .18s;margin-bottom:20px;}
-.btn-add-cart:hover{border-color:var(--primary-hover);color:var(--primary-hover);background:rgba(0,102,255,.06);}
+.btn-add-cart{width:100%;height:46px;background:var(--alfa-btn-secondary-bg,transparent);border:2px solid var(--alfa-btn-secondary-text,var(--primary));border-radius:0;color:var(--alfa-btn-secondary-text,var(--primary));cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:600;transition:border-color .18s,color .18s,background .18s;margin-bottom:20px;}
+.btn-add-cart:hover{border-color:var(--alfa-btn-secondary-hover,var(--primary-hover));color:var(--alfa-btn-secondary-hover,var(--primary-hover));background:rgba(0,102,255,.06);}
 
 /* ── PARCELAMENTO ── */
 .parcel-section{margin-bottom:28px;}
@@ -243,12 +248,19 @@ a{color:inherit;text-decoration:none;}
 }
 </style>
 <link rel="stylesheet" href="header.css?v=2">
+<link rel="stylesheet" href="footer.css?v=3">
+<link rel="stylesheet" href="popups.css">
+<link rel="stylesheet" href="consent.css">
 </head>
 <body>
 
 <div id="site-header"></div>
 
 <div class="page" id="pageContent">
+  <div class="prod-loading" id="prodLoading">
+    <div class="prod-loading-spinner"></div>
+    <p>Carregando produto...</p>
+  </div>
   <div class="not-found" id="notFound" style="display:none">
     <h2>Produto não encontrado</h2>
     <p>O produto que você procura não está disponível.</p>
@@ -256,10 +268,20 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<div id="reviewsSection"></div>
+<div id="reviewsSection" data-block="avaliacoes"></div>
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script src="site-meta.js"></script>
+<script src="consent.js"></script>
+<script src="event-manager.js"></script>
+<script src="script-engine.js"></script>
+<script src="popups.js"></script>
+<script src="theme-loader.js?v=4"></script>
+<script src="site-texts.js"></script>
+<script src="page-blocks.js"></script>
 <script src="store.js"></script>
 <script src="products.js"></script>
 <script src="categories.js"></script>
@@ -309,9 +331,14 @@ function loadProduct() {
   if (id && window.PRODUCTS_DB) p = window.PRODUCTS_DB.find(x => x.id === id);
   if (!p && q && window.PRODUCTS_DB) p = fuzzyFind(q);
   if (!id && !q) { location.replace('alfa-replica.html'); return; }
-  if (!p) { document.getElementById('notFound').style.display = 'block'; return; }
+  if (!p) {
+    document.getElementById('prodLoading').style.display = 'none';
+    document.getElementById('notFound').style.display = 'block';
+    return;
+  }
   renderProduct(p);
   renderReviews();
+  if (window.AlfaEvents) window.AlfaEvents.track('view_item', { value: p.price, items: [{ id: p.id, name: p.name, category: p.category, price: p.price, qty: 1 }] });
 }
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
@@ -341,14 +368,12 @@ function renderProduct(p) {
     </div>`
   ).join('');
 
-  // Breadcrumb cat
-  const catLabels = {
-    'processadores':'Processadores','placas-de-video':'Placas de Vídeo','memorias-ram':'Memórias RAM',
-    'ssd-hd':'SSD / HD','placas-mae':'Placas-mãe','gabinetes':'Gabinetes','monitores-gaming':'Monitores',
-    'mouse':'Mouse','teclados':'Teclados','headsets':'Headsets','notebooks':'Notebooks',
-    'pc-gamer':'PC Gamer','pc-office':'PC Office','fontes':'Fontes','cadeiras':'Cadeiras',
-  };
-  const catLabel = catLabels[p.cat] || p.cat;
+  // Breadcrumb cat — derivado de window.CATEGORIES_DB (mesma fonte do resto da loja)
+  let catLabel = p.cat;
+  for (const cat of (window.CATEGORIES_DB || [])) {
+    const sub = cat.subcategorias.find(s => s.slug === p.cat);
+    if (sub) { catLabel = sub.nome; break; }
+  }
 
   // Parcelamento table (12 opções, 2 colunas)
   const parcelRows = Array.from({length:12}, (_,i) => {
@@ -373,7 +398,7 @@ function renderProduct(p) {
       <span class="bc-cur">${p.name}</span>
     </nav>
 
-    <div class="prod-main">
+    <div class="prod-main" data-block="principal">
 
       <!-- ── GALLERY ── -->
       <div class="gallery">
@@ -474,7 +499,7 @@ function renderProduct(p) {
     </div>
 
     <!-- TABS -->
-    <div class="tabs-section">
+    <div class="tabs-section" data-block="descricao_especificacoes">
       <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab(this,'tabDesc')">Descrição</button>
         <button class="tab-btn" onclick="switchTab(this,'tabSpecs')">Especificações Técnicas</button>
@@ -492,6 +517,7 @@ function renderProduct(p) {
 
   document.getElementById('pageContent').innerHTML = html;
   window._currentProduct = p;
+  if (window.AlfaBlocks) AlfaBlocks.apply('produto');
 }
 
 // ── GALLERY CONTROLS ─────────────────────────────────────────────────────────
@@ -558,10 +584,12 @@ function starsHtml(n) {
   return out + '</span>';
 }
 
-function renderReviews() {
+let _productReviews = [];
+async function renderReviews() {
   const p = window._currentProduct;
   if (!p) return;
-  const all = Store.getReviewsByProduct(p.id);
+  _productReviews = await Store.getReviewsByProduct(p.id);
+  const all = _productReviews;
   const total = all.length;
   const avg = total ? all.reduce((s,r) => s + r.rating, 0) / total : 0;
   const counts = [5,4,3,2,1].map(n => all.filter(r => r.rating === n).length);
@@ -622,12 +650,13 @@ function renderReviews() {
     </div>
   `;
   renderReviewsList();
+  if (window.AlfaBlocks) AlfaBlocks.apply('produto');
 }
 
 function renderReviewsList() {
   const p = window._currentProduct;
   if (!p) return;
-  const all = Store.getReviewsByProduct(p.id);
+  const all = _productReviews;
   const total = all.length;
   let list = all.slice();
   if (reviewState.filterStars) list = list.filter(r => r.rating === reviewState.filterStars);
@@ -750,7 +779,7 @@ function removeMediaThumb(i) {
   modalMedia.splice(i, 1);
   renderMediaThumbs();
 }
-function submitReview() {
+async function submitReview() {
   const p = window._currentProduct;
   if (!p) return;
   const errEl = document.getElementById('revError');
@@ -771,9 +800,8 @@ function submitReview() {
     return;
   }
 
-  Store.addReview({
+  await Store.addReview({
     product_id: p.id,
-    user_id: user ? user.email : null,
     customer_name: name,
     rating: modalRating,
     title,
@@ -790,11 +818,21 @@ function submitReview() {
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
-loadProduct();
+function waitReady(cb) {
+  let gotProducts = window.PRODUCTS_DB.length > 0;
+  let gotCategories = window.CATEGORIES_DB.length > 0;
+  if (gotProducts && gotCategories) { cb(); return; }
+  document.addEventListener('products:ready', () => { gotProducts = true; if (gotCategories) cb(); }, { once: true });
+  document.addEventListener('categories:ready', () => { gotCategories = true; if (gotProducts) cb(); }, { once: true });
+}
+waitReady(loadProduct);
 </script>
+
+<div id="site-footer"></div>
 
 <a href="https://wa.me/5565992655883" class="wpp-float" target="_blank" rel="noopener noreferrer" title="Fale conosco no WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
 </a>
+<script src="footer.js?v=3"></script>
 </body>
 </html>

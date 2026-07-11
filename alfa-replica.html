@@ -54,6 +54,12 @@ button{font-family:inherit;cursor:pointer;}
 .hero-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10;}
 .hero-dot{width:8px;height:8px;border-radius:0;background:rgba(255,255,255,.35);cursor:pointer;border:none;padding:0;transition:background .25s,transform .25s;}
 .hero-dot.active{background:#fff;transform:scale(1.3);}
+.hero-overlay{position:absolute;inset:0;pointer-events:none;z-index:1;}
+.hero-caption{position:absolute;left:6%;bottom:14%;z-index:2;max-width:44%;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.55);}
+.hero-caption h2{font-size:clamp(20px,3vw,40px);font-weight:800;margin-bottom:8px;letter-spacing:-.5px;}
+.hero-caption p{font-size:clamp(12px,1.2vw,16px);opacity:.92;margin-bottom:16px;line-height:1.5;}
+.hero-cta{display:inline-block;background:var(--primary);color:#fff;font-size:13px;font-weight:700;padding:11px 24px;text-shadow:none;}
+@media(max-width:768px){.hero-caption{max-width:80%;bottom:10%;}.hero-cta{padding:9px 18px;font-size:12px;}}
 @media(max-width:768px){.hero-wrap{width:calc(100% - 32px);margin:12px auto 20px;}.hero-arrow.prev{left:10px;}.hero-arrow.next{right:10px;}}
 /* PRODUCTS */
 .prod-carousel-wrap{position:relative;padding:0 4px;}
@@ -69,9 +75,9 @@ button{font-family:inherit;cursor:pointer;}
 .prod-info{padding:11px 2px 8px;flex:1;display:flex;flex-direction:column;gap:4px;}
 .prod-brand{font-size:9.5px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;}
 .prod-name{font-size:12px;font-weight:600;color:var(--text-main);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-.prod-old{font-size:10px;color:var(--text-muted);text-decoration:line-through;margin-top:5px;}
-.prod-price{font-size:21px;font-weight:400;color:var(--success);line-height:1;letter-spacing:-.5px;}
-.prod-pix{font-size:10px;font-weight:700;color:var(--success);background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.16);padding:3px 8px;border-radius:0;width:fit-content;}
+.prod-old{font-size:10px;color:var(--alfa-price-old,var(--text-muted));text-decoration:line-through;margin-top:5px;}
+.prod-price{font-size:21px;font-weight:400;color:var(--alfa-price-pix,var(--success));line-height:1;letter-spacing:-.5px;}
+.prod-pix{font-size:10px;font-weight:700;color:var(--alfa-price-pix,var(--success));background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.16);padding:3px 8px;border-radius:0;width:fit-content;}
 .prod-install{font-size:10px;color:var(--text-secondary);}
 .prod-stars{display:flex;align-items:center;gap:3px;margin-top:2px;}
 .prod-actions{display:flex;gap:8px;padding:4px 0 10px;}
@@ -143,48 +149,12 @@ button{font-family:inherit;cursor:pointer;}
 .benefit-icon{flex-shrink:0;width:42px;height:42px;border-radius:0;background:rgba(37,99,255,.1);border:1px solid rgba(37,99,255,.18);display:flex;align-items:center;justify-content:center;}
 .benefit-txt b{display:block;font-size:12px;font-weight:700;color:var(--text-main);}
 .benefit-txt span{font-size:10.5px;color:var(--text-secondary);margin-top:2px;display:block;}
-/* FOOTER */
-.ft2-main{background:var(--bg-section);border-top:1px solid var(--border-color);position:relative;}
-.ft2-main::before{content:'';position:absolute;top:-1px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(37,99,255,.52) 50%,transparent);pointer-events:none;}
-.ft2-grid{display:grid;grid-template-columns:2fr 1.3fr 1.3fr 1.6fr;gap:56px;padding:72px 0 60px;}
-.ft2-logo{height:44px;width:auto;display:block;margin-bottom:14px;}
-.ft2-tag{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#1E6BFF;margin-bottom:16px;display:block;}
-.ft2-about{font-size:12.5px;color:var(--text-secondary);line-height:1.78;margin:0 0 22px;max-width:268px;}
-.ft2-phone{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--text-secondary);text-decoration:none;margin-bottom:16px;transition:color .2s;}
-.ft2-phone:hover{color:#8aaabf;}
-.ft2-insta{display:inline-flex;align-items:center;gap:12px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:0;padding:11px 18px;text-decoration:none;transition:border-color .25s,box-shadow .25s,background .25s;}
-.ft2-insta:hover{border-color:rgba(37,99,255,.28);box-shadow:0 0 22px rgba(37,99,255,.1);background:rgba(37,99,255,.04);}
-.ft2-insta-txt{display:flex;flex-direction:column;}
-.ft2-insta-label{font-size:9px;color:var(--text-muted);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
-.ft2-insta-name{font-size:12.5px;font-weight:800;color:var(--text-secondary);transition:color .25s;}
-.ft2-insta:hover .ft2-insta-name{color:#90a8bc;}
-.ft2-col-h{font-size:9.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin:0 0 22px;display:flex;align-items:center;gap:10px;}
-.ft2-col-h::after{content:'';flex:1;height:1px;background:var(--border-color);}
-.ft2-link{font-size:13px;color:var(--text-secondary);text-decoration:none;display:block;margin-bottom:12px;transition:color .2s,transform .2s;}
-.ft2-link:hover{color:#7a96aa;transform:translateX(4px);}
-.ft2-schedule{background:var(--bg-card);border:1px solid var(--border-color);border-radius:0;padding:14px 18px;margin-top:22px;}
-.ft2-sched-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;padding:3px 0;}
-.ft2-sched-day{color:var(--text-secondary);font-weight:600;}
-.ft2-sched-time{color:var(--text-secondary);font-weight:700;}
-.ft2-sched-sep{height:1px;background:var(--border-color);margin:8px 0;}
-.ft2-pay-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px;}
-.ft2-pay-chip{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:#fff;border:1px solid rgba(0,0,0,.14);border-radius:0;padding:0 11px;height:34px;min-width:50px;transition:transform .15s,box-shadow .15s;cursor:default;}
-.ft2-pay-chip:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.18);}
-.fpc-mc{gap:0;}
-.fpc-elo-logo{position:relative;width:28px;height:20px;}
-.fpc-elo-y{position:absolute;left:0;top:2px;width:13px;height:13px;border-radius:50%;background:#FFCB05;}
-.fpc-elo-c{position:absolute;left:6px;top:5px;width:13px;height:13px;border-radius:50%;background:#00A4E0;mix-blend-mode:multiply;}
-.fpc-elo-k{position:absolute;left:12px;top:1px;width:13px;height:13px;border-radius:50%;background:#000;mix-blend-mode:multiply;opacity:.85;}
-.fpc-boleto{background:#fff;gap:0;}
-.ft2-seal-list{display:flex;flex-direction:column;gap:9px;}
-.ft2-seal-item{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--text-secondary);font-weight:600;}
-.ft2-bottom{border-top:1px solid var(--border-color);padding:20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-.ft2-bottom p{margin:0;font-size:11px;color:var(--text-muted);font-weight:500;}
+/* Rodapé agora vem de footer.js/footer.css (componente compartilhado). */
 /* RESPONSIVE */
 
 @media(max-width:1200px){.prod-grid{grid-template-columns:repeat(3,1fr);}.hl{flex:0 0 40%;}}
-@media(max-width:960px){.prod-grid{grid-template-columns:repeat(2,1fr);}.cat-grid{grid-template-columns:repeat(4,1fr);}.banner-grid{grid-template-columns:1fr;}.benefit-bar{grid-template-columns:repeat(2,1fr);}.hl{flex:0 0 100%;}.hr{display:none;}.ft2-grid{grid-template-columns:repeat(2,1fr);gap:40px;}.ft2-about{max-width:100%;}}
-@media(max-width:580px){.prod-grid{grid-template-columns:1fr;}.cat-grid{grid-template-columns:repeat(2,1fr);}.sec-wrap{padding:0 14px;}.banner-subs{grid-template-columns:1fr;}.ft2-grid{grid-template-columns:1fr;padding:48px 0 40px;text-align:center;}.ft2-about{max-width:100%;}.ft2-col-h{justify-content:center;}.ft2-col-h::after{display:none;}.ft2-link:hover{transform:none;}.ft2-pay-grid{justify-content:center;}.ft2-seal-list{align-items:center;}.ft2-insta{display:inline-flex;}.ft2-bottom{flex-direction:column;align-items:center;}.benefit-bar{grid-template-columns:1fr;}}
+@media(max-width:960px){.prod-grid{grid-template-columns:repeat(2,1fr);}.cat-grid{grid-template-columns:repeat(4,1fr);}.banner-grid{grid-template-columns:1fr;}.benefit-bar{grid-template-columns:repeat(2,1fr);}.hl{flex:0 0 100%;}.hr{display:none;}}
+@media(max-width:580px){.prod-grid{grid-template-columns:1fr;}.cat-grid{grid-template-columns:repeat(2,1fr);}.sec-wrap{padding:0 14px;}.banner-subs{grid-template-columns:1fr;}.benefit-bar{grid-template-columns:1fr;}}
 
 /* ═══ PREMIUM VISUAL UPGRADE ═══ */
 
@@ -374,13 +344,13 @@ button{font-family:inherit;cursor:pointer;}
 .prod-stars span{color:#888!important;font-size:10px!important;}
 
 /* Preço antigo: cinza tachado */
-.prod-old{color:var(--text-muted)!important;font-size:11px!important;text-decoration:line-through!important;margin-bottom:2px!important;margin-top:2px!important;}
+.prod-old{color:var(--alfa-price-old,var(--text-muted))!important;font-size:11px!important;text-decoration:line-through!important;margin-bottom:2px!important;margin-top:2px!important;}
 
 /* Preço atual: verde forte */
-.prod-price{color:var(--success)!important;font-size:20px!important;font-weight:800!important;line-height:1.1!important;margin-bottom:2px!important;letter-spacing:0!important;}
+.prod-price{color:var(--alfa-price-pix,var(--success))!important;font-size:20px!important;font-weight:800!important;line-height:1.1!important;margin-bottom:2px!important;letter-spacing:0!important;}
 
 /* À vista */
-.prod-av{color:var(--success)!important;font-size:11px!important;font-weight:400!important;margin-bottom:2px!important;display:block!important;}
+.prod-av{color:var(--alfa-price-pix,var(--success))!important;font-size:11px!important;font-weight:400!important;margin-bottom:2px!important;display:block!important;}
 
 /* PIX: branco, sem caixa */
 .prod-pix{color:var(--text-main)!important;background:transparent!important;border:none!important;font-size:11px!important;font-weight:700!important;padding:0!important;width:auto!important;border-radius:0!important;margin-bottom:0!important;}
@@ -388,7 +358,7 @@ button{font-family:inherit;cursor:pointer;}
 /* Separador + área de parcelamento */
 .prod-install{color:var(--text-main)!important;font-size:10.5px!important;line-height:1.5!important;margin-top:0!important;}
 .prod-install::before{content:'';display:block;width:70px;height:1px;background:var(--border-color);margin:10px 0 8px;}
-.prod-inst-pix{color:var(--success)!important;font-size:18px!important;font-weight:800!important;display:block!important;line-height:1.1!important;margin-bottom:5px!important;}
+.prod-inst-pix{color:var(--alfa-price-installment,var(--success))!important;font-size:18px!important;font-weight:800!important;display:block!important;line-height:1.1!important;margin-bottom:5px!important;}
 
 /* Estrelas: ocultar */
 .prod-stars{display:none!important;}
@@ -435,7 +405,7 @@ button{font-family:inherit;cursor:pointer;}
 .prod-stars{font-size:11px!important;}
 
 /* OFERTAS EM DESTAQUE */
-.oferta-outer{position:relative;}
+.oferta-outer{position:relative;padding:0 46px;}
 .oferta-viewport{overflow:hidden;position:relative;}
 .oferta-track{display:flex;gap:16px;will-change:transform;user-select:none;cursor:grab;}
 .oferta-track.dragging{cursor:grabbing;transition:none!important;}
@@ -445,12 +415,11 @@ button{font-family:inherit;cursor:pointer;}
 .oferta-card:hover img{transform:scale(1.03);}
 .oferta-cta{position:absolute;bottom:18px;left:50%;transform:translate(-50%,6px);background:rgba(30,107,255,.92);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 26px;border-radius:0;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .25s,transform .25s;}
 .oferta-card:hover .oferta-cta{opacity:1;transform:translate(-50%,0);}
-.oferta-arrow{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:0;background:transparent;border:none;outline:none;color:var(--primary);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;opacity:0;transition:opacity .25s,transform .2s,color .2s;}
-.oferta-arrow svg{width:28px;height:28px;}
-.oferta-viewport:hover .oferta-arrow{opacity:1;}
+.oferta-arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:52px;border-radius:0;background:transparent;border:none;outline:none;color:var(--primary);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:transform .2s,color .2s;}
+.oferta-arrow svg{width:24px;height:24px;}
 .oferta-arrow:hover{color:var(--primary-hover);transform:translateY(-50%) scale(1.15);}
-.oferta-prev{left:10px;}
-.oferta-next{right:10px;}
+.oferta-prev{left:0;}
+.oferta-next{right:0;}
 .oferta-dots{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:18px;}
 .oferta-dot{width:7px;height:7px;border-radius:0;background:rgba(255,255,255,.2);border:none;outline:none;cursor:pointer;padding:0;transition:background .3s,width .3s,border-radius .3s;}
 .oferta-dot.active{background:rgba(37,99,255,.85);width:20px;border-radius:0;}
@@ -528,6 +497,9 @@ button{font-family:inherit;cursor:pointer;}
 @media(max-width:600px){.wpp-float{width:52px;height:52px;bottom:18px;right:18px;}.wpp-float svg{width:26px;height:26px;}}
 </style>
 <link rel="stylesheet" href="header.css?v=2">
+<link rel="stylesheet" href="footer.css?v=3">
+<link rel="stylesheet" href="popups.css">
+<link rel="stylesheet" href="consent.css">
 </head>
 <body>
 
@@ -676,7 +648,7 @@ button{font-family:inherit;cursor:pointer;}
 
 
 <!-- ══ 01 — BENEFÍCIOS + CATEGORIAS ══ -->
-<section class="cat-section">
+<section class="cat-section" data-section="beneficios_categorias">
 <div class="sec-wrap">
 <!-- Barra de benefícios -->
 <div class="cat-benefits">
@@ -700,7 +672,7 @@ button{font-family:inherit;cursor:pointer;}
 </div>
 
 <!-- Cards de categorias horizontais -->
-<div class="cat-row">
+<div class="cat-row" id="catRow">
   <a href="categoria.html?cat=pc-gamer" class="cat-hcard">
     <img src="pc gamer.png" class="cat-hcard-img" alt="PC Gamer">
     <div><span class="cat-hcard-name">PC Gamer</span><span class="cat-hcard-sub">Desempenho Extremo</span></div>
@@ -729,7 +701,7 @@ button{font-family:inherit;cursor:pointer;}
 
 </section>
 <!-- ══ ESCOLHA SEU NÍVEL ══ -->
-<section class="nivel-section" style="background:var(--bg-section);">
+<section class="nivel-section" data-section="nivel" style="background:var(--bg-section);">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Escolha seu N&iacute;vel</h2><p class="sec-sub">Do computador ideal para estudos at&eacute; a m&aacute;quina definitiva para quem exige o m&aacute;ximo desempenho.</p></div></div>
@@ -744,7 +716,7 @@ button{font-family:inherit;cursor:pointer;}
 </div>
 </section>
 <!-- ══ 02 — PRODUTOS EM DESTAQUE ══ -->
-<section style="background:var(--bg-main);padding:56px 0 60px;">
+<section data-section="produtos_destaque" style="background:var(--bg-main);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Produtos em Destaque</h2><p class="sec-sub">Os componentes mais buscados com as melhores condi&ccedil;&otilde;es do mercado.</p></div></div>
@@ -766,7 +738,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-pix">R$ 2.754,05 no Pix &middot; 5% OFF</div>
 <div class="prod-install">12x de R$ 241,58 s/ juros</div>
 </div>
-<div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
+<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
 </div>
 
 <div class="prod-card">
@@ -783,7 +755,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-pix">R$ 5.224,05 no Pix &middot; 5% OFF</div>
 <div class="prod-install">12x de R$ 458,25 s/ juros</div>
 </div>
-<div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
+<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
 </div>
 
 <div class="prod-card">
@@ -800,7 +772,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-pix">R$ 559,55 no Pix &middot; 5% OFF</div>
 <div class="prod-install">12x de R$ 49,08 s/ juros</div>
 </div>
-<div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
+<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
 </div>
 
 <div class="prod-card">
@@ -817,7 +789,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-pix">R$ 759,05 no Pix &middot; 5% OFF</div>
 <div class="prod-install">12x de R$ 66,58 s/ juros</div>
 </div>
-<div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
+<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
 </div>
 
 <div class="prod-card">
@@ -834,7 +806,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-pix">R$ 2.089,05 no Pix &middot; 5% OFF</div>
 <div class="prod-install">12x de R$ 183,25 s/ juros</div>
 </div>
-<div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
+<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
 </div>
 
 <div class="prod-card">
@@ -851,7 +823,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-pix">R$ 664,05 no Pix &middot; 5% OFF</div>
 <div class="prod-install">12x de R$ 58,25 s/ juros</div>
 </div>
-<div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
+<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
 </div>
 
 <div class="prod-card">
@@ -868,7 +840,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-pix">R$ 1.709,05 no Pix &middot; 5% OFF</div>
 <div class="prod-install">12x de R$ 149,91 s/ juros</div>
 </div>
-<div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
+<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
 </div>
 
 <div class="prod-card">
@@ -885,7 +857,7 @@ button{font-family:inherit;cursor:pointer;}
 <div class="prod-pix">R$ 1.329,05 no Pix &middot; 5% OFF</div>
 <div class="prod-install">12x de R$ 116,58 s/ juros</div>
 </div>
-<div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
+<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>
 </div>
 
 </div>
@@ -893,7 +865,7 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 <!-- ══ 03 — MAIS VENDIDOS (carrossel) ══ -->
-<section style="background:var(--bg-section);padding:56px 0 60px;">
+<section data-section="mais_vendidos" style="background:var(--bg-section);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Mais Vendidos</h2><p class="sec-sub">Os favoritos dos clientes m&ecirc;s ap&oacute;s m&ecirc;s.</p></div></div>
@@ -904,17 +876,17 @@ button{font-family:inherit;cursor:pointer;}
 <button class="carousel-btn next" id="mv-next" aria-label="Pr&oacute;ximo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
 <div class="prod-track" id="mv-track">
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">LOGITECH</div><div class="prod-name">G305 Lightspeed Sem Fio 12000 DPI Hero Sensor</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(632)</span></div><div class="prod-old">De: R$ 299,00</div><div class="prod-price">R$ 239,00</div><div class="prod-pix">R$ 227,05 no Pix</div><div class="prod-install">12x de R$ 19,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">LOGITECH</div><div class="prod-name">G305 Lightspeed Sem Fio 12000 DPI Hero Sensor</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(632)</span></div><div class="prod-old">De: R$ 299,00</div><div class="prod-price">R$ 239,00</div><div class="prod-pix">R$ 227,05 no Pix</div><div class="prod-install">12x de R$ 19,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-23% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">REDRAGON</div><div class="prod-name">Kumara K552 Mec&acirc;nico RGB Switch Red TKL</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(487)</span></div><div class="prod-old">De: R$ 219,00</div><div class="prod-price">R$ 169,00</div><div class="prod-pix">R$ 160,55 no Pix</div><div class="prod-install">12x de R$ 14,08 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-23% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">REDRAGON</div><div class="prod-name">Kumara K552 Mec&acirc;nico RGB Switch Red TKL</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(487)</span></div><div class="prod-old">De: R$ 219,00</div><div class="prod-price">R$ 169,00</div><div class="prod-pix">R$ 160,55 no Pix</div><div class="prod-install">12x de R$ 14,08 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">HYPERX</div><div class="prod-name">Cloud II Wireless Headset 7.1 Surround RGB</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(278)</span></div><div class="prod-old">De: R$ 699,00</div><div class="prod-price">R$ 579,00</div><div class="prod-pix">R$ 550,05 no Pix</div><div class="prod-install">12x de R$ 48,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">HYPERX</div><div class="prod-name">Cloud II Wireless Headset 7.1 Surround RGB</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(278)</span></div><div class="prod-old">De: R$ 699,00</div><div class="prod-price">R$ 579,00</div><div class="prod-pix">R$ 550,05 no Pix</div><div class="prod-install">12x de R$ 48,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-25% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">WD BLACK</div><div class="prod-name">SN850X 1TB NVMe PCIe 4.0 M.2 7300MB/s</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(341)</span></div><div class="prod-old">De: R$ 799,00</div><div class="prod-price">R$ 599,00</div><div class="prod-pix">R$ 569,05 no Pix</div><div class="prod-install">12x de R$ 49,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-25% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">WD BLACK</div><div class="prod-name">SN850X 1TB NVMe PCIe 4.0 M.2 7300MB/s</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(341)</span></div><div class="prod-old">De: R$ 799,00</div><div class="prod-price">R$ 599,00</div><div class="prod-pix">R$ 569,05 no Pix</div><div class="prod-install">12x de R$ 49,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">Vengeance LPX 16GB DDR4 3200MHz CL16</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(912)</span></div><div class="prod-old">De: R$ 329,00</div><div class="prod-price">R$ 249,00</div><div class="prod-pix">R$ 236,55 no Pix</div><div class="prod-install">12x de R$ 20,75 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">Vengeance LPX 16GB DDR4 3200MHz CL16</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(912)</span></div><div class="prod-old">De: R$ 329,00</div><div class="prod-price">R$ 249,00</div><div class="prod-pix">R$ 236,55 no Pix</div><div class="prod-install">12x de R$ 20,75 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-25% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">DEEPCOOL</div><div class="prod-name">AK620 Cooler Dupla Torre 260W TDP 6 Heatpipes</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(216)</span></div><div class="prod-old">De: R$ 529,00</div><div class="prod-price">R$ 399,00</div><div class="prod-pix">R$ 379,05 no Pix</div><div class="prod-install">12x de R$ 33,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-25% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">DEEPCOOL</div><div class="prod-name">AK620 Cooler Dupla Torre 260W TDP 6 Heatpipes</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(216)</span></div><div class="prod-old">De: R$ 529,00</div><div class="prod-price">R$ 399,00</div><div class="prod-pix">R$ 379,05 no Pix</div><div class="prod-install">12x de R$ 33,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
 </div>
 </div>
@@ -922,16 +894,16 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 <!-- == 04 == OFERTAS EM DESTAQUE == -->
-<section style="background:var(--bg-main);padding:56px 0 64px;">
+<section data-section="ofertas_banner" style="background:var(--bg-main);padding:56px 0 64px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Ofertas em Destaque</h2><p class="sec-sub">As melhores promo&ccedil;&otilde;es da semana para montar ou atualizar seu setup.</p></div></div>
 <a href="#" class="sec-link">Ver todas &rarr;</a>
 </div>
 <div class="oferta-outer">
-<div class="oferta-viewport" id="ofertaViewport">
 <button class="oferta-arrow oferta-prev" id="ofertaPrev" aria-label="Anterior"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
 <button class="oferta-arrow oferta-next" id="ofertaNext" aria-label="Proximo"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+<div class="oferta-viewport" id="ofertaViewport">
 <div class="oferta-track" id="ofertaTrack">
 <a href="/promocoes/rtx-4070-ti" class="oferta-card oferta-clone"><img src="oferta-nvidia-rtx4070ti.png" alt="NVIDIA GeForce RTX 4070 Ti" width="1024" height="1536"><span class="oferta-cta">Conferir</span></a>
 <a href="/promocoes/rx-7900-xtx" class="oferta-card oferta-clone"><img src="oferta-xfx-rx7900xtx.png" alt="XFX RX 7900 XTX 24GB GDDR6" width="929" height="1692"><span class="oferta-cta">Comprar Agora</span></a>
@@ -958,7 +930,7 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 <!-- ══ 05 — LANÇAMENTOS ══ -->
-<section style="background:var(--bg-section);padding:56px 0 60px;">
+<section data-section="lancamentos" style="background:var(--bg-section);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Lan&ccedil;amentos</h2><p class="sec-sub">Novidades em hardware e tecnologia chegando primeiro aqui.</p></div></div>
@@ -966,28 +938,28 @@ button{font-family:inherit;cursor:pointer;}
 </div>
 <div class="prod-grid">
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">AMD</div><div class="prod-name">Ryzen 9 7950X3D 16-Core 5.7GHz AM5 3D V-Cache</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(89)</span></div><div class="prod-old">De: R$ 3.899,00</div><div class="prod-price">R$ 3.199,00</div><div class="prod-pix">R$ 3.039,05 no Pix</div><div class="prod-install">12x de R$ 266,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">AMD</div><div class="prod-name">Ryzen 9 7950X3D 16-Core 5.7GHz AM5 3D V-Cache</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(89)</span></div><div class="prod-old">De: R$ 3.899,00</div><div class="prod-price">R$ 3.199,00</div><div class="prod-pix">R$ 3.039,05 no Pix</div><div class="prod-install">12x de R$ 266,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">NVIDIA &middot; ASUS ROG</div><div class="prod-name">GeForce RTX 4090 24GB GDDR6X STRIX OC Gaming</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(124)</span></div><div class="prod-old">De: R$ 12.499,00</div><div class="prod-price">R$ 9.999,00</div><div class="prod-pix">R$ 9.499,05 no Pix</div><div class="prod-install">12x de R$ 833,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">NVIDIA &middot; ASUS ROG</div><div class="prod-name">GeForce RTX 4090 24GB GDDR6X STRIX OC Gaming</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(124)</span></div><div class="prod-old">De: R$ 12.499,00</div><div class="prod-price">R$ 9.999,00</div><div class="prod-pix">R$ 9.499,05 no Pix</div><div class="prod-install">12x de R$ 833,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-24% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">G.SKILL</div><div class="prod-name">Trident Z5 RGB DDR5 64GB 7200MHz Kit (2x32GB)</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(47)</span></div><div class="prod-old">De: R$ 1.699,00</div><div class="prod-price">R$ 1.299,00</div><div class="prod-pix">R$ 1.234,05 no Pix</div><div class="prod-install">12x de R$ 108,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-24% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">G.SKILL</div><div class="prod-name">Trident Z5 RGB DDR5 64GB 7200MHz Kit (2x32GB)</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(47)</span></div><div class="prod-old">De: R$ 1.699,00</div><div class="prod-price">R$ 1.299,00</div><div class="prod-pix">R$ 1.234,05 no Pix</div><div class="prod-install">12x de R$ 108,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-16% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ASUS ROG</div><div class="prod-name">Swift Pro PG248QP 24.1" FHD 540Hz 0.2ms ULMB2</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(63)</span></div><div class="prod-old">De: R$ 4.299,00</div><div class="prod-price">R$ 3.599,00</div><div class="prod-pix">R$ 3.419,05 no Pix</div><div class="prod-install">12x de R$ 299,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-16% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ASUS ROG</div><div class="prod-name">Swift Pro PG248QP 24.1" FHD 540Hz 0.2ms ULMB2</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(63)</span></div><div class="prod-old">De: R$ 4.299,00</div><div class="prod-price">R$ 3.599,00</div><div class="prod-pix">R$ 3.419,05 no Pix</div><div class="prod-install">12x de R$ 299,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">MSI</div><div class="prod-name">MEG Z790 ACE WiFi 6E DDR5 E-ATX LGA1700</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(38)</span></div><div class="prod-old">De: R$ 3.899,00</div><div class="prod-price">R$ 3.199,00</div><div class="prod-pix">R$ 3.039,05 no Pix</div><div class="prod-install">12x de R$ 266,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">MSI</div><div class="prod-name">MEG Z790 ACE WiFi 6E DDR5 E-ATX LGA1700</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(38)</span></div><div class="prod-old">De: R$ 3.899,00</div><div class="prod-price">R$ 3.199,00</div><div class="prod-pix">R$ 3.039,05 no Pix</div><div class="prod-install">12x de R$ 266,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-22% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">NZXT</div><div class="prod-name">H9 Elite Mid Tower Dual-Chamber ARGB Vidro</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(71)</span></div><div class="prod-old">De: R$ 1.799,00</div><div class="prod-price">R$ 1.399,00</div><div class="prod-pix">R$ 1.329,05 no Pix</div><div class="prod-install">12x de R$ 116,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-22% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">NZXT</div><div class="prod-name">H9 Elite Mid Tower Dual-Chamber ARGB Vidro</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(71)</span></div><div class="prod-old">De: R$ 1.799,00</div><div class="prod-price">R$ 1.399,00</div><div class="prod-pix">R$ 1.329,05 no Pix</div><div class="prod-install">12x de R$ 116,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">K100 RGB &Oacute;ptico Mec&acirc;nico OPX Switch 44-Zone iCUE</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(143)</span></div><div class="prod-old">De: R$ 1.499,00</div><div class="prod-price">R$ 1.199,00</div><div class="prod-pix">R$ 1.139,05 no Pix</div><div class="prod-install">12x de R$ 99,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-20% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">K100 RGB &Oacute;ptico Mec&acirc;nico OPX Switch 44-Zone iCUE</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(143)</span></div><div class="prod-old">De: R$ 1.499,00</div><div class="prod-price">R$ 1.199,00</div><div class="prod-pix">R$ 1.139,05 no Pix</div><div class="prod-install">12x de R$ 99,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-22% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">SAMSUNG</div><div class="prod-name">T7 Shield 2TB SSD Externo USB 3.2 Gen2 IP65</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(212)</span></div><div class="prod-old">De: R$ 899,00</div><div class="prod-price">R$ 699,00</div><div class="prod-pix">R$ 664,05 no Pix</div><div class="prod-install">12x de R$ 58,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-22% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">SAMSUNG</div><div class="prod-name">T7 Shield 2TB SSD Externo USB 3.2 Gen2 IP65</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(212)</span></div><div class="prod-old">De: R$ 899,00</div><div class="prod-price">R$ 699,00</div><div class="prod-pix">R$ 664,05 no Pix</div><div class="prod-install">12x de R$ 58,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
 </div>
 </div>
 </section>
 
 <!-- ══ 06 — PERIFÉRICOS EM ALTA (carrossel) ══ -->
-<section style="background:var(--bg-main);padding:56px 0 60px;">
+<section data-section="perifericos_alta" style="background:var(--bg-main);padding:56px 0 60px;">
 <div class="sec-wrap">
 <div class="sec-head">
 <div class="sec-head-left"><div class="sec-head-accent"></div><div><h2 class="sec-h2">Perif&eacute;ricos em Alta</h2><p class="sec-sub">Teclado, mouse, headset, mousepad, cadeiras e microfones top de linha.</p></div></div>
@@ -998,17 +970,17 @@ button{font-family:inherit;cursor:pointer;}
 <button class="carousel-btn next" id="peri-next" aria-label="Pr&oacute;ximo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
 <div class="prod-track" id="peri-track">
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">LOGITECH</div><div class="prod-name">MX Master 3S Mouse Sem Fio 8000 DPI MagSpeed</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(389)</span></div><div class="prod-old">De: R$ 799,00</div><div class="prod-price">R$ 679,00</div><div class="prod-pix">R$ 645,05 no Pix</div><div class="prod-install">12x de R$ 56,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">LOGITECH</div><div class="prod-name">MX Master 3S Mouse Sem Fio 8000 DPI MagSpeed</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(389)</span></div><div class="prod-old">De: R$ 799,00</div><div class="prod-price">R$ 679,00</div><div class="prod-pix">R$ 645,05 no Pix</div><div class="prod-install">12x de R$ 56,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ASUS ROG</div><div class="prod-name">Claymore II Mec&acirc;nico Sem Fio 100H ROG RX Red</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(112)</span></div><div class="prod-old">De: R$ 1.599,00</div><div class="prod-price">R$ 1.299,00</div><div class="prod-pix">R$ 1.234,05 no Pix</div><div class="prod-install">12x de R$ 108,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ASUS ROG</div><div class="prod-name">Claymore II Mec&acirc;nico Sem Fio 100H ROG RX Red</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(112)</span></div><div class="prod-old">De: R$ 1.599,00</div><div class="prod-price">R$ 1.299,00</div><div class="prod-pix">R$ 1.234,05 no Pix</div><div class="prod-install">12x de R$ 108,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#16a34a;">OFERTA</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">STEELSERIES</div><div class="prod-name">Arctis Nova Pro Wireless Hi-Fi DSP ANC</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(198)</span></div><div class="prod-old">De: R$ 1.899,00</div><div class="prod-price">R$ 1.499,00</div><div class="prod-pix">R$ 1.424,05 no Pix</div><div class="prod-install">12x de R$ 124,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#16a34a;">OFERTA</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">STEELSERIES</div><div class="prod-name">Arctis Nova Pro Wireless Hi-Fi DSP ANC</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(198)</span></div><div class="prod-old">De: R$ 1.899,00</div><div class="prod-price">R$ 1.499,00</div><div class="prod-pix">R$ 1.424,05 no Pix</div><div class="prod-install">12x de R$ 124,91 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">THUNDER X3</div><div class="prod-name">TC3 Cadeira Gamer Reclin&aacute;vel 175&deg; Couro PU RGB</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(231)</span></div><div class="prod-old">De: R$ 1.199,00</div><div class="prod-price">R$ 879,00</div><div class="prod-pix">R$ 835,05 no Pix</div><div class="prod-install">12x de R$ 73,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">THUNDER X3</div><div class="prod-name">TC3 Cadeira Gamer Reclin&aacute;vel 175&deg; Couro PU RGB</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9734; <span style="color:var(--text-secondary);font-size:10px;">(231)</span></div><div class="prod-old">De: R$ 1.199,00</div><div class="prod-price">R$ 879,00</div><div class="prod-pix">R$ 835,05 no Pix</div><div class="prod-install">12x de R$ 73,25 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">MM350 Pro Extended XL Mousepad 930x400mm 4mm</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(447)</span></div><div class="prod-old">De: R$ 279,00</div><div class="prod-price">R$ 199,00</div><div class="prod-pix">R$ 189,05 no Pix</div><div class="prod-install">12x de R$ 16,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">CORSAIR</div><div class="prod-name">MM350 Pro Extended XL Mousepad 930x400mm 4mm</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(447)</span></div><div class="prod-old">De: R$ 279,00</div><div class="prod-price">R$ 199,00</div><div class="prod-pix">R$ 189,05 no Pix</div><div class="prod-install">12x de R$ 16,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
-<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ELGATO</div><div class="prod-name">Wave:3 Microfone Condensador USB 24-bit 96kHz</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(267)</span></div><div class="prod-old">De: R$ 999,00</div><div class="prod-price">R$ 799,00</div><div class="prod-pix">R$ 759,05 no Pix</div><div class="prod-install">12x de R$ 66,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
+<div class="prod-card"><span class="prod-badge" style="background:#cc0000;">-18% OFF</span><div class="prod-img-wrap"><div class="img-ph">?</div></div><div class="prod-info"><div class="prod-brand">ELGATO</div><div class="prod-name">Wave:3 Microfone Condensador USB 24-bit 96kHz</div><div class="prod-stars" style="font-size:13px;color:#f59e0b;">&#9733;&#9733;&#9733;&#9733;&#9733; <span style="color:var(--text-secondary);font-size:10px;">(267)</span></div><div class="prod-old">De: R$ 999,00</div><div class="prod-price">R$ 799,00</div><div class="prod-pix">R$ 759,05 no Pix</div><div class="prod-install">12x de R$ 66,58 s/ juros</div></div><div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div></div>
 
 </div>
 </div>
@@ -1016,7 +988,7 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 <!-- ══ 07 — MARCAS ══ -->
-<section class="brands-section">
+<section class="brands-section" data-section="marcas">
 <div class="sec-wrap">
   <p class="brands-eyebrow">Parceiros &amp; Tecnologia</p>
   <h2 class="brands-title">MARCAS E <span>TECNOLOGIAS</span> QUE TRABALHAMOS</h2>
@@ -1058,89 +1030,7 @@ button{font-family:inherit;cursor:pointer;}
 </section>
 
 
-<!-- ══ 10 — RODAPÉ ══ -->
-<footer class="ft2-main">
-<div class="sec-wrap">
-<div class="ft2-grid">
-
-<!-- COL 1: MARCA -->
-<div>
-<img src="logo-dark.png" alt="Alfa Informática" class="ft2-logo theme-logo">
-<span class="ft2-tag">Hardware &bull; Periféricos &bull; Setup Gamer</span>
-<p class="ft2-about">Especialistas em hardware, periféricos e computadores gamer de alta performance.</p>
-<a href="tel:+5565992655883" class="ft2-phone">
-<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-(65) 99265-5883
-</a>
-<a href="https://instagram.com/informatica_alfa" class="ft2-insta" target="_blank" rel="noopener noreferrer">
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-<defs><linearGradient id="ftIg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="30%" stop-color="#e6683c"/><stop offset="55%" stop-color="#dc2743"/><stop offset="80%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs>
-<rect x="2" y="2" width="20" height="20" rx="5.5" stroke="url(#ftIg)" stroke-width="2"/>
-<circle cx="12" cy="12" r="4.5" stroke="url(#ftIg)" stroke-width="2"/>
-<circle cx="17.5" cy="6.5" r="1.1" fill="#dc2743"/>
-</svg>
-<div class="ft2-insta-txt">
-<span class="ft2-insta-label">Instagram</span>
-<span class="ft2-insta-name">@informatica_alfa</span>
-</div>
-</a>
-</div>
-
-<!-- COL 2: ATENDIMENTO -->
-<div>
-<p class="ft2-col-h">Atendimento</p>
-<a href="https://wa.me/5565992655883?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20no%20site%20da%20Alfa%20Inform%C3%A1tica." class="ft2-link" target="_blank" rel="noopener noreferrer">Central de Ajuda</a>
-<a href="https://wa.me/5565992655883?text=Ol%C3%A1%2C%20preciso%20falar%20sobre%20troca%20ou%20devolu%C3%A7%C3%A3o." class="ft2-link" target="_blank" rel="noopener noreferrer">Trocas e Devolu&ccedil;&otilde;es</a>
-<a href="https://wa.me/5565992655883?text=Ol%C3%A1%2C%20preciso%20de%20atendimento%20sobre%20garantia." class="ft2-link" target="_blank" rel="noopener noreferrer">Garantia</a>
-<a href="https://wa.me/5565992655883?text=Ol%C3%A1%2C%20gostaria%20de%20falar%20com%20a%20Alfa%20Inform%C3%A1tica." class="ft2-link" target="_blank" rel="noopener noreferrer">Fale Conosco</a>
-<div class="ft2-schedule">
-<div class="ft2-sched-row"><span class="ft2-sched-day">Segunda a Sexta</span><span class="ft2-sched-time">08:00 &ndash; 18:00</span></div>
-<div class="ft2-sched-sep"></div>
-<div class="ft2-sched-row"><span class="ft2-sched-day">S&aacute;bado</span><span class="ft2-sched-time">08:00 &ndash; 13:00</span></div>
-</div>
-</div>
-
-<!-- COL 3: CATEGORIAS -->
-<div>
-<p class="ft2-col-h">Categorias</p>
-<a href="/categoria/processadores" class="ft2-link">Processadores</a>
-<a href="/categoria/placas-de-video" class="ft2-link">Placas de V&iacute;deo</a>
-<a href="/categoria/memorias-ram" class="ft2-link">Mem&oacute;rias RAM</a>
-<a href="/categoria/ssd-nvme" class="ft2-link">SSD / NVMe</a>
-<a href="/categoria/gabinetes" class="ft2-link">Gabinetes</a>
-<a href="/categoria/monitores" class="ft2-link">Monitores</a>
-<a href="/categoria/perifericos" class="ft2-link">Perif&eacute;ricos</a>
-<a href="/categoria/computadores-gamer" class="ft2-link">Computadores Gamer</a>
-</div>
-
-<!-- COL 4: PAGAMENTO + SEGURANÇA -->
-<div>
-<p class="ft2-col-h">Formas de Pagamento</p>
-<div class="ft2-pay-grid">
-<div class="ft2-pay-chip"><svg width="38" height="14" viewBox="0 0 40 14"><text x="1" y="13" font-family="Arial,Helvetica,sans-serif" font-style="italic" font-weight="900" font-size="16" fill="#1A1F71" letter-spacing="-1">VISA</text></svg></div>
-<div class="ft2-pay-chip fpc-mc"><svg width="30" height="20" viewBox="0 0 32 20"><circle cx="12" cy="10" r="9" fill="#EB001B"/><circle cx="20" cy="10" r="9" fill="#F79E1B" style="mix-blend-mode:multiply"/></svg></div>
-<div class="ft2-pay-chip"><div class="fpc-elo-logo"><div class="fpc-elo-y"></div><div class="fpc-elo-c"></div><div class="fpc-elo-k"></div></div></div>
-<div class="ft2-pay-chip"><svg width="46" height="14" viewBox="0 0 56 18" fill="none"><path d="M9 9L15 3L21 9L15 15Z" fill="#32BCAD"/><text x="27" y="14" font-family="Arial,sans-serif" font-weight="800" font-size="13" fill="#32BCAD" letter-spacing=".4">Pix</text></svg></div>
-<div class="ft2-pay-chip fpc-boleto"><svg width="24" height="18" viewBox="0 0 24 18"><rect x="0" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="4" y="0" width="1" height="18" fill="#1a1a1a"/><rect x="6.5" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="10" y="0" width="1.5" height="18" fill="#1a1a1a"/><rect x="13" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="17" y="0" width="1" height="18" fill="#1a1a1a"/><rect x="19.5" y="0" width="2" height="18" fill="#1a1a1a"/><rect x="23" y="0" width="1" height="18" fill="#1a1a1a"/></svg></div>
-</div>
-<p class="ft2-col-h" style="margin-top:4px;">Segurança</p>
-<div class="ft2-seal-list">
-<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>Compra 100% Segura</div>
-<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>SSL Certificado</div>
-<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>Pagamento Protegido</div>
-<div class="ft2-seal-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Garantia Oficial</div>
-</div>
-</div>
-
-</div>
-
-<!-- BARRA INFERIOR -->
-<div class="ft2-bottom">
-<p class="ft2-bottom-txt">&copy; 2025 Alfa Inform&aacute;tica. Todos os direitos reservados.</p>
-<p class="ft2-bottom-txt">Desenvolvido por Alfa Inform&aacute;tica</p>
-</div>
-</div>
-</footer>
+<div id="site-footer"></div>
 
 <script>
 (function(){
@@ -1181,8 +1071,34 @@ button{font-family:inherit;cursor:pointer;}
   initCarousel('promo-track','promo-prev','promo-next');
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script src="site-meta.js"></script>
+<script src="consent.js"></script>
+<script src="event-manager.js"></script>
+<script src="script-engine.js"></script>
+<script src="popups.js"></script>
 <script>
-(function(){
+(async function(){
+  // Busca os banners cadastrados em Aparência > Banners (até 4, ordem de
+  // exibição). Se der qualquer problema ou não houver nenhum, mantém os
+  // banners fixos que já estão no HTML. A estrutura de 12 cartões (4 reais
+  // x 3, pro efeito de carrossel infinito) não muda, só o conteúdo.
+  try {
+    var { data: bannerRows } = await window.sb
+      .from('banners').select('*').eq('placement','ofertas_home').eq('ativo', true).order('ordem').limit(4);
+    if (bannerRows && bannerRows.length) {
+      document.querySelectorAll('#ofertaTrack .oferta-card').forEach(function (a, i) {
+        var b = bannerRows[(i % 4) % bannerRows.length];
+        a.href = b.link_url || '#';
+        var img = a.querySelector('img');
+        if (img) { img.src = b.imagem_url; img.alt = b.titulo || ''; }
+        var cta = a.querySelector('.oferta-cta');
+        if (cta) cta.textContent = b.cta_label || 'Ver Oferta';
+      });
+    }
+  } catch (e) { console.error('banners ofertas_home', e); }
+
   var REAL=4,GAP=16,DELAY=5600,TR='550ms cubic-bezier(.4,0,.2,1)';
   var cur=REAL,sliding=false,timer=null,drag=false,dx0=0,tx0=0,dragDist=0;
   var vp=document.getElementById('ofertaViewport');
@@ -1256,10 +1172,33 @@ button{font-family:inherit;cursor:pointer;}
   start();
 })();
 </script>
+<script>
+// Aplica ordem/visibilidade/título das seções cadastradas em Aparência > Homepage.
+(async function () {
+  try {
+    var { data: secRows } = await window.sb.from('homepage_sections').select('*').order('ordem');
+    if (!secRows || !secRows.length) return;
+    var refNode = document.getElementById('site-footer');
+    secRows.forEach(function (s) {
+      var el = document.querySelector('[data-section="' + s.section_key + '"]');
+      if (!el) return;
+      if (s.visivel === false) { el.style.display = 'none'; return; }
+      el.style.display = '';
+      if (s.titulo_override) { var h2 = el.querySelector('.sec-h2'); if (h2) h2.textContent = s.titulo_override; }
+      if (s.subtitulo_override) { var sub = el.querySelector('.sec-sub'); if (sub) sub.textContent = s.subtitulo_override; }
+      if (refNode) el.parentNode.insertBefore(el, refNode);
+    });
+  } catch (e) { console.error('homepage_sections', e); }
+})();
+</script>
+<script src="theme-loader.js?v=4"></script>
+<script src="site-texts.js"></script>
+<script src="page-blocks.js"></script>
 <script src="store.js"></script>
 <script src="products.js"></script>
 <script src="categories.js"></script>
 <script src="header.js"></script>
+<script src="footer.js?v=3"></script>
 <script>
 
 // ── Product card wiring ────────────────────────────────
@@ -1335,9 +1274,31 @@ document.querySelectorAll('.prod-card').forEach((card, i) => {
 
 </script>
 <script>
-(function(){
+(async function(){
   var track=document.getElementById('heroTrack');
   if(!track)return;
+
+  // Busca os slides cadastrados em Aparência > Hero. Se der qualquer problema
+  // (ou não houver nenhum), mantém o slide fixo que já está no HTML.
+  try {
+    var { data: heroRows } = await window.sb
+      .from('hero_slides').select('*').eq('ativo', true).order('ordem');
+    if (heroRows && heroRows.length) {
+      track.innerHTML = heroRows.map(function (s, i) {
+        var overlay = s.overlay_ativo ? '<div class="hero-overlay" style="background:rgba(0,0,0,' + (s.overlay_opacidade != null ? s.overlay_opacidade : 0.35) + ')"></div>' : '';
+        var caption = (s.titulo || s.subtitulo || s.cta_label) ? (
+          '<div class="hero-caption">' +
+          (s.titulo ? '<h2>' + s.titulo + '</h2>' : '') +
+          (s.subtitulo ? '<p>' + s.subtitulo + '</p>' : '') +
+          (s.cta_label ? '<span class="hero-cta">' + s.cta_label + '</span>' : '') +
+          '</div>'
+        ) : '';
+        var link = s.cta_url ? '<a href="' + s.cta_url + '"></a>' : '';
+        return '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img src="' + s.imagem_url + '" alt="' + (s.titulo || 'Alfa Informática') + '">' + overlay + caption + link + '</div>';
+      }).join('');
+    }
+  } catch (e) { console.error('hero_slides', e); }
+
   var slides=Array.from(track.querySelectorAll('.hero-slide'));
   var total=slides.length;
   var dotsWrap=document.getElementById('heroDots');
