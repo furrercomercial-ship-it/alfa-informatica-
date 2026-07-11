@@ -281,5 +281,23 @@ window.AlfaScripts = (function () {
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
+  // Painel roda num domínio separado (repo/deploy próprio), então o iframe de
+  // diagnóstico do admin-aparencia-scripts.html não consegue mais ler
+  // window.gtag/window.AlfaScripts direto (bloqueado por same-origin policy).
+  // Responde por postMessage em vez disso.
+  window.addEventListener('message', function (e) {
+    if (!e.data || e.data.type !== 'alfa-diag-request') return;
+    function respond() {
+      e.source.postMessage({ type: 'alfa-diag-response', requestId: e.data.requestId, result: diagnostics() }, e.origin);
+    }
+    if (window.__alfaReady) { respond(); return; }
+    // Ainda carregando as integrações — espera runPass() terminar (ou no
+    // máximo 6s) antes de responder, senão o diagnóstico vem vazio.
+    var start = Date.now();
+    var poll = setInterval(function () {
+      if (window.__alfaReady || Date.now() - start > 6000) { clearInterval(poll); respond(); }
+    }, 200);
+  });
+
   return { diagnostics: diagnostics, _injected: injected };
 })();

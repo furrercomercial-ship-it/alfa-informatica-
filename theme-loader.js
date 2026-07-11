@@ -118,6 +118,17 @@ window.AlfaThemeLoader = (function () {
     applyAll();
   }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
+  // O editor de Design System roda num domínio separado do site (painel e
+  // loja são dois deploys/repos diferentes), então não dá pra escrever
+  // direto em window.__alfaPreviewOverride do iframe (bloqueado por
+  // same-origin policy). postMessage é o jeito cross-origin de fazer isso.
+  window.addEventListener('message', function (e) {
+    if (!e.data || e.data.type !== 'alfa-preview-override') return;
+    if (e.data.mode) document.documentElement.dataset.theme = e.data.mode;
+    window.__alfaPreviewOverride = e.data.payload;
+    applyAll();
+  });
+
   init();
   return { reapply: applyAll };
 })();
