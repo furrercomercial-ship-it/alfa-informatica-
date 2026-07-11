@@ -343,6 +343,7 @@ function renderAll(){
 
   document.getElementById('formArea').innerHTML = contatoHtml + entregaHtml + envioHtml + pagHtml;
   if (window.AlfaBlocks) AlfaBlocks.apply('checkout');
+  if (window.AlfaTexts) AlfaTexts.apply();
 
   var subtotal = items.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
   var pixDiscount = state.payId === 'pix' ? subtotal * .05 : 0;

@@ -429,6 +429,7 @@ function render(){
     <div class="of-grid">${ofertasHtml()}</div>
   </section>`;
   if (window.AlfaBlocks) AlfaBlocks.apply('carrinho');
+  if (window.AlfaTexts) AlfaTexts.apply();
 
   /* ── RIGHT ── */
   document.getElementById('rightCol').innerHTML=`

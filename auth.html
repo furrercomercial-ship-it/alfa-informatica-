@@ -458,6 +458,7 @@ function showClient(){
   renderAddresses();
   renderFavorites();
   if (window.AlfaBlocks) AlfaBlocks.apply('minha_conta');
+  if (window.AlfaTexts) AlfaTexts.apply();
 }
 async function renderOrders(){
   const list=document.getElementById('ordersList');

@@ -515,6 +515,7 @@ function renderPage() {
   buildBrandFilter();
   applyFilters();
   if (window.AlfaBlocks) AlfaBlocks.apply('categoria');
+  if (window.AlfaTexts) AlfaTexts.apply();
 }
 
 function filterSubcat(e, slug) {
