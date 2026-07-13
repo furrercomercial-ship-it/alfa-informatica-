@@ -40,6 +40,11 @@ a{color:inherit;text-decoration:none;}
 .oc-rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;text-align:left;}
 .oc-rec-card{background:var(--bg-card);border:1px solid var(--border-color);overflow:hidden;}
 .oc-rec-img{height:120px;background:var(--bg-section);}
+@media(max-width:480px){
+  .oc-wrap{padding:40px 16px 60px;}
+  .oc-actions{flex-direction:column;}
+  .btn-home,.btn-outline{width:100%;text-align:center;box-sizing:border-box;}
+}
 .oc-rec-img img{width:100%;height:100%;object-fit:cover;}
 .oc-rec-name{padding:10px 12px 4px;font-size:12px;font-weight:600;}
 .oc-rec-price{padding:0 12px 12px;font-size:14px;font-weight:800;color:var(--success);}
