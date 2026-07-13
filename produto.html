@@ -353,13 +353,9 @@ function renderProduct(p) {
   const stockOk    = p.stock > 0;
   const stockTxt   = p.stock > 10 ? 'PRODUTO DISPONÍVEL' : p.stock > 0 ? `APENAS ${p.stock} EM ESTOQUE` : 'SEM ESTOQUE';
 
-  // Stars
-  const r = Math.round(p.rating || 4.8);
-  const starsF = '★'.repeat(r);
-  const starsE = '☆'.repeat(5 - r);
-
   // Images
-  _imgList = (p.images && p.images.length) ? [...p.images, ...p.images, ...p.images].slice(0,4) : ['img teste.jpg','img teste.jpg','img teste.jpg'];
+  const NO_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#CFCFCF"/></svg>');
+  _imgList = (p.images && p.images.length) ? [...p.images, ...p.images, ...p.images].slice(0,4) : [NO_IMG];
   _imgIdx  = 0;
 
   const thumbsHTML = _imgList.map((src, i) =>
@@ -418,10 +414,10 @@ function renderProduct(p) {
           Frete Grátis: Centro-Oeste
         </div>
 
-        <div class="rating-row">
-          <span class="stars-filled">${starsF}</span><span class="stars-empty">${starsE}</span>
-          <span class="rating-num">${(p.rating||4.8).toFixed(1)}</span>
-          <span class="rating-count">(${p.reviews||0} avaliações)</span>
+        <div class="rating-row" id="ratingRow" style="display:none;">
+          <span class="stars-filled" id="ratingStarsF"></span><span class="stars-empty" id="ratingStarsE"></span>
+          <span class="rating-num" id="ratingNum"></span>
+          <span class="rating-count" id="ratingCount"></span>
         </div>
 
         <h1 class="pinfo-name">${p.name}</h1>
@@ -594,6 +590,22 @@ async function renderReviews() {
   const total = all.length;
   const avg = total ? all.reduce((s,r) => s + r.rating, 0) / total : 0;
   const counts = [5,4,3,2,1].map(n => all.filter(r => r.rating === n).length);
+
+  const ratingRow = document.getElementById('ratingRow');
+  if (total > 0) {
+    const rr = Math.round(avg);
+    document.getElementById('ratingStarsF').textContent = '★'.repeat(rr);
+    document.getElementById('ratingStarsE').textContent = '☆'.repeat(5 - rr);
+    document.getElementById('ratingNum').textContent = avg.toFixed(1);
+    document.getElementById('ratingCount').textContent = '(' + total + (total === 1 ? ' avaliação)' : ' avaliações)');
+  } else {
+    document.getElementById('ratingStarsF').textContent = '';
+    document.getElementById('ratingStarsE').textContent = '☆☆☆☆☆';
+    document.getElementById('ratingNum').textContent = '';
+    document.getElementById('ratingCount').textContent = 'Sem avaliações ainda';
+  }
+  ratingRow.style.display = '';
+
   const barsHtml = [5,4,3,2,1].map((n,i) => {
     const c = counts[i];
     const pct = total ? (c / total * 100) : 0;

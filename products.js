@@ -29,7 +29,7 @@ window.PRODUCTS_DB = [];
     stock: row.stock,
     rating: Number(row.rating),
     reviews: row.reviews_count,
-    images: row.images && row.images.length ? row.images : ['img teste.jpg'],
+    images: row.images && row.images.length ? row.images : [],
     description: row.description,
     specs: row.specs || [],
   }));

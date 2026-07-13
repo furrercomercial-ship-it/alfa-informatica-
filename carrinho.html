@@ -393,11 +393,12 @@ function render(){
     </div>
     ${cart.map(item=>{
       const specs=getSpecs(item);
+      const itemImg=item.images&&item.images[0]?item.images[0]:'';
       return `
       <div class="cart-item">
         <div class="item-img">
           <div class="item-img-inner">
-            <img src="img teste.jpg" alt="${item.name}">
+            ${itemImg?'<img src="'+itemImg+'" alt="'+item.name+'">':''}
           </div>
         </div>
         <div class="item-info">

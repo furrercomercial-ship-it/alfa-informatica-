@@ -628,7 +628,7 @@ function applyFilters() {
     return `<div class="pc" onclick="viewProduct(${p.id})" style="cursor:pointer">
       <div class="pc-bdg">${disc ? `<span class="bdg-d">-${disc}% OFF</span>` : ''}</div>
       <div class="pc-img">
-        <img src="${p.images && p.images[0] ? p.images[0] : 'img teste.jpg'}" alt="${p.name}" loading="lazy">
+        ${p.images && p.images[0] ? `<img src="${p.images[0]}" alt="${p.name}" loading="lazy">` : ''}
       </div>
       <div class="pc-body">
         <div class="pc-name">${p.name}</div>
