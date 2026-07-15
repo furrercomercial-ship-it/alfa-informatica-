@@ -37,7 +37,7 @@ create table if not exists public.notas_fiscais (
                             check (tipo_documento in ('principal','complementar','devolucao')),
   numero_nfe              text not null,
   serie                   text not null,
-  chave_acesso            text not null unique
+  chave_acesso            text not null
                             check (chave_acesso ~ '^[0-9]{44}$'),
   data_emissao            date not null,
   data_saida              date,
@@ -81,6 +81,14 @@ create trigger notas_fiscais_set_updated_at before update on public.notas_fiscai
 create unique index if not exists notas_fiscais_pedido_principal_uidx
   on public.notas_fiscais (pedido_id)
   where tipo_documento = 'principal' and deleted_at is null;
+
+-- Chave de acesso: única só entre notas ATIVAS. Excluir uma nota (exclusão
+-- lógica) libera a chave de novo — sem isso, corrigir um cadastro errado
+-- (excluir e recadastrar a mesma NF-e) ficaria bloqueado pra sempre.
+alter table public.notas_fiscais drop constraint if exists notas_fiscais_chave_acesso_key;
+create unique index if not exists notas_fiscais_chave_acesso_uidx
+  on public.notas_fiscais (chave_acesso)
+  where deleted_at is null;
 
 create index if not exists notas_fiscais_pedido_idx      on public.notas_fiscais (pedido_id);
 create index if not exists notas_fiscais_numero_idx       on public.notas_fiscais (numero_nfe);
