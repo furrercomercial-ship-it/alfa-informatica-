@@ -1,0 +1,7 @@
+# Segredos — nunca sobem pro GitHub. O Access Token do Mercado Pago e a
+# service_role key do Supabase só existem via `supabase secrets set`, nunca
+# num arquivo deste projeto.
+.env
+.env.local
+.env.*.local
+supabase/.env

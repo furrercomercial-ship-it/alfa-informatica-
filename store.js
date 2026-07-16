@@ -128,9 +128,14 @@ const Store = {
   },
 
   // ── ORDERS (Supabase) ─────────────────────────────────
+  // O pedido em si passou a ser criado pela Edge Function mp-create-payment
+  // (checkout.html chama window.sb.functions.invoke diretamente) — o valor
+  // cobrado nunca mais é calculado/confiado aqui no navegador.
   ORDER_STATUS_LABELS: {
-    aguardando_pagamento: 'Aguardando Pagamento', pago: 'Pago', preparando: 'Em Preparação',
-    enviado: 'Em Transporte', entregue: 'Entregue', cancelado: 'Cancelado',
+    aguardando_pagamento: 'Aguardando Pagamento', processando: 'Processando', pago: 'Pago',
+    preparando: 'Em Preparação', enviado: 'Em Transporte', entregue: 'Entregue',
+    cancelado: 'Cancelado', recusado: 'Pagamento Recusado', estornado: 'Estornado',
+    estorno_parcial: 'Estornado Parcialmente', expirado: 'Expirado',
   },
   getOrders: async () => {
     const { data: { session } } = await window.sb.auth.getSession();
@@ -148,44 +153,6 @@ const Store = {
       total: Store.fmt(Number(o.total)),
       items: (o.order_items || []).map(i => i.qty + 'x ' + i.product_name_snapshot).join(', '),
     }));
-  },
-  // order: { items:[{id,name,price,qty,images}], address, shippingMethod, freight, paymentMethod, subtotal, discount, total }
-  addOrder: async (order) => {
-    const { data: { session } } = await window.sb.auth.getSession();
-    const orderNumber = 'ALFA-' + Date.now().toString(36).toUpperCase();
-    const { data: created, error } = await window.sb.from('orders').insert({
-      order_number: orderNumber,
-      user_id: session ? session.user.id : null,
-      status: 'aguardando_pagamento',
-      subtotal: order.subtotal, discount: order.discount || 0, freight: order.freight || 0, total: order.total,
-      shipping_method: order.shippingMethod, payment_method: order.paymentMethod,
-      address_snapshot: order.address || null,
-    }).select().single();
-    if (error) { console.error(error); return null; }
-
-    // Congela o preço de custo de cada produto no momento da venda, senão o
-    // lucro de pedidos antigos mudaria toda vez que o custo for atualizado.
-    const ids = (order.items || []).map(i => i.id).filter(Boolean);
-    let costMap = {};
-    if (ids.length) {
-      const { data: prods } = await window.sb.from('products').select('id,cost_price').in('id', ids);
-      (prods || []).forEach(p => { costMap[p.id] = p.cost_price; });
-    }
-
-    const items = (order.items || []).map(i => ({
-      order_id: created.id, product_id: i.id, product_name_snapshot: i.name,
-      product_image_snapshot: i.images && i.images[0] ? i.images[0] : null,
-      unit_price: i.price, qty: i.qty, line_total: i.price * i.qty,
-      cost_price_snapshot: costMap[i.id] ?? null,
-    }));
-    if (items.length) await window.sb.from('order_items').insert(items);
-    if (window.AlfaEvents) {
-      window.AlfaEvents.track('purchase', {
-        value: order.total, order_id: created.order_number || created.id, coupon: order.couponCode || undefined,
-        items: (order.items || []).map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
-      });
-    }
-    return created;
   },
 
   // ── ADDRESSES (mock) ──────────────────────────────────

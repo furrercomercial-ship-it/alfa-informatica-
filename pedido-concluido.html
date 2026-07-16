@@ -48,6 +48,18 @@ a{color:inherit;text-decoration:none;}
 .oc-rec-img img{width:100%;height:100%;object-fit:cover;}
 .oc-rec-name{padding:10px 12px 4px;font-size:12px;font-weight:600;}
 .oc-rec-price{padding:0 12px 12px;font-size:14px;font-weight:800;color:var(--success);}
+.oc-icon.pending{background:rgba(217,119,6,.12);border-color:rgba(217,119,6,.3);color:#D97706;}
+.oc-icon.rejected{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.3);color:#DC2626;}
+.oc-status-pill{display:inline-block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:4px 11px;border-radius:20px;margin-bottom:14px;}
+.oc-status-pill.pago{background:rgba(34,197,94,.12);color:var(--success);}
+.oc-status-pill.pendente{background:rgba(217,119,6,.12);color:#D97706;}
+.oc-status-pill.recusado{background:rgba(220,38,38,.12);color:#DC2626;}
+.oc-pix-box{text-align:center;padding:20px;background:var(--bg-main);border:1px dashed var(--border-color);margin-top:16px;}
+.oc-pix-box img{max-width:220px;margin:0 auto 14px;}
+.oc-pix-copy{display:flex;gap:8px;margin-top:12px;}
+.oc-pix-copy input{flex:1;min-width:0;font-size:11px;padding:10px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-main);}
+.oc-pix-copy button{padding:0 16px;border:1px solid var(--border-color);background:transparent;color:var(--text-main);font-size:12px;font-weight:700;cursor:pointer;}
+.oc-retry-note{font-size:12.5px;color:var(--text-secondary);margin-top:10px;}
 </style>
 <link rel="stylesheet" href="header.css?v=2">
 <link rel="stylesheet" href="footer.css?v=3">
@@ -86,20 +98,124 @@ a{color:inherit;text-decoration:none;}
 <script>
 function fmt(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
 
+var POLL_INTERVAL_MS = 4000;
+var POLL_MAX_TRIES = 8; // ~32s — tempo de sobra pro webhook do Mercado Pago chegar
+var pollCount = 0;
+var pollTimer = null;
+var pageTitleDefault = null;
+var pageSubDefault = null;
+
+// pago/preparando/enviado/entregue = pagamento confirmado, pedido seguindo o
+// fluxo normal. aguardando_pagamento/processando = ainda em andamento (Pix
+// esperando o cliente pagar, ou confirmação a caminho). O resto = não deu certo.
+function statusGroup(status) {
+  if (['pago', 'preparando', 'enviado', 'entregue'].includes(status)) return 'pago';
+  if (['aguardando_pagamento', 'processando'].includes(status)) return 'pendente';
+  return 'recusado'; // recusado, cancelado, expirado, estornado, estorno_parcial
+}
+
+async function fetchPedido(numero) {
+  const { data, error } = await window.sb.rpc('buscar_pedido_por_numero', { p_numero: numero });
+  if (error) { console.error(error); return null; }
+  return data;
+}
+
+function trackPurchaseOnce(order) {
+  const key = 'alfa_purchase_tracked_' + order.order_number;
+  if (sessionStorage.getItem(key)) return;
+  sessionStorage.setItem(key, '1');
+  if (window.AlfaEvents) {
+    window.AlfaEvents.track('purchase', {
+      value: Number(order.total), order_id: order.order_number,
+      items: (order.order_items || []).map(i => ({ name: i.product_name_snapshot, price: i.unit_price, qty: i.qty })),
+    });
+  }
+}
+
+function renderPedido(order) {
+  const group = statusGroup(order.status);
+  const pagamento = order.pagamento || {};
+
+  const icon = document.querySelector('.oc-icon');
+  const titleEl = document.getElementById('ocTitle');
+  const subEl = document.getElementById('ocSub');
+  icon.classList.remove('pending', 'rejected');
+
+  if (group === 'pago') {
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    titleEl.textContent = pageTitleDefault || 'Pagamento aprovado!';
+    subEl.textContent = 'Seu pedido foi confirmado. ' + (pageSubDefault || 'Em breve nossa equipe entra em contato pra confirmar os detalhes.');
+    trackPurchaseOnce(order);
+  } else if (group === 'pendente') {
+    icon.classList.add('pending');
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>';
+    titleEl.textContent = 'Pagamento em processamento';
+    subEl.textContent = pagamento.metodo === 'pix'
+      ? 'Falta só você pagar o Pix abaixo — assim que compensar, confirmamos automaticamente.'
+      : 'Estamos confirmando seu pagamento com o Mercado Pago. Isso pode levar alguns instantes.';
+  } else {
+    icon.classList.add('rejected');
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    titleEl.textContent = 'Pagamento não aprovado';
+    subEl.textContent = 'Não conseguimos confirmar o pagamento deste pedido. Você pode tentar novamente com outro cartão ou forma de pagamento.';
+  }
+
+  const statusLabel = { pago:'Pago', preparando:'Em Preparação', enviado:'Em Transporte', entregue:'Entregue',
+    aguardando_pagamento:'Aguardando Pagamento', processando:'Processando', recusado:'Recusado',
+    cancelado:'Cancelado', expirado:'Expirado', estornado:'Estornado', estorno_parcial:'Estornado Parcialmente' }[order.status] || order.status;
+
+  let pixHtml = '';
+  if (group === 'pendente' && pagamento.metodo === 'pix' && pagamento.resposta_resumida && pagamento.resposta_resumida.pix) {
+    const pix = pagamento.resposta_resumida.pix;
+    pixHtml = '<div class="oc-pix-box">' +
+      (pix.qr_code_base64 ? `<img src="data:image/png;base64,${pix.qr_code_base64}" alt="QR Code Pix">` : '') +
+      '<div style="font-size:12.5px;color:var(--text-secondary);">Escaneie no app do seu banco ou copie o código Pix abaixo.</div>' +
+      (pix.qr_code ? `<div class="oc-pix-copy"><input readonly value="${pix.qr_code}" onclick="this.select();"><button type="button" onclick="navigator.clipboard.writeText('${pix.qr_code.replace(/'/g, "\\'")}');">Copiar</button></div>` : '') +
+      '</div>';
+  }
+
+  const retryHtml = group === 'recusado'
+    ? '<div class="oc-retry-note">Se o carrinho ainda estiver salvo no seu navegador, você pode <a href="checkout.html" style="color:var(--primary);">tentar novamente aqui</a>.</div>'
+    : '';
+
+  document.getElementById('ocOrderCard').innerHTML =
+    `<span class="oc-status-pill ${group}">${statusLabel}</span>` +
+    `<div class="oc-order-num">Pedido <b>${order.order_number}</b> — ${new Date(order.created_at).toLocaleDateString('pt-BR')}</div>` +
+    (order.order_items || []).map(i => `<div class="oc-item"><span>${i.qty}x ${i.product_name_snapshot}</span><span>${fmt(i.line_total)}</span></div>`).join('') +
+    `<div class="oc-total-row"><span>Total</span><span>${fmt(order.total)}</span></div>` +
+    pixHtml + retryHtml;
+
+  return group;
+}
+
+function schedulePoll(numero) {
+  if (pollCount >= POLL_MAX_TRIES) return;
+  pollTimer = setTimeout(async () => {
+    pollCount++;
+    const order = await fetchPedido(numero);
+    if (!order) return;
+    const group = renderPedido(order);
+    if (group === 'pendente') schedulePoll(numero); // continua só enquanto ainda estiver esperando confirmação
+  }, POLL_INTERVAL_MS);
+}
+
 async function load() {
   const params = new URLSearchParams(location.search);
   const numero = params.get('pedido');
 
   const { data: pag } = await window.sb.from('paginas_cms').select('*').eq('slug', 'pedido-concluido').maybeSingle();
-  if (pag) { document.getElementById('ocTitle').textContent = pag.titulo || 'Pedido Confirmado!'; document.getElementById('ocSub').textContent = pag.subtitulo || document.getElementById('ocSub').textContent; }
+  if (pag) {
+    if (pag.titulo) pageTitleDefault = pag.titulo;
+    if (pag.subtitulo) pageSubDefault = pag.subtitulo;
+  }
 
   if (numero) {
-    const { data: order } = await window.sb.from('orders').select('*,order_items(*)').eq('order_number', numero).maybeSingle();
+    const order = await fetchPedido(numero);
     if (order) {
-      document.getElementById('ocOrderCard').innerHTML =
-        `<div class="oc-order-num">Pedido <b>${order.order_number}</b> — ${new Date(order.created_at).toLocaleDateString('pt-BR')}</div>` +
-        (order.order_items || []).map(i => `<div class="oc-item"><span>${i.qty}x ${i.product_name_snapshot}</span><span>${fmt(i.line_total)}</span></div>`).join('') +
-        `<div class="oc-total-row"><span>Total</span><span>${fmt(order.total)}</span></div>`;
+      const group = renderPedido(order);
+      if (group === 'pendente') schedulePoll(numero);
+    } else {
+      document.getElementById('ocOrderCard').style.display = 'none';
     }
   } else {
     document.getElementById('ocOrderCard').style.display = 'none';

@@ -57,6 +57,17 @@ a{color:inherit;text-decoration:none;}
 .pay-txt .pay-name{font-size:13.5px;font-weight:700;color:var(--text-main);}
 .pay-txt .pay-desc{font-size:11px;color:var(--text-secondary);margin-top:2px;}
 .pay-badge{margin-left:auto;font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:0;flex-shrink:0;}
+/* Cartão (Mercado Pago Secure Fields) */
+.mp-card-form{margin-top:14px;padding-top:14px;border-top:1px solid var(--border-color);}
+.mp-secure-field{width:100%;height:42px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:0;padding:0 14px;}
+.mp-secure-field.focused{border-color:rgba(37,99,235,.5);box-shadow:0 0 0 3px rgba(37,99,235,.08);}
+.mp-card-msg{font-size:11.5px;margin-top:8px;}
+.mp-card-msg.error{color:#e5484d;}
+.mp-card-msg.ok{color:var(--success);}
+.pix-box{margin-top:14px;padding:18px;background:var(--bg-main);border:1px dashed var(--border-color);text-align:center;}
+.pix-box img{max-width:200px;margin:0 auto 12px;}
+.pix-copy{display:flex;gap:8px;margin-top:10px;}
+.pix-copy input{flex:1;min-width:0;font-size:11px;padding:9px 10px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-main);}
 /* Submit */
 .btn-submit{width:100%;padding:16px;background:var(--alfa-btn-buy-bg,var(--success));color:var(--alfa-btn-buy-text,#fff);border:none;border-radius:0;font-size:14px;font-weight:800;letter-spacing:.3px;cursor:pointer;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:11px;transition:filter .2s,transform .15s;box-shadow:0 8px 28px rgba(34,197,94,.25);}
 .btn-submit:hover{filter:brightness(1.08);}
@@ -160,6 +171,8 @@ a{color:inherit;text-decoration:none;}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="supabase-client.js"></script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="mercadopago-client.js"></script>
 <script src="site-meta.js"></script>
 <script src="consent.js"></script>
 <script src="event-manager.js"></script>
@@ -176,7 +189,7 @@ a{color:inherit;text-decoration:none;}
 var WPP = 'https://wa.me/5565992655883';
 var items = [];
 
-var state = { addressId:null, addingAddress:false, shipId:null, payId:null, terms:false, cupom:null, cupomErro:'', cupomChecking:false };
+var state = { addressId:null, addingAddress:false, shipId:null, payId:null, terms:false, cupom:null, cupomErro:'', cupomChecking:false, guestEmail:'', guestCpf:'', paying:false };
 
 var shipOpts = [
   {id:'economico', name:'Econômico',       price:18.90, days:'7–10 dias úteis'},
@@ -184,18 +197,19 @@ var shipOpts = [
   {id:'retirada',  name:'Retirada na loja',price:0,     days:'Disponível a partir de 1h'}
 ];
 
+// Só os 2 métodos que realmente funcionam de verdade via Mercado Pago
+// (Checkout Transparente / API de Orders, ambiente de TESTE). Os outros 3
+// que existiam aqui (cartão+pix, dois cartões, boleto) nunca processaram
+// pagamento nenhum — eram só botões decorativos.
 var payOpts = [
   {id:'pix',          label:'Pix',               desc:'Aprovação imediata — 5% de desconto', badge:'5% OFF',
     icon:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>'},
-  {id:'cartao',       label:'Cartão de crédito', desc:'Visa, Mastercard, Elo — em até 12x',   badge:'Até 12x',
-    icon:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>'},
-  {id:'cartao_pix',   label:'Cartão + Pix',      desc:'Divida o pagamento em duas formas',    badge:'',
-    icon:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/><circle cx="17" cy="16" r="2.4"/>'},
-  {id:'dois_cartoes', label:'Dois cartões',      desc:'Divida entre dois cartões de crédito', badge:'',
-    icon:'<rect x="1" y="7" width="17" height="12" rx="2"/><rect x="6" y="3" width="17" height="12" rx="2"/>'},
-  {id:'boleto',       label:'Boleto bancário',   desc:'1–3 dias úteis para compensar',        badge:'',
-    icon:'<rect x="2" y="4" width="2" height="16"/><rect x="6" y="4" width="1" height="16"/><rect x="9" y="4" width="3" height="16"/><rect x="14" y="4" width="1" height="16"/><rect x="17" y="4" width="2" height="16"/><rect x="21" y="4" width="1" height="16"/>'}
+  {id:'credit_card',  label:'Cartão de crédito', desc:'Visa, Mastercard, Elo — em até 12x',   badge:'Até 12x',
+    icon:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>'}
 ];
+
+var mpCardFormCtl = null; // controlador do cardForm do Mercado Pago, montado só quando "Cartão" é selecionado
+var checkoutIdempotencyKey = null;
 
 function fmt(v) {
   return 'R$ ' + Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -273,7 +287,11 @@ function renderAll(){
       '<div class="contact-row"><span>Nome</span><span>' + (user.name||'—') + '</span></div>' +
       '<div class="contact-row"><span>E-mail</span><span>' + user.email + '</span></div>' +
       '<div class="contact-row"><span>CPF</span><span>' + maskCPF(user.cpf) + '</span></div>'
-      : '<p style="font-size:13px;color:var(--text-secondary);">Você não está logado. <a href="auth.html" style="color:var(--primary);">Entre na sua conta</a> para continuar com seus dados salvos.</p>') +
+      : '<p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;">Você não está logado. <a href="auth.html" style="color:var(--primary);">Entre na sua conta</a> ou preencha os dados abaixo — exigidos pelo Mercado Pago pra processar o pagamento.</p>' +
+        '<div class="two-col">' +
+          '<div class="field"><label>E-mail</label><input type="email" id="guestEmail" placeholder="voce@email.com" value="' + state.guestEmail + '" onblur="state.guestEmail=this.value;renderAll();"></div>' +
+          '<div class="field"><label>CPF</label><input id="guestCpf" placeholder="000.000.000-00" maxlength="14" value="' + state.guestCpf + '" onblur="state.guestCpf=this.value;renderAll();"></div>' +
+        '</div>') +
     '</div>';
 
   var addrBody;
@@ -336,6 +354,33 @@ function renderAll(){
           (p.badge ? '<span class="pay-badge" style="background:rgba(22,163,74,.12);color:var(--success);">' + p.badge + '</span>' : '') +
         '</label></div>';
     }).join('') + '</div>';
+
+    if (state.payId === 'credit_card') {
+      pagBody += '<div class="mp-card-form" id="mpCardFormWrap">' +
+        '<form id="mpCardForm">' +
+          '<div class="two-col">' +
+            '<div class="field"><label>Número do cartão</label><div id="mpCardNumber" class="mp-secure-field"></div></div>' +
+            '<div class="field"><label>Nome impresso no cartão</label><input id="mpCardholderName" placeholder="Como está no cartão"></div>' +
+          '</div>' +
+          '<div class="two-col">' +
+            '<div class="field"><label>Validade</label><div id="mpExpirationDate" class="mp-secure-field"></div></div>' +
+            '<div class="field"><label>CVV</label><div id="mpSecurityCode" class="mp-secure-field"></div></div>' +
+          '</div>' +
+          '<div class="two-col">' +
+            '<div class="field"><label>Parcelas</label><select id="mpInstallments"></select></div>' +
+            '<div class="field"><label>Banco emissor</label><select id="mpIssuer"></select></div>' +
+          '</div>' +
+          '<div class="two-col" style="display:none;">' +
+            '<div class="field"><label>Tipo de documento</label><select id="mpIdentificationType"></select></div>' +
+            '<div class="field"><label>Número do documento</label><input id="mpIdentificationNumber"></div>' +
+          '</div>' +
+          '<input type="hidden" id="mpCardholderEmail">' +
+        '</form>' +
+        '<div class="mp-card-msg" id="mpCardMsg"></div>' +
+      '</div>';
+    } else if (state.payId === 'pix') {
+      pagBody += '<div class="mp-card-msg" id="mpCardMsg" style="font-size:12.5px;color:var(--text-secondary);margin-top:12px;">O QR Code do Pix aparece na próxima tela, depois de finalizar o pedido.</div>';
+    }
   }
   var pagHtml = '<div class="form-card ck-card" data-block="pagamento">' +
     '<div class="ck-head-row"><div class="section-head' + (!state.shipId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.shipId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><span data-text="checkout_pagamento">Pagamento</span></div>' + (state.payId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
@@ -356,6 +401,7 @@ function renderAll(){
   if (!state.addressId) missing.push('Endereço de entrega');
   if (!state.shipId) missing.push('Método de entrega');
   if (!state.payId) missing.push('Método de pagamento');
+  if (!user.email && (!state.guestEmail || !state.guestCpf)) missing.push('E-mail e CPF (seção Contato)');
   if (!state.terms) missing.push('Aceitar os termos');
 
   var itemsHtml = items.map(function(i){
@@ -387,14 +433,19 @@ function renderAll(){
     '<div class="sum-total"><span class="lbl">Total</span><span class="val">' + fmt(total) + '</span></div>' +
     alertHtml +
     '<label class="ck-terms"><input type="checkbox" id="ckTerms" ' + (state.terms?'checked':'') + ' onchange="state.terms=this.checked;renderAll();"><span>Estou ciente e concordo com os <a href="#">termos e condições de venda</a> da Alfa Informática.</span></label>' +
-    '<button class="btn-submit" ' + (missing.length?'disabled':'') + ' onclick="finalize()">' +
-      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>' +
-      '<span data-text="finalizar_pedido">Finalizar Pedido</span>' +
+    '<button class="btn-submit" ' + (missing.length || state.paying ?'disabled':'') + ' onclick="finalize()">' +
+      (state.paying
+        ? '<span>Processando pagamento...</span>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span data-text="finalizar_pedido">Finalizar Pedido</span>') +
     '</button>' +
     '</div>';
 
   document.getElementById('summaryArea').innerHTML = summaryHtml;
   if (window.AlfaTexts) AlfaTexts.apply();
+
+  if (state.payId === 'credit_card' && document.getElementById('mpCardForm')) {
+    mountCardPaymentForm(total);
+  }
 }
 
 function selectAddress(id){ state.addressId = id; renderAll(); }
@@ -428,52 +479,136 @@ function selectPay(id){
   if (window.AlfaEvents && pay) window.AlfaEvents.track('add_payment_info', { method: pay.label });
 }
 
+// Monta o formulário oficial de cartão do Mercado Pago (Secure Fields) — o
+// número/validade/CVV nunca passam pelo nosso JS, só pelos iframes deles.
+// Como renderAll() reconstrói o HTML inteiro a cada mudança de estado, isso
+// remonta o formulário sempre que a seção de pagamento volta a existir no
+// DOM (mesmo padrão "re-render tudo" já usado no resto desta página).
+function mountCardPaymentForm(amount) {
+  if (!window.MPClient) return;
+  var msgEl = document.getElementById('mpCardMsg');
+  mpCardFormCtl = MPClient.mountCardForm({
+    formId: 'mpCardForm',
+    cardNumber: 'mpCardNumber',
+    expirationDate: 'mpExpirationDate',
+    securityCode: 'mpSecurityCode',
+    cardholderName: 'mpCardholderName',
+    issuer: 'mpIssuer',
+    installments: 'mpInstallments',
+    identificationType: 'mpIdentificationType',
+    identificationNumber: 'mpIdentificationNumber',
+    cardholderEmail: 'mpCardholderEmail',
+  }, amount, function () {
+    if (msgEl) msgEl.textContent = '';
+    var user = Store.getUser() || {};
+    var email = user.email || state.guestEmail || '';
+    var cpf = (user.cpf || state.guestCpf || '').replace(/\D/g, '');
+    var emailField = document.getElementById('mpCardholderEmail');
+    if (emailField) emailField.value = email;
+    var idNumberField = document.getElementById('mpIdentificationNumber');
+    if (idNumberField && !idNumberField.value) idNumberField.value = cpf;
+  });
+}
+
+function showPaymentError(msg) {
+  var box = document.getElementById('mpCardMsg');
+  if (box) { box.textContent = msg; box.className = 'mp-card-msg error'; }
+  else alert(msg);
+}
+
 async function finalize(){
+  if (state.paying) return; // trava contra clique duplo / envio duplicado
+
   var addrs = Store.getAddresses();
   var addr = addrs.find(function(a){ return a.id === state.addressId; });
   var ship = shipOpts.find(function(s){ return s.id === state.shipId; });
-  var pay = payOpts.find(function(p){ return p.id === state.payId; });
   var user = Store.getUser() || {};
 
-  var subtotal = items.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
-  var pixDiscount = state.payId === 'pix' ? subtotal * .05 : 0;
-  var cupomDiscount = cupomDiscountValue(state.cupom, subtotal);
-  var discount = pixDiscount + cupomDiscount;
-  var freight = ship ? ship.price : 0;
-  var total = subtotal - discount + freight;
+  var payerEmail = user.email || state.guestEmail;
+  var payerCpf = (user.cpf || state.guestCpf || '').replace(/\D/g, '');
+  if (!payerEmail || payerCpf.length !== 11) {
+    alert('Preencha um e-mail e um CPF válido (11 números) na seção Contato antes de pagar — o Mercado Pago exige isso.');
+    return;
+  }
 
-  var submitBtn = document.querySelector('.btn-submit');
-  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando pedido...'; }
+  var cardData = null;
+  if (state.payId === 'credit_card') {
+    cardData = MPClient.getCardFormData(mpCardFormCtl);
+    if (!cardData || !cardData.token) {
+      showPaymentError('Confira os dados do cartão — algum campo está incompleto ou inválido.');
+      return;
+    }
+  }
 
-  var created = await Store.addOrder({
-    items: items,
+  // Gerada a cada tentativa: impede que uma falha de rede reenvie a MESMA
+  // cobrança duas vezes (a Edge Function usa isso como X-Idempotency-Key no
+  // Mercado Pago e também deduplica no nosso próprio banco).
+  checkoutIdempotencyKey = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : ('idem-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+
+  state.paying = true;
+  renderAll();
+
+  var payload = {
+    idempotency_key: checkoutIdempotencyKey,
+    items: items.map(function (i) { return { product_id: i.id, qty: i.qty }; }),
+    shipping_method_id: state.shipId,
+    coupon_code: state.cupom ? state.cupom.codigo : null,
     address: addr || null,
-    shippingMethod: ship ? ship.name : null,
-    freight: freight,
-    paymentMethod: pay ? pay.label : null,
-    subtotal: subtotal,
-    discount: discount,
-    total: total,
-    couponCode: state.cupom ? state.cupom.codigo : null,
-  });
-  if (state.cupom) await window.sb.rpc('incrementar_uso_cupom', { p_codigo: state.cupom.codigo });
+    payment_method: state.payId,
+    payer: {
+      email: payerEmail,
+      first_name: (user.name || '').split(' ')[0] || payerEmail,
+      last_name: (user.name || '').split(' ').slice(1).join(' ') || '',
+      cpf: payerCpf,
+    },
+  };
+  if (cardData) payload.card = { token: cardData.token, installments: cardData.installments, payment_method_id: cardData.paymentMethodId };
+
+  var resp, invokeErr;
+  try {
+    resp = await window.sb.functions.invoke('mp-create-payment', { body: payload });
+    invokeErr = resp && resp.error;
+  } catch (e) {
+    invokeErr = e;
+  }
+  var data = resp && resp.data;
+
+  if (invokeErr || !data || data.ok === false) {
+    state.paying = false;
+    renderAll();
+    showPaymentError((data && data.error) || 'Não foi possível conectar ao processador de pagamento. Tente novamente.');
+    return; // nada foi cobrado de verdade — carrinho preservado, pode tentar de novo
+  }
+
+  if (data.status === 'recusado') {
+    state.paying = false;
+    renderAll();
+    showPaymentError('Pagamento não aprovado' + (data.status_detail ? ' (' + data.status_detail + ')' : '') + '. Confira os dados e tente novamente, ou escolha outro método.');
+    return; // pedido interno já existe com status "recusado" — não duplica se o cliente tentar de novo
+  }
+
+  // Chegou até aqui = a tentativa de pagamento aconteceu de verdade
+  // (aprovado ou pendente, caso do Pix aguardando o cliente pagar).
   Store.clearCart();
   Store.setCheckoutItems([]);
+  // O evento "purchase" (GA4/Meta/TikTok) só dispara em pedido-concluido.html
+  // quando o pagamento é realmente confirmado como "pago" — aqui ainda pode
+  // ser só um Pix pendente, contar como venda concluída seria enganoso.
 
-  var prodLines = items.map(function(i){ return '• ' + i.qty + 'x ' + i.name + ' — ' + fmt(i.price*i.qty); }).join('\n');
+  var prodLines = items.map(function(i){ return '• ' + i.qty + 'x ' + i.name; }).join('\n');
+  var statusLabel = data.status === 'aprovado' ? 'Pago (' + (state.payId === 'pix' ? 'Pix' : 'Cartão') + ')' : 'Aguardando pagamento (Pix)';
   var msg = '🛒 *NOVO PEDIDO — ALFA INFORMÁTICA*\n\n'
-    + '👤 *Cliente:* ' + (user.name||'—') + '\n'
+    + '👤 *Cliente:* ' + (user.name || payerEmail || '—') + '\n'
     + '📍 *Endereço:* ' + (addr ? (addr.rua+', '+addr.numero+' - '+addr.bairro+', '+addr.cid+'/'+addr.uf) : '—') + '\n'
     + '🚚 *Envio:* ' + (ship?ship.name:'—') + '\n\n'
     + '*📦 PRODUTOS:*\n' + prodLines + '\n\n'
-    + '*💰 TOTAL: ' + fmt(total) + '*\n'
-    + '*💳 Pagamento: ' + (pay?pay.label:'—') + '*'
-    + '\n\n_Pedido confirmado via site Alfa Informática_';
+    + '*💳 Status: ' + statusLabel + '*'
+    + '\n\n_Pedido ' + data.order_number + ' via site Alfa Informática_';
   window.open(WPP + '?text=' + encodeURIComponent(msg), '_blank');
 
-  // Página dedicada de pedido concluído (resumo real + recomendações), no
-  // lugar de só trocar o HTML desta mesma tela.
-  location.href = 'pedido-concluido.html' + (created && created.order_number ? '?pedido=' + encodeURIComponent(created.order_number) : '');
+  location.href = 'pedido-concluido.html?pedido=' + encodeURIComponent(data.order_number);
 }
 
 init();
