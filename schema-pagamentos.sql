@@ -73,10 +73,26 @@ create table if not exists public.pagamentos_webhook_eventos (
 create index if not exists pagamentos_webhook_eventos_data_id_idx on public.pagamentos_webhook_eventos (data_id);
 
 -- ============================================================================
+-- RATE LIMIT — mp-create-payment roda sem verificação de JWT do Supabase
+-- (precisa aceitar checkout de visitante), então essa checagem por IP é o
+-- que impede a rota de ficar livre pra qualquer volume de chamadas.
+-- ============================================================================
+create table if not exists public.checkout_rate_limit (
+  id          bigint generated always as identity primary key,
+  ip          text not null,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists checkout_rate_limit_ip_idx on public.checkout_rate_limit (ip, created_at desc);
+
+-- ============================================================================
 -- ROW LEVEL SECURITY
 -- ============================================================================
 alter table public.pagamentos                 enable row level security;
 alter table public.pagamentos_webhook_eventos  enable row level security;
+alter table public.checkout_rate_limit         enable row level security;
+-- Sem nenhuma policy aqui de propósito — só a Edge Function (service_role)
+-- lê/escreve; ninguém mais precisa ver essa tabela.
 
 -- Só leitura pro dono do pedido ou quem tem permissão de ver pedidos — toda
 -- escrita acontece exclusivamente pelas Edge Functions com a service_role

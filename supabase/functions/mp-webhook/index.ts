@@ -19,6 +19,8 @@
 // --no-verify-jwt é necessário porque quem chama essa rota é o Mercado Pago,
 // não um usuário logado no Supabase — a autenticidade é garantida pela
 // validação de assinatura abaixo, não por um JWT do Supabase.
+// SUPABASE_SERVICE_ROLE_KEY NÃO precisa ser configurada manualmente — o
+// Supabase já injeta ela automaticamente em toda Edge Function hospedada.
 //
 // URL a cadastrar no painel do Mercado Pago (Suas integrações > Webhooks):
 //   https://<seu-project-ref>.supabase.co/functions/v1/mp-webhook
@@ -57,10 +59,13 @@ function mapMpStatus(status: string | undefined, statusDetail: string | undefine
   const d = (statusDetail || '').toLowerCase();
   if (s === 'processed' || s === 'approved' || d === 'accredited') return 'aprovado';
   if (d.startsWith('cc_rejected') || s === 'rejected') return 'recusado';
-  if (s === 'cancelled') return 'cancelado';
-  if (s === 'refunded') return 'estornado';
+  if (s === 'cancelled' || s === 'canceled') return 'cancelado';
+  // chargeback (contestação) não tem estado interno próprio — cai como
+  // "estornado" pro fluxo de negócio, mas status_detail guarda o valor
+  // original ("charged_back") pra quem olhar o painel ver a diferença.
+  if (s === 'refunded' || s === 'charged_back' || s === 'chargeback') return 'estornado';
   if (s === 'partially_refunded') return 'estorno_parcial';
-  if (s === 'pending' || s === 'action_required' || d.includes('pending')) return 'pendente';
+  if (s === 'pending' || s === 'action_required' || s === 'processing' || d.includes('pending')) return 'pendente';
   return 'em_processamento';
 }
 
@@ -97,8 +102,13 @@ Deno.serve(async (req) => {
     const xSignature = req.headers.get('x-signature') || '';
     const xRequestId = req.headers.get('x-request-id') || '';
     const url = new URL(req.url);
-    const dataIdFromQuery = url.searchParams.get('data.id') || url.searchParams.get('id') || '';
-    const dataId = String(dataIdFromQuery || body?.data?.id || '').toLowerCase();
+    // ID original (maiúsculas/minúsculas como o Mercado Pago mandou) — as
+    // orders da API de Orders vêm com id alfanumérico tipo "ORD01JQ4S...",
+    // e a busca GET /v1/orders/{id} é sensível a caixa. `dataId` (minúsculo)
+    // existe só pra montar a manifest da assinatura, que a doc do Mercado
+    // Pago pede em minúsculas — nunca usar essa versão pra chamar a API.
+    const dataIdOriginal = String(url.searchParams.get('data.id') || url.searchParams.get('id') || body?.data?.id || '');
+    const dataId = dataIdOriginal.toLowerCase();
 
     const parts: Record<string, string> = {};
     xSignature.split(',').forEach((p) => {
@@ -108,7 +118,7 @@ Deno.serve(async (req) => {
     const ts = parts.ts;
     const v1 = parts.v1;
 
-    if (!ts || !v1 || !dataId) {
+    if (!ts || !v1 || !dataIdOriginal) {
       console.error('[mp-webhook] assinatura ausente ou notificação sem data.id');
       return new Response(JSON.stringify({ ok: false }), { status: 401, headers: corsHeaders() });
     }
@@ -126,8 +136,8 @@ Deno.serve(async (req) => {
       mp_notification_id: notificationId,
       tipo: body.type || null,
       acao: body.action || null,
-      data_id: dataId,
-      payload_resumido: { type: body.type, action: body.action, data_id: dataId },
+      data_id: dataIdOriginal,
+      payload_resumido: { type: body.type, action: body.action, data_id: dataIdOriginal },
     });
     if (insertEventErr) {
       // unique_violation (23505) = já processamos essa notificação antes.
@@ -139,9 +149,12 @@ Deno.serve(async (req) => {
     }
 
     // ── reconsulta o estado real na API do Mercado Pago (nunca confia só
-    // no corpo da notificação) ──────────────────────────────────────────
+    // no corpo da notificação) — a API de Orders manda type:"order" com
+    // data.id sendo o id da ORDER (alfanumérico, ex: "ORD01JQ4S..."), não
+    // um id de payment numérico; por isso sempre usa dataIdOriginal aqui,
+    // nunca a versão minúscula (essa é só pra assinatura). ────────────────
     const isOrderEvent = body.type === 'order' || body.topic === 'order';
-    const mpUrl = isOrderEvent ? `${MP_API_BASE}/v1/orders/${dataId}` : `${MP_API_BASE}/v1/payments/${dataId}`;
+    const mpUrl = isOrderEvent ? `${MP_API_BASE}/v1/orders/${dataIdOriginal}` : `${MP_API_BASE}/v1/payments/${dataIdOriginal}`;
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 15000);
@@ -182,7 +195,7 @@ Deno.serve(async (req) => {
     }
 
     if (!pagamento) {
-      console.error('[mp-webhook] notificação sem pagamento correspondente no banco — ignorada', dataId);
+      console.error('[mp-webhook] notificação sem pagamento correspondente no banco — ignorada', dataIdOriginal);
       await admin.from('pagamentos_webhook_eventos').update({ processado_em: new Date().toISOString() }).eq('mp_notification_id', notificationId);
       return new Response(JSON.stringify({ ok: true }), { status: 200, headers: corsHeaders() });
     }

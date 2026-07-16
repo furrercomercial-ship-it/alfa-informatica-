@@ -11,14 +11,20 @@
 //
 // Deploy (rodar localmente, uma vez, com a Supabase CLI já instalada e logada):
 //   supabase link --project-ref ybkgevyahpkkxhiexejy
-//   supabase functions deploy mp-create-payment
+//   supabase functions deploy mp-create-payment --no-verify-jwt
 //   supabase secrets set MP_ACCESS_TOKEN=<seu Access Token DE TESTE, em Suas integrações > Credenciais>
 //
 // O Access Token NUNCA deve ser colado em nenhum arquivo do projeto — só no
 // comando `supabase secrets set`, que o guarda de forma segura no servidor.
-// SUPABASE_SERVICE_ROLE_KEY já deve estar configurada (mesma usada por
-// admin-create-staff); se não estiver, rode também:
-//   supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<sua service_role key>
+// SUPABASE_SERVICE_ROLE_KEY NÃO precisa ser configurada manualmente — o
+// Supabase já injeta ela automaticamente em toda Edge Function hospedada.
+//
+// --no-verify-jwt é necessário porque o checkout aceita compra de visitante
+// sem login (a chave pública do projeto não é um JWT, então o Supabase
+// bloquearia até a chamada de visitante antes de chegar aqui). Como isso
+// torna a rota chamável por qualquer um, a proteção contra abuso — limite
+// de tentativas por IP, checagem de origem, validação de payload — é feita
+// à mão logo no início da função (ver RATE_LIMIT_* abaixo).
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
@@ -36,6 +42,17 @@ const SHIPPING_OPTIONS: Record<string, { name: string; price: number }> = {
 };
 
 const PIX_DISCOUNT_RATE = 0.05; // mesma regra de negócio já existente no checkout hoje
+
+// Como a função roda sem verificação de JWT do Supabase (precisa aceitar
+// visitante sem login), estas duas defesas substituem o que o Supabase
+// deixaria de barrar automaticamente:
+const ALLOWED_ORIGINS = [
+  'https://alfa-informatica-dhs9.vercel.app',
+  'http://localhost',
+  'http://127.0.0.1',
+];
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 8; // tentativas de pagamento por IP por minuto
 
 function corsHeaders(extra: Record<string, string> = {}) {
   return {
@@ -63,10 +80,10 @@ async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = 1500
 function mapMpStatus(orderStatus: string | undefined, statusDetail: string | undefined): string {
   const s = (orderStatus || '').toLowerCase();
   const d = (statusDetail || '').toLowerCase();
-  if (s === 'processed' && (d === 'accredited' || d === '')) return 'aprovado';
+  if ((s === 'processed' || s === 'approved') && (d === 'accredited' || d === '')) return 'aprovado';
   if (d.startsWith('cc_rejected') || s === 'rejected') return 'recusado';
-  if (s === 'cancelled') return 'cancelado';
-  if (s === 'pending' || s === 'action_required' || d.includes('pending')) return 'pendente';
+  if (s === 'cancelled' || s === 'canceled') return 'cancelado';
+  if (s === 'pending' || s === 'action_required' || s === 'processing' || d.includes('pending')) return 'pendente';
   return 'em_processamento';
 }
 
@@ -76,6 +93,28 @@ Deno.serve(async (req) => {
 
   try {
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+
+    // ── validação de origem: só bloqueia quando o header existe e não bate
+    // com nenhum domínio conhecido — visitante testando local (file://) ou
+    // alguns clientes legítimos não mandam Origin nenhum, então não trava
+    // esses casos; quem barra abuso de volume é o rate limit abaixo. ──────
+    const origin = req.headers.get('origin') || req.headers.get('referer') || '';
+    if (origin && !ALLOWED_ORIGINS.some((o) => origin.startsWith(o))) {
+      console.error('[mp-create-payment] origem não reconhecida rejeitada', origin);
+      return fail(403, 'Origem não permitida.');
+    }
+
+    // ── rate limit por IP: sem isso, uma função sem verificação de JWT fica
+    // livre pra qualquer volume de chamadas de qualquer lugar. ───────────
+    const clientIp = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
+    const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
+    const { count: recentCount } = await admin
+      .from('checkout_rate_limit').select('id', { count: 'exact', head: true })
+      .eq('ip', clientIp).gte('created_at', since);
+    if ((recentCount || 0) >= RATE_LIMIT_MAX) {
+      return fail(429, 'Muitas tentativas em pouco tempo. Aguarde um instante e tente novamente.');
+    }
+    await admin.from('checkout_rate_limit').insert({ ip: clientIp });
 
     // Identifica o cliente logado, se houver — checkout de visitante continua
     // permitido (mesma regra que orders_insert já aceita user_id null).
@@ -103,11 +142,28 @@ Deno.serve(async (req) => {
       card,
     } = body;
 
-    if (!idempotencyKey || typeof idempotencyKey !== 'string') return fail(400, 'Requisição inválida.');
-    if (!Array.isArray(items) || !items.length) return fail(400, 'Carrinho vazio.');
+    // Validação completa do payload — a função roda sem JWT do Supabase, e
+    // um chamador malicioso pode mandar qualquer coisa; nada aqui é
+    // confiado sem checagem de formato/tamanho antes de tocar o banco.
+    if (!idempotencyKey || typeof idempotencyKey !== 'string' || idempotencyKey.length > 100) return fail(400, 'Requisição inválida.');
+    if (!Array.isArray(items) || !items.length || items.length > 50) return fail(400, 'Carrinho inválido.');
+    if (items.some((i: any) => !Number.isInteger(i.product_id) || !Number.isInteger(i.qty) || i.qty < 1 || i.qty > 100)) {
+      return fail(400, 'Carrinho inválido.');
+    }
     if (!['pix', 'credit_card'].includes(paymentMethod)) return fail(400, 'Selecione uma forma de pagamento.');
-    if (paymentMethod === 'credit_card' && (!card || !card.token)) return fail(400, 'Dados do cartão inválidos.');
-    if (!payer || !payer.email || !payer.cpf) return fail(400, 'Preencha e-mail e CPF para continuar.');
+    if (paymentMethod === 'credit_card' && (!card || typeof card.token !== 'string' || card.token.length > 200)) {
+      return fail(400, 'Dados do cartão inválidos.');
+    }
+    if (!payer || typeof payer.email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payer.email) || payer.email.length > 200) {
+      return fail(400, 'Informe um e-mail válido.');
+    }
+    if (!payer.cpf || String(payer.cpf).replace(/\D/g, '').length !== 11) {
+      return fail(400, 'Informe um CPF válido (11 números).');
+    }
+    if (typeof shippingMethodId !== 'string' || shippingMethodId.length > 50) return fail(400, 'Selecione uma forma de envio.');
+    if (couponCode !== null && couponCode !== undefined && (typeof couponCode !== 'string' || couponCode.length > 40)) {
+      return fail(400, 'Cupom inválido.');
+    }
 
     // ── idempotência: se essa idempotency_key já foi processada (duplo
     // clique, retry de rede), devolve o resultado que já existe em vez de
@@ -196,6 +252,23 @@ Deno.serve(async (req) => {
     await admin.from('order_items').insert(orderItemsPayload.map((i) => ({ ...i, order_id: order.id })));
     if (couponApplied) await admin.rpc('incrementar_uso_cupom', { p_codigo: couponApplied });
 
+    // ── reivindica a idempotency_key ANTES de chamar o Mercado Pago (não só
+    // depois): fecha a janela de corrida em que duas requisições quase
+    // simultâneas com a mesma chave passariam pela checagem inicial (que só
+    // olha o que já existe) e chamariam a API duas vezes. Se a constraint
+    // única barrar aqui, é porque outra requisição com essa chave já está
+    // em andamento — devolve erro pra essa tentativa recuar (o pedido dela
+    // fica órfão como "aguardando_pagamento", sem tentativa de cobrança).
+    const { data: pagamento, error: pagClaimErr } = await admin.from('pagamentos').insert({
+      pedido_id: order.id, external_reference: String(order.id), valor: total,
+      moeda: 'BRL', metodo: paymentMethod, status: 'pendente',
+      idempotency_key: idempotencyKey, criado_por: userId,
+    }).select().single();
+    if (pagClaimErr || !pagamento) {
+      console.error('[mp-create-payment] não foi possível reivindicar a idempotency_key', pagClaimErr?.code, pagClaimErr?.message);
+      return fail(409, 'Essa tentativa de pagamento já está em andamento. Aguarde alguns segundos.');
+    }
+
     // ── monta a Order do Mercado Pago
     const [firstName, ...restName] = String(payer.first_name || payer.email).split(' ');
     const mpBody: any = {
@@ -247,10 +320,7 @@ Deno.serve(async (req) => {
       });
     } catch (e) {
       console.error('[mp-create-payment] falha de conexão com o Mercado Pago', String(e));
-      await admin.from('pagamentos').insert({
-        pedido_id: order.id, external_reference: String(order.id), valor: total, metodo: paymentMethod,
-        status: 'recusado', status_detail: 'connection_error', idempotency_key: idempotencyKey, criado_por: userId,
-      });
+      await admin.from('pagamentos').update({ status: 'recusado', status_detail: 'connection_error' }).eq('id', pagamento.id);
       return fail(502, 'Não foi possível conectar ao Mercado Pago. Tente novamente em instantes.');
     }
 
@@ -258,11 +328,9 @@ Deno.serve(async (req) => {
 
     if (!mpRes.ok) {
       console.error('[mp-create-payment] Mercado Pago recusou a requisição', mpRes.status, JSON.stringify(mpData).slice(0, 500));
-      await admin.from('pagamentos').insert({
-        pedido_id: order.id, external_reference: String(order.id), valor: total, metodo: paymentMethod,
+      await admin.from('pagamentos').update({
         status: 'recusado', status_detail: mpData?.message || 'request_error',
-        idempotency_key: idempotencyKey, criado_por: userId,
-      });
+      }).eq('id', pagamento.id);
       return fail(400, 'Pagamento não pôde ser processado. Verifique os dados e tente novamente.');
     }
 
@@ -280,20 +348,16 @@ Deno.serve(async (req) => {
         }
       : null;
 
-    await admin.from('pagamentos').insert({
-      pedido_id: order.id,
+    await admin.from('pagamentos').update({
       mp_order_id: mpData.id ? String(mpData.id) : null,
       mp_payment_id: mpPayment.id ? String(mpPayment.id) : null,
-      external_reference: String(order.id),
-      valor: total, moeda: 'BRL', metodo: paymentMethod,
       status: normalizedStatus, status_detail: mpData.status_detail || mpPayment.status_detail || null,
       ambiente_teste: mpData.live_mode === false || mpData.live_mode === undefined,
       resposta_resumida: {
         id: mpData.id, status: mpData.status, status_detail: mpData.status_detail,
         payment_id: mpPayment.id, payment_status: mpPayment.status, pix: pixInfo,
       },
-      idempotency_key: idempotencyKey, criado_por: userId,
-    });
+    }).eq('id', pagamento.id);
 
     // Cartão aprovado sincronamente no modo automático: já reflete no pedido
     // sem esperar o webhook (ele confirma de novo, é idempotente).
