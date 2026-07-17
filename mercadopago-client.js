@@ -82,7 +82,13 @@ window.MPClient = (function () {
           if (error) return;
           var select = document.getElementById(elementIds.installments);
           if (!select) return;
-          var payerCosts = (Array.isArray(installments) && installments[0] && installments[0].payer_costs) || [];
+          // installmentsResponse é UM objeto { payer_costs: [...] }, não uma
+          // lista de objetos — confirmado na doc oficial do SDK
+          // (github.com/mercadopago/sdk-js/blob/main/docs/card-form.md).
+          // A versão anterior lia installments[0].payer_costs, que nunca
+          // existe porque `installments` não é array — por isso o select
+          // sempre caía no placeholder, mesmo com o callback OK.
+          var payerCosts = (installments && Array.isArray(installments.payer_costs)) ? installments.payer_costs : [];
           select.innerHTML = payerCosts.length
             ? payerCosts.map((pc) => '<option value="' + pc.installments + '">' + (pc.recommended_message || (pc.installments + 'x')) + '</option>').join('')
             : '<option value="">Parcelas</option>';

@@ -307,6 +307,22 @@ Deno.serve(async (req) => {
       },
     };
 
+    // Log de diagnóstico do que estamos mandando pro Mercado Pago — nunca
+    // inclui número de cartão/CVV (eles nem chegam até aqui, só o token de
+    // uso único do SDK), e mesmo o token é mascarado por precaução. Isso
+    // aparece nos logs da Edge Function no painel do Supabase e é o que
+    // permite auditar exatamente o payload de uma tentativa real sem expor
+    // dado sensível.
+    console.log('[mp-create-payment] enviando order ao Mercado Pago', JSON.stringify({
+      ...mpBody,
+      transactions: {
+        payments: mpBody.transactions.payments.map((p: any) => ({
+          ...p,
+          payment_method: { ...p.payment_method, token: p.payment_method.token ? '[presente]' : undefined },
+        })),
+      },
+    }));
+
     let mpRes: Response;
     try {
       mpRes = await fetchWithTimeout(`${MP_API_BASE}/v1/orders`, {
@@ -327,7 +343,10 @@ Deno.serve(async (req) => {
     const mpData = await mpRes.json().catch(() => ({}));
 
     if (!mpRes.ok) {
-      console.error('[mp-create-payment] Mercado Pago recusou a requisição', mpRes.status, JSON.stringify(mpData).slice(0, 500));
+      // Log completo (não truncado) da resposta de erro — é exatamente o
+      // "status HTTP, código de erro, mensagem, detalhes, causa da
+      // rejeição" que uma auditoria de pagamento recusado precisa ver.
+      console.error('[mp-create-payment] Mercado Pago recusou a requisição', mpRes.status, JSON.stringify(mpData));
       await admin.from('pagamentos').update({
         status: 'recusado', status_detail: mpData?.message || 'request_error',
       }).eq('id', pagamento.id);
