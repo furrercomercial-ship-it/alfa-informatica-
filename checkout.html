@@ -289,8 +289,8 @@ function renderAll(){
       '<div class="contact-row"><span>CPF</span><span>' + maskCPF(user.cpf) + '</span></div>'
       : '<p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;">Você não está logado. <a href="auth.html" style="color:var(--primary);">Entre na sua conta</a> ou preencha os dados abaixo — exigidos pelo Mercado Pago pra processar o pagamento.</p>' +
         '<div class="two-col">' +
-          '<div class="field"><label>E-mail</label><input type="email" id="guestEmail" placeholder="voce@email.com" value="' + state.guestEmail + '" onblur="state.guestEmail=this.value;renderAll();"></div>' +
-          '<div class="field"><label>CPF</label><input id="guestCpf" placeholder="000.000.000-00" maxlength="14" value="' + state.guestCpf + '" onblur="state.guestCpf=this.value;renderAll();"></div>' +
+          '<div class="field"><label>E-mail</label><input type="email" id="guestEmail" placeholder="voce@email.com" value="' + state.guestEmail + '" onblur="updateContactField(\'guestEmail\',this.value)"></div>' +
+          '<div class="field"><label>CPF</label><input id="guestCpf" placeholder="000.000.000-00" maxlength="14" value="' + state.guestCpf + '" onblur="updateContactField(\'guestCpf\',this.value)"></div>' +
         '</div>') +
     '</div>';
 
@@ -448,6 +448,15 @@ function renderAll(){
   }
 }
 
+// Se o formulário de cartão já estiver aberto, não chama renderAll() — teria
+// o mesmo problema de destruir o iframe do Mercado Pago no meio do preenchimento.
+// O valor digitado já fica salvo em state; só não atualiza o aviso de "faltando"
+// até o próximo re-render natural (trocar frete, endereço etc.).
+function updateContactField(field, value) {
+  state[field] = value;
+  if (state.payId !== 'credit_card') renderAll();
+}
+
 function selectAddress(id){ state.addressId = id; renderAll(); }
 
 function saveAddress(){
@@ -516,6 +525,21 @@ function showPaymentError(msg) {
   else alert(msg);
 }
 
+// Atualiza só o botão de pagar, sem chamar renderAll() — um re-render
+// completo destrói e tenta remontar o formulário de cartão do Mercado Pago
+// (ele é um iframe de verdade, não HTML comum, e não sobrevive a isso no
+// meio de uma tentativa de pagamento: os campos ficam em branco e param de
+// aceitar digitação). Fora do fluxo de pagamento, renderAll() continua
+// normal — isso só evita chamá-lo justamente nesses 3 pontos.
+function setSubmitProcessing(isProcessing) {
+  var btn = document.querySelector('.btn-submit');
+  if (!btn) return;
+  btn.disabled = isProcessing;
+  btn.innerHTML = isProcessing
+    ? '<span>Processando pagamento...</span>'
+    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span data-text="finalizar_pedido">Finalizar Pedido</span>';
+}
+
 async function finalize(){
   if (state.paying) return; // trava contra clique duplo / envio duplicado
 
@@ -548,7 +572,7 @@ async function finalize(){
     : ('idem-' + Date.now() + '-' + Math.random().toString(36).slice(2));
 
   state.paying = true;
-  renderAll();
+  setSubmitProcessing(true);
 
   var payload = {
     idempotency_key: checkoutIdempotencyKey,
@@ -577,14 +601,14 @@ async function finalize(){
 
   if (invokeErr || !data || data.ok === false) {
     state.paying = false;
-    renderAll();
+    setSubmitProcessing(false);
     showPaymentError((data && data.error) || 'Não foi possível conectar ao processador de pagamento. Tente novamente.');
     return; // nada foi cobrado de verdade — carrinho preservado, pode tentar de novo
   }
 
   if (data.status === 'recusado') {
     state.paying = false;
-    renderAll();
+    setSubmitProcessing(false);
     showPaymentError('Pagamento não aprovado' + (data.status_detail ? ' (' + data.status_detail + ')' : '') + '. Confira os dados e tente novamente, ou escolha outro método.');
     return; // pedido interno já existe com status "recusado" — não duplica se o cliente tentar de novo
   }
