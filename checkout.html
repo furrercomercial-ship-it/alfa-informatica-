@@ -457,7 +457,7 @@ function updateContactField(field, value) {
   if (state.payId !== 'credit_card') renderAll();
 }
 
-function selectAddress(id){ state.addressId = id; renderAll(); }
+function selectAddress(id){ if (state.addressId === id) return; state.addressId = id; renderAll(); }
 
 function saveAddress(){
   var cep = (document.getElementById('aCep').value||'').trim();
@@ -478,11 +478,18 @@ function saveAddress(){
 }
 
 function selectShip(id){
+  if (state.shipId === id) return; // clicar de novo na mesma opção não deve redesenhar nada
   state.shipId = id; renderAll();
   var ship = shipOpts.find(function(s){ return s.id === id; });
   if (window.AlfaEvents && ship) window.AlfaEvents.track('add_shipping_info', { shipping_tier: ship.name, value: ship.price });
 }
 function selectPay(id){
+  // Clicar de novo na opção já selecionada não pode remontar o formulário
+  // do Mercado Pago — ele não sobrevive a ser montado duas vezes (o SDK só
+  // devolve a instância antiga, mas os campos na tela já foram trocados
+  // por elementos novos que o Mercado Pago não está mais escutando).
+  if (state.payId === id) return;
+  mpCardFormCtl = null; // libera a montagem do cartão pra poder acontecer de novo se voltar pra cá depois
   state.payId = id; renderAll();
   var pay = payOpts.find(function(p){ return p.id === id; });
   if (window.AlfaEvents && pay) window.AlfaEvents.track('add_payment_info', { method: pay.label });
@@ -490,11 +497,15 @@ function selectPay(id){
 
 // Monta o formulário oficial de cartão do Mercado Pago (Secure Fields) — o
 // número/validade/CVV nunca passam pelo nosso JS, só pelos iframes deles.
-// Como renderAll() reconstrói o HTML inteiro a cada mudança de estado, isso
-// remonta o formulário sempre que a seção de pagamento volta a existir no
-// DOM (mesmo padrão "re-render tudo" já usado no resto desta página).
+// O SDK do Mercado Pago NÃO suporta ser montado duas vezes na mesma sessão
+// (na segunda vez ele só devolve a instância antiga, sem religar nos
+// campos novos que o renderAll() acabou de recriar na tela) — por isso,
+// mesmo com as travas em selectPay/selectShip/selectAddress evitando
+// re-render à toa, esta função também se recusa a montar de novo enquanto
+// já existir uma montagem ativa. mpCardFormCtl só volta a `null` quando o
+// método de pagamento muda de verdade (ver selectPay).
 function mountCardPaymentForm(amount) {
-  if (!window.MPClient) return;
+  if (!window.MPClient || mpCardFormCtl) return;
   var msgEl = document.getElementById('mpCardMsg');
   mpCardFormCtl = MPClient.mountCardForm({
     formId: 'mpCardForm',
