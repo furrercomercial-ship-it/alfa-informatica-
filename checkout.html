@@ -165,7 +165,36 @@ a{color:inherit;text-decoration:none;}
 <div id="site-header"></div>
 
 <div class="layout" id="mainLayout">
-  <div id="formArea"></div>
+  <!-- Os 4 cards abaixo (contato/entrega/envio/pagamento) são filhos diretos
+       fixos de #formArea de propósito, com data-block em cada um — é a
+       mesma estrutura que window.AlfaBlocks (page-blocks.js) espera pra
+       reordenar/esconder essas seções conforme configurado em Aparência >
+       Blocos (checkout: contato, entrega, envio, pagamento). Só o
+       CONTEÚDO INTERNO de cada card é reescrito a cada render; os cards em
+       si nunca são recriados nem trocados de lugar fora do que o próprio
+       AlfaBlocks decidir. -->
+  <div id="formArea">
+    <div class="form-card ck-card" data-block="contato" id="contatoArea"></div>
+    <div class="form-card ck-card" data-block="entrega" id="entregaArea"></div>
+    <div class="form-card ck-card" data-block="envio" id="envioArea"></div>
+    <div class="form-card ck-card" data-block="pagamento" id="pagamentoCard">
+      <div id="pagamentoHead"></div>
+      <div id="pagamentoList"></div>
+      <!-- Nó fixo: criado (via mountCardPaymentForm) e populado UMA única
+           vez com os iframes do Mercado Pago, e nunca mais mexido depois —
+           nem innerHTML, nem reposicionado. Mover um iframe já montado no
+           DOM (mesmo pra recolocar no mesmo lugar) faz o navegador recarregar
+           ele do zero, apagando o que a Mercado Pago já tinha lido do
+           cartão — é exatamente esse o motivo de só alternar `display`
+           aqui, nunca appendChild/replaceWith. -->
+      <div id="mpCardFormSlot" style="display:none;"></div>
+      <div id="pagamentoPixMsg"></div>
+      <!-- Mensagem de erro/status do pagamento — único elemento pra
+           card e pix (nunca dois id="..." iguais ao mesmo tempo no DOM,
+           já que mpCardFormSlot agora fica sempre presente, só escondido). -->
+      <div class="mp-card-msg" id="mpPaymentMsg"></div>
+    </div>
+  </div>
   <div id="summaryArea"></div>
 </div>
 
@@ -277,19 +306,15 @@ async function applyCupom() {
 function removeCupom() { state.cupom = null; state.cupomErro = ''; renderAll(); }
 
 function renderAll(){
-  // Se o formulário de cartão do Mercado Pago já existir, tira ele de
-  // dentro do formArea ANTES de reescrever o innerHTML — senão essa
-  // reescrita destrói os iframes vivos que estão lá dentro. Fica
-  // "estacionado", escondido, direto no body, e só volta pro lugar certo
-  // no fim desta função (mountCardPaymentForm), se ainda for a vez dele.
-  var parkedCardForm = document.getElementById('mpCardFormPersistent');
-  if (parkedCardForm) { parkedCardForm.style.display = 'none'; document.body.appendChild(parkedCardForm); }
-
   var user = Store.getUser() || {};
   var addrs = Store.getAddresses();
   var ship = shipOpts.find(function(s){ return s.id === state.shipId; });
 
-  var contatoHtml = '<div class="form-card ck-card" data-block="contato">' +
+  // Sem o wrapper <div class="form-card ck-card" data-block="contato"> aqui
+  // — ele já existe fixo no HTML da página (#contatoArea); duplicar o
+  // data-block também num nó interno faria o AlfaBlocks (mais abaixo)
+  // achar dois elementos com o mesmo data-block e mexer no errado.
+  var contatoHtml =
     '<div class="ck-head-row"><div class="section-head" style="margin:0;"><div class="section-ico-badge"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><span data-text="checkout_contato">Contato</span></div><div class="ck-check">' + checkIco() + '</div></div>' +
     (user.email ?
       '<div class="contact-row"><span>Nome</span><span>' + (user.name||'—') + '</span></div>' +
@@ -299,8 +324,7 @@ function renderAll(){
         '<div class="two-col">' +
           '<div class="field"><label>E-mail</label><input type="email" id="guestEmail" placeholder="voce@email.com" value="' + state.guestEmail + '" onblur="updateContactField(\'guestEmail\',this.value)"></div>' +
           '<div class="field"><label>CPF</label><input id="guestCpf" placeholder="000.000.000-00" maxlength="14" value="' + state.guestCpf + '" onblur="updateContactField(\'guestCpf\',this.value)"></div>' +
-        '</div>') +
-    '</div>';
+        '</div>');
 
   var addrBody;
   if (state.addingAddress) {
@@ -327,9 +351,9 @@ function renderAll(){
         '</div>';
     }).join('') + '<button class="btn-link" onclick="state.addingAddress=true;renderAll();">+ Adicionar novo endereço</button>';
   }
-  var entregaHtml = '<div class="form-card ck-card" data-block="entrega">' +
+  var entregaHtml =
     '<div class="ck-head-row"><div class="section-head" style="margin:0;"><div class="section-ico-badge"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><span data-text="checkout_entrega">Entrega</span></div>' + (state.addressId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
-    addrBody + '</div>';
+    addrBody;
 
   var envioBody;
   if (!state.addressId) {
@@ -344,15 +368,15 @@ function renderAll(){
         '</div>';
     }).join('');
   }
-  var envioHtml = '<div class="form-card ck-card" data-block="envio">' +
+  var envioHtml =
     '<div class="ck-head-row"><div class="section-head' + (!state.addressId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.addressId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><span data-text="checkout_envio">Método de Envio</span></div>' + (state.shipId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
-    envioBody + '</div>';
+    envioBody;
 
-  var pagBody;
+  var pagListHtml;
   if (!state.shipId) {
-    pagBody = '<div class="ck-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Selecione um método de envio primeiro</span></div>';
+    pagListHtml = '<div class="ck-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Selecione um método de envio primeiro</span></div>';
   } else {
-    pagBody = '<div class="pay-list">' + payOpts.map(function(p){
+    pagListHtml = '<div class="pay-list">' + payOpts.map(function(p){
       var sel = p.id === state.payId;
       return '<div class="pay-opt' + (sel?' active':'') + '" onclick="selectPay(\'' + p.id + '\')">' +
         '<label>' +
@@ -362,22 +386,25 @@ function renderAll(){
           (p.badge ? '<span class="pay-badge" style="background:rgba(22,163,74,.12);color:var(--success);">' + p.badge + '</span>' : '') +
         '</label></div>';
     }).join('') + '</div>';
-
-    if (state.payId === 'credit_card') {
-      // Só um lugar reservado — o formulário de verdade (com os iframes do
-      // Mercado Pago dentro) é criado UMA vez só e só é reposicionado aqui,
-      // nunca recriado, senão o Mercado Pago perde a referência dos campos
-      // (ver mountCardPaymentForm).
-      pagBody += '<div id="mpCardFormAnchor"></div>';
-    } else if (state.payId === 'pix') {
-      pagBody += '<div class="mp-card-msg" id="mpCardMsg" style="font-size:12.5px;color:var(--text-secondary);margin-top:12px;">O QR Code do Pix aparece na próxima tela, depois de finalizar o pedido.</div>';
-    }
   }
-  var pagHtml = '<div class="form-card ck-card" data-block="pagamento">' +
-    '<div class="ck-head-row"><div class="section-head' + (!state.shipId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.shipId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><span data-text="checkout_pagamento">Pagamento</span></div>' + (state.payId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
-    pagBody + '</div>';
+  var pagHeadHtml = '<div class="ck-head-row"><div class="section-head' + (!state.shipId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.shipId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><span data-text="checkout_pagamento">Pagamento</span></div>' + (state.payId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>';
+  var pagPixMsgHtml = state.payId === 'pix'
+    ? '<div style="font-size:12.5px;color:var(--text-secondary);margin-top:12px;">O QR Code do Pix aparece na próxima tela, depois de finalizar o pedido.</div>'
+    : '';
 
-  document.getElementById('formArea').innerHTML = contatoHtml + entregaHtml + envioHtml + pagHtml;
+  // contato/entrega/envio nunca têm iframe nenhum dentro — inofensivo
+  // reescrever o innerHTML deles inteiro a cada render, como sempre foi.
+  document.getElementById('contatoArea').innerHTML = contatoHtml;
+  document.getElementById('entregaArea').innerHTML = entregaHtml;
+  document.getElementById('envioArea').innerHTML = envioHtml;
+  document.getElementById('pagamentoHead').innerHTML = pagHeadHtml;
+  document.getElementById('pagamentoList').innerHTML = pagListHtml;
+  document.getElementById('pagamentoPixMsg').innerHTML = pagPixMsgHtml;
+  // #mpCardFormSlot NUNCA leva innerHTML aqui — só troca de display. Ver
+  // mountCardPaymentForm(), chamado logo abaixo, pra entender por quê.
+  var cardSlot = document.getElementById('mpCardFormSlot');
+  if (cardSlot) cardSlot.style.display = state.payId === 'credit_card' ? '' : 'none';
+
   if (window.AlfaBlocks) AlfaBlocks.apply('checkout');
   if (window.AlfaTexts) AlfaTexts.apply();
 
@@ -434,18 +461,14 @@ function renderAll(){
   document.getElementById('summaryArea').innerHTML = summaryHtml;
   if (window.AlfaTexts) AlfaTexts.apply();
 
-  if (state.payId === 'credit_card' && document.getElementById('mpCardFormAnchor')) {
+  if (state.payId === 'credit_card') {
     mountCardPaymentForm(total);
   }
 }
 
-// Se o formulário de cartão já estiver aberto, não chama renderAll() — teria
-// o mesmo problema de destruir o iframe do Mercado Pago no meio do preenchimento.
-// O valor digitado já fica salvo em state; só não atualiza o aviso de "faltando"
-// até o próximo re-render natural (trocar frete, endereço etc.).
 function updateContactField(field, value) {
   state[field] = value;
-  if (state.payId !== 'credit_card') renderAll();
+  renderAll();
 }
 
 function selectAddress(id){ if (state.addressId === id) return; state.addressId = id; renderAll(); }
@@ -475,15 +498,7 @@ function selectShip(id){
   if (window.AlfaEvents && ship) window.AlfaEvents.track('add_shipping_info', { shipping_tier: ship.name, value: ship.price });
 }
 function selectPay(id){
-  // Clicar de novo na opção já selecionada não pode remontar o formulário
-  // do Mercado Pago — ele não sobrevive a ser montado duas vezes (o SDK só
-  // devolve a instância antiga, mas os campos na tela já foram trocados
-  // por elementos novos que o Mercado Pago não está mais escutando).
-  if (state.payId === id) return;
-  // Não zera mpCardFormCtl aqui: se a pessoa trocar de método e voltar pra
-  // "Cartão de crédito" depois, o mesmo formulário (com o que ela já tinha
-  // digitado) é reaproveitado — nunca recriado — então a referência dele
-  // precisa continuar valendo a viagem inteira.
+  if (state.payId === id) return; // clicar de novo na mesma opção não redesenha nada à toa
   state.payId = id; renderAll();
   var pay = payOpts.find(function(p){ return p.id === id; });
   if (window.AlfaEvents && pay) window.AlfaEvents.track('add_payment_info', { method: pay.label });
@@ -491,32 +506,27 @@ function selectPay(id){
 
 // Monta o formulário oficial de cartão do Mercado Pago (Secure Fields) — o
 // número/validade/CVV nunca passam pelo nosso JS, só pelos iframes deles.
-// O SDK do Mercado Pago NÃO suporta ser montado duas vezes na mesma sessão
-// (na segunda vez ele só devolve a instância antiga, sem religar nos
-// campos novos que o renderAll() acabou de recriar na tela) — por isso,
-// mesmo com as travas em selectPay/selectShip/selectAddress evitando
-// re-render à toa, esta função também se recusa a montar de novo enquanto
-// já existir uma montagem ativa. mpCardFormCtl só volta a `null` quando o
-// método de pagamento muda de verdade (ver selectPay).
-// O formulário de cartão (com os iframes do Mercado Pago dentro) é criado
-// UMA única vez por visita à página e só é REPOSICIONADO nos redesenhos
-// seguintes (via replaceWith, que move o nó existente sem destruí-lo) —
-// nunca recriado. renderAll() roda de novo por qualquer motivo (endereço,
-// cupom, termos, frete...), e se o formulário fosse reconstruído do zero a
-// cada vez, o Mercado Pago perderia a referência dos campos (o SDK não
-// suporta ser montado duas vezes na mesma sessão).
+// #mpCardFormSlot é um nó FIXO que já existe no HTML da página (não é
+// gerado por template string) — populamos o innerHTML dele com o
+// formulário e montamos o SDK aqui SÓ NA PRIMEIRA VEZ (guardado em
+// mpCardFormCtl, que também serve de trava contra remontagem). Depois
+// disso a função não faz mais nada além do que renderAll() já cuida
+// (mostrar/esconder via display).
+//
+// Por quê tão rígido: mover um iframe já montado no DOM — mesmo só pra
+// reposicionar, com replaceWith/appendChild, sem trocar o src — faz o
+// navegador recarregar aquele iframe do zero (é assim que a spec de
+// iframe funciona: sair e voltar ao documento = nova navegação), apagando
+// tudo que a Mercado Pago já tinha lido do cartão. Foi exatamente esse
+// "reposicionar com cuidado" de uma versão anterior deste arquivo que
+// causava o cartão sumir ao marcar os termos — a correção de verdade é
+// nunca mais tocar nesse nó depois de montado, nem pra "ajudar".
 function mountCardPaymentForm(amount) {
   if (!window.MPClient) return;
-  var anchor = document.getElementById('mpCardFormAnchor');
-  if (!anchor) return;
+  var slot = document.getElementById('mpCardFormSlot');
+  if (!slot || mpCardFormCtl) return; // já montado — não faz nada de novo
 
-  var persistent = document.getElementById('mpCardFormPersistent');
-  if (persistent) { persistent.style.display = ''; anchor.replaceWith(persistent); return; }
-
-  persistent = document.createElement('div');
-  persistent.className = 'mp-card-form';
-  persistent.id = 'mpCardFormPersistent';
-  persistent.innerHTML =
+  slot.innerHTML =
     '<form id="mpCardForm">' +
       '<div class="two-col">' +
         '<div class="field"><label>Número do cartão</label><div id="mpCardNumber" class="mp-secure-field"></div></div>' +
@@ -535,12 +545,9 @@ function mountCardPaymentForm(amount) {
         '<div class="field"><label>Número do documento</label><input id="mpIdentificationNumber"></div>' +
       '</div>' +
       '<input type="hidden" id="mpCardholderEmail">' +
-    '</form>' +
-    '<div class="mp-card-msg" id="mpCardMsg"></div>';
+    '</form>';
 
-  anchor.replaceWith(persistent);
-
-  var msgEl = document.getElementById('mpCardMsg');
+  var msgEl = document.getElementById('mpPaymentMsg');
   mpCardFormCtl = MPClient.mountCardForm({
     formId: 'mpCardForm',
     cardNumber: 'mpCardNumber',
@@ -577,7 +584,7 @@ function mountCardPaymentForm(amount) {
 }
 
 function showPaymentError(msg) {
-  var box = document.getElementById('mpCardMsg');
+  var box = document.getElementById('mpPaymentMsg');
   if (box) { box.textContent = msg; box.className = 'mp-card-msg error'; }
   else alert(msg);
 }

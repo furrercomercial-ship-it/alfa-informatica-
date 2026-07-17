@@ -55,7 +55,7 @@ window.AlfaBlocks = (function () {
     });
     var anchor = found[byDomOrder[byDomOrder.length - 1].block_key].nextSibling;
 
-    ordered.forEach(function (c) {
+    ordered.forEach(function (c, i) {
       var el = found[c.block_key];
       var hideByDevice = c.visibilidade === 'desktop' && device !== 'desktop'
         || c.visibilidade === 'celular' && device !== 'celular';
@@ -67,7 +67,17 @@ window.AlfaBlocks = (function () {
         var titleEl = el.querySelector('[data-block-title]');
         if (titleEl) titleEl.textContent = c.titulo_override;
       }
-      parent.insertBefore(el, anchor); // insertBefore em nó existente move — não duplica
+      // insertBefore em nó já conectado ao documento SEMPRE remove e
+      // reinsere por baixo dos panos, mesmo quando o destino já é onde o nó
+      // já está — pra a maioria dos elementos isso não importa, mas se
+      // algum bloco tiver um iframe vivo lá dentro (ex: formulário de
+      // cartão do Mercado Pago no checkout), isso reseta esse iframe do
+      // zero a cada chamada. Só mexe no DOM quando a posição realmente
+      // precisa mudar.
+      var target = (i + 1 < ordered.length) ? found[ordered[i + 1].block_key] : anchor;
+      if (el.parentNode !== parent || el.nextSibling !== target) {
+        parent.insertBefore(el, target);
+      }
     });
   }
 
