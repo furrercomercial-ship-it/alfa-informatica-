@@ -61,6 +61,13 @@ window.MPClient = (function () {
           setTimeout(() => { if (onReady) onReady(cardForm); }, 0);
         },
         onError: (error) => console.error('[MPClient] erro no formulário de cartão', error),
+        // Se isso nunca aparecer no console ao digitar o número do cartão,
+        // o problema está ANTES de tudo: o SDK não está nem detectando o
+        // que foi digitado no campo (então getIssuers()/getInstallments()
+        // nunca chegam a ser chamados — não é um bug de parsing, é a
+        // origem dos dois nunca disparar).
+        onBinChange: (bin) => console.log('[MPClient] onBinChange — bin detectado:', bin),
+        onValidityChange: (error, field) => console.log('[MPClient] onValidityChange', field, error),
         // O SDK NÃO preenche <select> sozinho — os campos de parcelas/banco
         // emissor são só onde ele lê o valor escolhido, quem desenha as
         // opções somos nós, a partir do que esses dois retornos avisam.
