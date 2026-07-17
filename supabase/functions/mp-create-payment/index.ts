@@ -147,7 +147,17 @@ Deno.serve(async (req) => {
     // confiado sem checagem de formato/tamanho antes de tocar o banco.
     if (!idempotencyKey || typeof idempotencyKey !== 'string' || idempotencyKey.length > 100) return fail(400, 'Requisição inválida.');
     if (!Array.isArray(items) || !items.length || items.length > 50) return fail(400, 'Carrinho inválido.');
-    if (items.some((i: any) => !Number.isInteger(i.product_id) || !Number.isInteger(i.qty) || i.qty < 1 || i.qty > 100)) {
+    // product_id/qty às vezes chegam como string (ex: produto.html manda
+    // `id: String(p.id)` no botão "Comprar agora") — Number.isInteger('42')
+    // é sempre false, então validar o tipo cru rejeitava carrinho válido.
+    // Normaliza pra número aqui, ANTES de validar e de tudo que usa
+    // productMap.get() mais abaixo (que precisa da mesma chave numérica que
+    // o Supabase devolve pra `products.id`).
+    const normalizedItems = items.map((i: any) => ({
+      product_id: Number(i && i.product_id),
+      qty: Number(i && i.qty),
+    }));
+    if (normalizedItems.some((i) => !Number.isInteger(i.product_id) || !Number.isInteger(i.qty) || i.qty < 1 || i.qty > 100)) {
       return fail(400, 'Carrinho inválido.');
     }
     if (!['pix', 'credit_card'].includes(paymentMethod)) return fail(400, 'Selecione uma forma de pagamento.');
@@ -202,7 +212,7 @@ Deno.serve(async (req) => {
 
     // ── recalcula tudo a partir do banco — nunca confia em preço/desconto/
     // frete/total vindos do frontend.
-    const productIds = items.map((i: any) => i.product_id).filter(Boolean);
+    const productIds = normalizedItems.map((i) => i.product_id).filter(Boolean);
     if (!productIds.length) return fail(400, 'Carrinho inválido.');
 
     const { data: products, error: prodErr } = await admin
@@ -213,9 +223,9 @@ Deno.serve(async (req) => {
     const productMap = new Map((products || []).map((p: any) => [p.id, p]));
     let subtotal = 0;
     const orderItemsPayload: any[] = [];
-    for (const item of items) {
+    for (const item of normalizedItems) {
       const p = productMap.get(item.product_id);
-      const qty = Number(item.qty) || 0;
+      const qty = item.qty;
       if (!p || !p.active) return fail(400, `Um dos produtos do carrinho não está mais disponível.`);
       if (qty < 1) return fail(400, 'Quantidade inválida.');
       if (p.stock < qty) return fail(409, `Estoque insuficiente para "${p.name}".`);
