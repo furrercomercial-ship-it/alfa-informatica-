@@ -218,7 +218,7 @@ a{color:inherit;text-decoration:none;}
 var WPP = 'https://wa.me/5565992655883';
 var items = [];
 
-var state = { addressId:null, addingAddress:false, shipId:null, payId:null, terms:false, cupom:null, cupomErro:'', cupomChecking:false, guestEmail:'', guestCpf:'', paying:false };
+var state = { addressId:null, addingAddress:false, shipId:null, payId:null, terms:false, cupom:null, cupomErro:'', cupomChecking:false, guestName:'', guestEmail:'', guestCpf:'', paying:false };
 
 var shipOpts = [
   {id:'economico', name:'Econômico',       price:18.90, days:'7–10 dias úteis'},
@@ -321,6 +321,7 @@ function renderAll(){
       '<div class="contact-row"><span>E-mail</span><span>' + user.email + '</span></div>' +
       '<div class="contact-row"><span>CPF</span><span>' + maskCPF(user.cpf) + '</span></div>'
       : '<p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;">Você não está logado. <a href="auth.html" style="color:var(--primary);">Entre na sua conta</a> ou preencha os dados abaixo — exigidos pelo Mercado Pago pra processar o pagamento.</p>' +
+        '<div class="field"><label>Nome completo</label><input id="guestName" placeholder="Seu nome" value="' + state.guestName + '" onblur="updateContactField(\'guestName\',this.value)"></div>' +
         '<div class="two-col">' +
           '<div class="field"><label>E-mail</label><input type="email" id="guestEmail" placeholder="voce@email.com" value="' + state.guestEmail + '" onblur="updateContactField(\'guestEmail\',this.value)"></div>' +
           '<div class="field"><label>CPF</label><input id="guestCpf" placeholder="000.000.000-00" maxlength="14" value="' + state.guestCpf + '" onblur="updateContactField(\'guestCpf\',this.value)"></div>' +
@@ -419,7 +420,7 @@ function renderAll(){
   if (!state.addressId) missing.push('Endereço de entrega');
   if (!state.shipId) missing.push('Método de entrega');
   if (!state.payId) missing.push('Método de pagamento');
-  if (!user.email && (!state.guestEmail || !state.guestCpf)) missing.push('E-mail e CPF (seção Contato)');
+  if (!user.email && (!state.guestName || !state.guestEmail || !state.guestCpf)) missing.push('Nome, e-mail e CPF (seção Contato)');
   if (!state.terms) missing.push('Aceitar os termos');
 
   var itemsHtml = items.map(function(i){
@@ -614,8 +615,9 @@ async function finalize(){
 
   var payerEmail = user.email || state.guestEmail;
   var payerCpf = (user.cpf || state.guestCpf || '').replace(/\D/g, '');
-  if (!payerEmail || payerCpf.length !== 11) {
-    alert('Preencha um e-mail e um CPF válido (11 números) na seção Contato antes de pagar — o Mercado Pago exige isso.');
+  var payerName = user.name || state.guestName || '';
+  if (!payerEmail || payerCpf.length !== 11 || !payerName) {
+    alert('Preencha nome, e-mail e um CPF válido (11 números) na seção Contato antes de pagar — o Mercado Pago exige isso.');
     return;
   }
 
@@ -677,8 +679,8 @@ async function finalize(){
     payment_method: state.payId,
     payer: {
       email: payerEmail,
-      first_name: (user.name || '').split(' ')[0] || payerEmail,
-      last_name: (user.name || '').split(' ').slice(1).join(' ') || '',
+      first_name: payerName.split(' ')[0],
+      last_name: payerName.split(' ').slice(1).join(' ') || '-',
       cpf: payerCpf,
     },
   };
