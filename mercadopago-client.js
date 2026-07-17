@@ -51,7 +51,14 @@ window.MPClient = (function () {
       callbacks: {
         onFormMounted: (error) => {
           if (error) { console.error('[MPClient] erro ao montar o formulário de cartão', error); return; }
-          if (onReady) onReady(cardForm);
+          // onFormMounted é chamado pelo SDK de forma síncrona, ainda por
+          // dentro desta própria chamada a client.cardForm(...) — nesse
+          // instante a atribuição "const cardForm = ..." logo abaixo ainda
+          // não terminou, então usar `cardForm` aqui direto dá
+          // "Cannot access 'cardForm' before initialization" e quebra o
+          // formulário silenciosamente. setTimeout(0) adia a leitura pro
+          // próximo tick, quando cardForm já está garantidamente atribuído.
+          setTimeout(() => { if (onReady) onReady(cardForm); }, 0);
         },
         onError: (error) => console.error('[MPClient] erro no formulário de cartão', error),
       },
