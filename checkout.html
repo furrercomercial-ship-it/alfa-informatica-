@@ -621,13 +621,28 @@ async function finalize(){
 
   var cardData = null;
   if (state.payId === 'credit_card') {
-    cardData = MPClient.getCardFormData(mpCardFormCtl);
-    // Diagnóstico do que o SDK do Mercado Pago devolveu de verdade, sem
-    // nunca logar o token inteiro (é de uso único, mas mascarado por
-    // precaução) — dá pra comparar isso com o log
-    // "[mp-create-payment] payload recebido do frontend" no painel do
-    // Supabase e ver se o valor muda no caminho até o backend.
-    console.log('[Checkout] cardData obtido do SDK', cardData ? {
+    // Trava o botão já aqui — gerar o token é uma chamada de rede ao
+    // Mercado Pago, então também pode levar um instante.
+    state.paying = true;
+    setSubmitProcessing(true);
+
+    // getCardFormData() só LÊ o que já foi tokenizado — quem gera o token de
+    // verdade é createCardToken()/requestCardToken(), de forma assíncrona.
+    // Chamar getCardFormData() sozinho (como era antes) sempre devolvia
+    // token vazio, porque o token nunca tinha sido gerado.
+    var tokenResult = await MPClient.requestCardToken(mpCardFormCtl);
+    var formData = MPClient.getCardFormData(mpCardFormCtl);
+    cardData = (tokenResult && tokenResult.token) ? {
+      token: tokenResult.token,
+      installments: formData ? formData.installments : null,
+      paymentMethodId: formData ? formData.paymentMethodId : null,
+      issuerId: formData ? formData.issuerId : null,
+    } : null;
+
+    // Diagnóstico sem nunca logar o token inteiro (mascarado por precaução)
+    // — dá pra comparar com o log "[mp-create-payment] payload recebido do
+    // frontend" no painel do Supabase e ver se o valor muda no caminho.
+    console.log('[Checkout] cardData após requestCardToken', cardData ? {
       token_presente: !!cardData.token,
       token_tamanho: cardData.token ? cardData.token.length : 0,
       token_preview: cardData.token ? (cardData.token.slice(0, 4) + '...' + cardData.token.slice(-4)) : null,
@@ -636,6 +651,8 @@ async function finalize(){
       issuerId: cardData.issuerId,
     } : null);
     if (!cardData || !cardData.token) {
+      state.paying = false;
+      setSubmitProcessing(false);
       showPaymentError('Confira os dados do cartão — algum campo está incompleto ou inválido.');
       return;
     }

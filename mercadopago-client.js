@@ -33,6 +33,16 @@ window.MPClient = (function () {
     const client = init();
     if (!client) return null;
 
+    // getCardFormData() só LÊ o que já foi gerado — quem gera o token de
+    // verdade é createCardToken(), que devolve o resultado de forma
+    // assíncrona via onCardTokenReceived (confirmado na doc oficial do SDK,
+    // github.com/mercadopago/sdk-js/blob/main/docs/card-form.md — são dois
+    // métodos/callbacks separados). Sem chamar createCardToken(), o token
+    // nunca existe, então getCardFormData().token fica sempre vazio — era
+    // exatamente esse o motivo do "confira os dados do cartão" aparecer
+    // mesmo com todos os campos preenchidos e válidos.
+    let pendingTokenResolvers = [];
+
     const cardForm = client.cardForm({
       amount: String(amount),
       iframe: true,
@@ -114,10 +124,34 @@ window.MPClient = (function () {
         // aparecer no console, o SDK visualmente montou mas não terminou de
         // inicializar de verdade.
         onReady: () => { console.log('[MPClient] onReady — cardForm 100% inicializado (iframes prontos)'); },
+        onCardTokenReceived: (error, data) => {
+          console.log('[MPClient] onCardTokenReceived', error, data ? { token_presente: !!data.token } : null);
+          var resolvers = pendingTokenResolvers;
+          pendingTokenResolvers = [];
+          resolvers.forEach(function (resolve) { resolve(error ? null : data); });
+        },
       },
     });
 
+    // Pendura o pedido de token nessa mesma instância — chamar
+    // requestCardToken(cardForm) é o único jeito confiável de garantir que
+    // existe um token antes de ler getCardFormData().
+    cardForm.__requestToken = function () {
+      return new Promise(function (resolve) {
+        pendingTokenResolvers.push(resolve);
+        cardForm.createCardToken();
+      });
+    };
+
     return cardForm;
+  }
+
+  // Gera (ou renova) o token do cartão de forma assíncrona e só então
+  // resolve — chamar isso ANTES de getCardFormData() no momento de
+  // finalizar a compra, nunca ler o token direto sem passar por aqui.
+  function requestCardToken(cardForm) {
+    if (!cardForm || typeof cardForm.__requestToken !== 'function') return Promise.resolve(null);
+    return cardForm.__requestToken();
   }
 
   // Lê os dados já tokenizados do formulário (chamar só depois de
@@ -139,5 +173,5 @@ window.MPClient = (function () {
     }
   }
 
-  return { init, mountCardForm, getCardFormData };
+  return { init, mountCardForm, getCardFormData, requestCardToken };
 })();
