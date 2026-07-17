@@ -101,6 +101,12 @@ window.MPClient = (function () {
           var list = Array.isArray(types) ? types : [];
           select.innerHTML = list.map((t) => '<option value="' + t.id + '">' + (t.name || t.id) + '</option>').join('');
         },
+        // Segundo a doc oficial, onReady só dispara depois que TODOS os
+        // iframes (número/validade/CVV) estão prontos de verdade — mais
+        // tarde que onFormMounted. Log só pra diagnóstico: se isso nunca
+        // aparecer no console, o SDK visualmente montou mas não terminou de
+        // inicializar de verdade.
+        onReady: () => { console.log('[MPClient] onReady — cardForm 100% inicializado (iframes prontos)'); },
       },
     });
 

@@ -615,6 +615,19 @@ async function finalize(){
   var cardData = null;
   if (state.payId === 'credit_card') {
     cardData = MPClient.getCardFormData(mpCardFormCtl);
+    // Diagnóstico do que o SDK do Mercado Pago devolveu de verdade, sem
+    // nunca logar o token inteiro (é de uso único, mas mascarado por
+    // precaução) — dá pra comparar isso com o log
+    // "[mp-create-payment] payload recebido do frontend" no painel do
+    // Supabase e ver se o valor muda no caminho até o backend.
+    console.log('[Checkout] cardData obtido do SDK', cardData ? {
+      token_presente: !!cardData.token,
+      token_tamanho: cardData.token ? cardData.token.length : 0,
+      token_preview: cardData.token ? (cardData.token.slice(0, 4) + '...' + cardData.token.slice(-4)) : null,
+      installments: cardData.installments,
+      paymentMethodId: cardData.paymentMethodId,
+      issuerId: cardData.issuerId,
+    } : null);
     if (!cardData || !cardData.token) {
       showPaymentError('Confira os dados do cartão — algum campo está incompleto ou inválido.');
       return;
@@ -659,7 +672,12 @@ async function finalize(){
   if (invokeErr || !data || data.ok === false) {
     state.paying = false;
     setSubmitProcessing(false);
-    showPaymentError((data && data.error) || 'Não foi possível conectar ao processador de pagamento. Tente novamente.');
+    // Mostra a causa REAL devolvida pelo Mercado Pago (via mp-create-payment)
+    // quando existir — é o texto que diz exatamente o motivo técnico da
+    // recusa (ex: invalid_card_token), em vez de só uma mensagem genérica.
+    console.error('[Checkout] mp-create-payment recusou', data);
+    var detalhe = data && (data.mp_message || (data.mp_cause && JSON.stringify(data.mp_cause)) || data.mp_error);
+    showPaymentError(((data && data.error) || 'Não foi possível conectar ao processador de pagamento. Tente novamente.') + (detalhe ? ' [' + detalhe + ']' : ''));
     return; // nada foi cobrado de verdade — carrinho preservado, pode tentar de novo
   }
 

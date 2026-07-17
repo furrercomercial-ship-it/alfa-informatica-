@@ -165,6 +165,25 @@ Deno.serve(async (req) => {
       return fail(400, 'Cupom inválido.');
     }
 
+    // Log de diagnóstico do payload CRU recebido — compara com o que o
+    // console do navegador mostrou ter sido enviado (ver checkout.html,
+    // log "[Checkout] cardData obtido do SDK"). Se installments/payment_
+    // method_id chegarem null/undefined aqui mas o navegador mostrou valor,
+    // o problema é na serialização/transporte, não no SDK nem no backend.
+    console.log('[mp-create-payment] payload recebido do frontend', JSON.stringify({
+      payment_method: paymentMethod,
+      shipping_method_id: shippingMethodId,
+      coupon_code: couponCode || null,
+      items_count: Array.isArray(items) ? items.length : 0,
+      payer_email_presente: !!(payer && payer.email),
+      card: card ? {
+        token_presente: !!card.token,
+        token_tamanho: card.token ? String(card.token).length : 0,
+        installments: card.installments,
+        payment_method_id: card.payment_method_id,
+      } : null,
+    }));
+
     // ── idempotência: se essa idempotency_key já foi processada (duplo
     // clique, retry de rede), devolve o resultado que já existe em vez de
     // criar um pedido/pagamento novo.
@@ -350,7 +369,19 @@ Deno.serve(async (req) => {
       await admin.from('pagamentos').update({
         status: 'recusado', status_detail: mpData?.message || 'request_error',
       }).eq('id', pagamento.id);
-      return fail(400, 'Pagamento não pôde ser processado. Verifique os dados e tente novamente.');
+      // Devolve o erro REAL do Mercado Pago no corpo da resposta (visível na
+      // aba Rede do navegador, sem precisar abrir o painel do Supabase) —
+      // não é dado sensível, é só a razão da recusa (ex: invalid_card_token,
+      // invalid_installments), o mesmo texto que a própria Mercado Pago
+      // documenta como causa de erro.
+      return new Response(JSON.stringify({
+        ok: false,
+        error: 'Pagamento não pôde ser processado. Verifique os dados e tente novamente.',
+        mp_status: mpRes.status,
+        mp_error: mpData?.error ?? null,
+        mp_message: mpData?.message ?? null,
+        mp_cause: mpData?.cause ?? null,
+      }), { status: 400, headers: corsHeaders() });
     }
 
     const mpPayment = mpData?.transactions?.payments?.[0] || {};
