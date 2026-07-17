@@ -61,6 +61,40 @@ window.MPClient = (function () {
           setTimeout(() => { if (onReady) onReady(cardForm); }, 0);
         },
         onError: (error) => console.error('[MPClient] erro no formulário de cartão', error),
+        // O SDK NÃO preenche <select> sozinho — os campos de parcelas/banco
+        // emissor são só onde ele lê o valor escolhido, quem desenha as
+        // opções somos nós, a partir do que esses dois retornos avisam.
+        // Faz log do formato bruto de propósito: se o formato vier
+        // diferente do que a doc descreve, dá pra ver exatamente o que
+        // ajustar sem precisar adivinhar de novo.
+        onIssuersReceived: (error, issuers) => {
+          console.log('[MPClient] onIssuersReceived', error, issuers);
+          if (error) return;
+          var select = document.getElementById(elementIds.issuer);
+          if (!select) return;
+          var list = Array.isArray(issuers) ? issuers : [];
+          select.innerHTML = list.length
+            ? list.map((i) => '<option value="' + i.id + '">' + i.name + '</option>').join('')
+            : '<option value="">Banco emissor</option>';
+        },
+        onInstallmentsReceived: (error, installments) => {
+          console.log('[MPClient] onInstallmentsReceived', error, installments);
+          if (error) return;
+          var select = document.getElementById(elementIds.installments);
+          if (!select) return;
+          var payerCosts = (Array.isArray(installments) && installments[0] && installments[0].payer_costs) || [];
+          select.innerHTML = payerCosts.length
+            ? payerCosts.map((pc) => '<option value="' + pc.installments + '">' + (pc.recommended_message || (pc.installments + 'x')) + '</option>').join('')
+            : '<option value="">Parcelas</option>';
+        },
+        onIdentificationTypesReceived: (error, types) => {
+          console.log('[MPClient] onIdentificationTypesReceived', error, types);
+          if (error) return;
+          var select = document.getElementById(elementIds.identificationType);
+          if (!select || select.options.length) return; // já populado, não sobrescreve
+          var list = Array.isArray(types) ? types : [];
+          select.innerHTML = list.map((t) => '<option value="' + t.id + '">' + (t.name || t.id) + '</option>').join('');
+        },
       },
     });
 
