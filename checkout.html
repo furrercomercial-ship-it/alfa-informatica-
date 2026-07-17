@@ -370,7 +370,7 @@ function renderAll(){
             '<div class="field"><label>Parcelas</label><select id="mpInstallments"></select></div>' +
             '<div class="field"><label>Banco emissor</label><select id="mpIssuer"></select></div>' +
           '</div>' +
-          '<div class="two-col" style="display:none;">' +
+          '<div class="two-col">' +
             '<div class="field"><label>Tipo de documento</label><select id="mpIdentificationType"></select></div>' +
             '<div class="field"><label>Número do documento</label><input id="mpIdentificationNumber"></div>' +
           '</div>' +
@@ -512,10 +512,22 @@ function mountCardPaymentForm(amount) {
     var user = Store.getUser() || {};
     var email = user.email || state.guestEmail || '';
     var cpf = (user.cpf || state.guestCpf || '').replace(/\D/g, '');
-    var emailField = document.getElementById('mpCardholderEmail');
-    if (emailField) emailField.value = email;
-    var idNumberField = document.getElementById('mpIdentificationNumber');
-    if (idNumberField && !idNumberField.value) idNumberField.value = cpf;
+
+    // Só setar `.value` direto não avisa o SDK do Mercado Pago (ele escuta
+    // eventos input/change pra recalcular parcelas/emissor) — por isso
+    // dispara os dois eventos depois de preencher, senão o formulário fica
+    // com CPF preenchido mas o Mercado Pago nunca "percebe" isso acontecer.
+    function setAndNotify(id, value) {
+      var el = document.getElementById(id);
+      if (!el || !value || el.value === value) return;
+      el.value = value;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    setAndNotify('mpCardholderEmail', email);
+    setAndNotify('mpIdentificationType', 'CPF');
+    setAndNotify('mpIdentificationNumber', cpf);
   });
 }
 
