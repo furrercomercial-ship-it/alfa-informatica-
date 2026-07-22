@@ -13,6 +13,7 @@
 //   supabase link --project-ref ybkgevyahpkkxhiexejy
 //   supabase functions deploy mp-create-payment --no-verify-jwt
 //   supabase secrets set MP_ACCESS_TOKEN=<seu Access Token DE TESTE, em Suas integrações > Credenciais>
+//   supabase secrets set MP_TEST_BUYER_EMAIL=<e-mail da Conta de teste tipo Comprador, en Suas integrações > Contas de teste>
 //
 // O Access Token NUNCA deve ser colado em nenhum arquivo do projeto — só no
 // comando `supabase secrets set`, que o guarda de forma segura no servidor.
@@ -32,6 +33,16 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const MP_ACCESS_TOKEN = Deno.env.get('MP_ACCESS_TOKEN')!;
 const MP_API_BASE = 'https://api.mercadopago.com';
+// Ambiente de TESTE: a conta por trás do MP_ACCESS_TOKEN é um usuário de
+// teste vendedor — a Mercado Pago exige que o comprador TAMBÉM seja uma
+// conta de teste válida (e-mail @testuser.com de uma "Conta de teste" tipo
+// Comprador, criada em Suas integrações > Contas de teste), nunca um e-mail
+// real de cliente. Enquanto essa variável estiver configurada, ela
+// substitui o e-mail do formulário só na chamada pro Mercado Pago (o e-mail
+// real do cliente continua salvo normalmente em orders/pagamentos, pra não
+// perder o dado) — configurar com:
+//   supabase secrets set MP_TEST_BUYER_EMAIL=test_user_XXXXXXXXX@testuser.com
+const MP_TEST_BUYER_EMAIL = Deno.env.get('MP_TEST_BUYER_EMAIL') || '';
 
 // Mesmas 3 opções que já existem em checkout.html — precisam viver aqui
 // também porque o frontend só pode mandar o ID escolhido, nunca o preço.
@@ -300,6 +311,10 @@ Deno.serve(async (req) => {
 
     // ── monta a Order do Mercado Pago
     const [firstName, ...restName] = String(payer.first_name || payer.email).split(' ');
+    const mpPayerEmail = MP_TEST_BUYER_EMAIL || payer.email;
+    if (MP_TEST_BUYER_EMAIL) {
+      console.log('[mp-create-payment] usando MP_TEST_BUYER_EMAIL (conta de comprador de teste) no lugar do e-mail do formulário — ambiente de teste');
+    }
     const mpBody: any = {
       type: 'online',
       processing_mode: 'automatic',
@@ -307,7 +322,7 @@ Deno.serve(async (req) => {
       total_amount: total.toFixed(2),
       description: `Pedido ${orderNumber} — Alfa Informática`,
       payer: {
-        email: payer.email,
+        email: mpPayerEmail,
         first_name: firstName || payer.email,
         last_name: payer.last_name || restName.join(' ') || '-',
         identification: { type: 'CPF', number: String(payer.cpf).replace(/\D/g, '') },
@@ -352,9 +367,12 @@ Deno.serve(async (req) => {
       },
     }));
 
+    const mpUrl = `${MP_API_BASE}/v1/orders`;
+    console.log('[mp-create-payment] chamando', mpUrl);
+
     let mpRes: Response;
     try {
-      mpRes = await fetchWithTimeout(`${MP_API_BASE}/v1/orders`, {
+      mpRes = await fetchWithTimeout(mpUrl, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${MP_ACCESS_TOKEN}`,
@@ -363,8 +381,8 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify(mpBody),
       });
-    } catch (e) {
-      console.error('[mp-create-payment] falha de conexão com o Mercado Pago', String(e));
+    } catch (e: any) {
+      console.error('[mp-create-payment] falha de conexão com o Mercado Pago', mpUrl, String(e), e?.stack || null);
       await admin.from('pagamentos').update({ status: 'recusado', status_detail: 'connection_error' }).eq('id', pagamento.id);
       return fail(502, 'Não foi possível conectar ao Mercado Pago. Tente novamente em instantes.');
     }
@@ -372,25 +390,28 @@ Deno.serve(async (req) => {
     const mpData = await mpRes.json().catch(() => ({}));
 
     if (!mpRes.ok) {
-      // Log completo (não truncado) da resposta de erro — é exatamente o
-      // "status HTTP, código de erro, mensagem, detalhes, causa da
-      // rejeição" que uma auditoria de pagamento recusado precisa ver.
-      console.error('[mp-create-payment] Mercado Pago recusou a requisição', mpRes.status, JSON.stringify(mpData));
+      // Formato real de erro da Mercado Pago é {"errors":[{"code":...,
+      // "message":...}]} — NUNCA {error, message, cause} soltos no nível
+      // raiz (essa suposição anterior fazia mp_error/mp_message/mp_cause
+      // ficarem sempre null, mesmo com a Mercado Pago respondendo um motivo
+      // de verdade). mp_errors e mp_body abaixo carregam a resposta CRUA,
+      // sem nenhum campo escolhido a dedo — nunca descartamos o que veio.
+      const mpErrorsList = Array.isArray(mpData?.errors) ? mpData.errors : null;
+      const mpFirstMessage = mpErrorsList && mpErrorsList[0] ? (mpErrorsList[0].message || mpErrorsList[0].code) : null;
+      console.error('[mp-create-payment] Mercado Pago recusou a requisição', mpUrl, mpRes.status, JSON.stringify(mpData));
       await admin.from('pagamentos').update({
-        status: 'recusado', status_detail: mpData?.message || 'request_error',
+        status: 'recusado', status_detail: mpFirstMessage || 'request_error',
       }).eq('id', pagamento.id);
-      // Devolve o erro REAL do Mercado Pago no corpo da resposta (visível na
-      // aba Rede do navegador, sem precisar abrir o painel do Supabase) —
-      // não é dado sensível, é só a razão da recusa (ex: invalid_card_token,
-      // invalid_installments), o mesmo texto que a própria Mercado Pago
-      // documenta como causa de erro.
+      // Devolve o erro REAL e COMPLETO do Mercado Pago (visível na aba Rede
+      // do navegador, sem precisar abrir o painel do Supabase) — não é dado
+      // sensível, é só a razão técnica da recusa.
       return new Response(JSON.stringify({
         ok: false,
         error: 'Pagamento não pôde ser processado. Verifique os dados e tente novamente.',
         mp_status: mpRes.status,
-        mp_error: mpData?.error ?? null,
-        mp_message: mpData?.message ?? null,
-        mp_cause: mpData?.cause ?? null,
+        mp_message: mpFirstMessage,
+        mp_errors: mpErrorsList,
+        mp_body: mpData,
       }), { status: 400, headers: corsHeaders() });
     }
 
@@ -431,8 +452,8 @@ Deno.serve(async (req) => {
       ok: true, order_number: orderNumber, status: normalizedStatus,
       status_detail: mpData.status_detail || null, pix: pixInfo,
     }), { headers: corsHeaders() });
-  } catch (e) {
-    console.error('[mp-create-payment] erro inesperado', String(e));
+  } catch (e: any) {
+    console.error('[mp-create-payment] erro inesperado', String(e), e?.stack || null);
     return fail(500, 'Não foi possível processar o pagamento. Tente novamente.');
   }
 });

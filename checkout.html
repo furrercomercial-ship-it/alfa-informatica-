@@ -699,10 +699,11 @@ async function finalize(){
     state.paying = false;
     setSubmitProcessing(false);
     // Mostra a causa REAL devolvida pelo Mercado Pago (via mp-create-payment)
-    // quando existir — é o texto que diz exatamente o motivo técnico da
-    // recusa (ex: invalid_card_token), em vez de só uma mensagem genérica.
-    console.error('[Checkout] mp-create-payment recusou', data);
-    var detalhe = data && (data.mp_message || (data.mp_cause && JSON.stringify(data.mp_cause)) || data.mp_error);
+    // quando existir — nunca só a mensagem genérica. O corpo completo (mp_body)
+    // também fica logado no console pra inspeção, sem precisar abrir o painel
+    // do Supabase pra ver o que a Mercado Pago respondeu de verdade.
+    console.error('[Checkout] mp-create-payment recusou — resposta completa:', data);
+    var detalhe = data && data.mp_message;
     showPaymentError(((data && data.error) || 'Não foi possível conectar ao processador de pagamento. Tente novamente.') + (detalhe ? ' [' + detalhe + ']' : ''));
     return; // nada foi cobrado de verdade — carrinho preservado, pode tentar de novo
   }
