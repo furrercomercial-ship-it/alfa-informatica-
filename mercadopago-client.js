@@ -6,7 +6,7 @@
 
    Requer que <script src="https://sdk.mercadopago.com/js/v2"></script> seja
    carregado ANTES deste arquivo (mesma ordem que supabase-js -> supabase-client.js). */
-window.MERCADO_PAGO_PUBLIC_KEY = 'APP_USR-e6c119ce-9267-47e8-b2b3-74f9e0f72549';
+window.MERCADO_PAGO_PUBLIC_KEY = 'APP_USR-eee4fc10-9e1d-4cc1-976e-5a0363e1024b';
 
 window.MPClient = (function () {
   let mp = null;
