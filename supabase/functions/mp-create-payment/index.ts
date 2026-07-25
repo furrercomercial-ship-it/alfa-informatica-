@@ -426,14 +426,16 @@ Deno.serve(async (req) => {
       console.log('[mp-create-payment] resposta completa da Order de Pix', JSON.stringify(mpData));
     }
 
-    // Pix: QR code costuma vir dentro do pagamento — guarda o que existir,
-    // sem quebrar se a Order vier num formato um pouco diferente.
+    // Pix: confirmado numa Order real (log acima) que o QR code vem dentro
+    // de transactions.payments[0].payment_method — não em
+    // point_of_interoperation.transaction_data como a doc de outras APIs da
+    // Mercado Pago sugeria. ticket_url é um link hospedado pela própria
+    // Mercado Pago com o mesmo Pix, útil como alternativa ao QR/copia-e-cola.
     const pixInfo = paymentMethod === 'pix'
       ? {
-          qr_code: mpPayment?.point_of_interaction?.transaction_data?.qr_code
-            || mpData?.point_of_interaction?.transaction_data?.qr_code || null,
-          qr_code_base64: mpPayment?.point_of_interaction?.transaction_data?.qr_code_base64
-            || mpData?.point_of_interaction?.transaction_data?.qr_code_base64 || null,
+          qr_code: mpPayment?.payment_method?.qr_code || null,
+          qr_code_base64: mpPayment?.payment_method?.qr_code_base64 || null,
+          ticket_url: mpPayment?.payment_method?.ticket_url || null,
         }
       : null;
 
