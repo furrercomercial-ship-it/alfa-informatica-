@@ -418,6 +418,14 @@ Deno.serve(async (req) => {
     const mpPayment = mpData?.transactions?.payments?.[0] || {};
     const normalizedStatus = mapMpStatus(mpData.status, mpData.status_detail || mpPayment.status_detail);
 
+    // Log da resposta de sucesso COMPLETA só pra Pix — nunca tínhamos visto
+    // uma Order de Pix aprovada/pendente de verdade até agora, então o
+    // caminho abaixo pra achar o QR code era um chute educado. Sem dado
+    // sensível aqui (Pix não tem token de cartão nem CVV).
+    if (paymentMethod === 'pix') {
+      console.log('[mp-create-payment] resposta completa da Order de Pix', JSON.stringify(mpData));
+    }
+
     // Pix: QR code costuma vir dentro do pagamento — guarda o que existir,
     // sem quebrar se a Order vier num formato um pouco diferente.
     const pixInfo = paymentMethod === 'pix'
