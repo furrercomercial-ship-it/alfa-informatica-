@@ -13,6 +13,7 @@
    produto e a seção de avaliações). */
 window.AlfaBlocks = (function () {
   var cache = {}; // page_key -> [{block_key, ordem, visivel, visibilidade}]
+  var queue = {}; // page_key -> Promise da última apply() em andamento
 
   function currentDevice() {
     var ua = navigator.userAgent || '';
@@ -29,7 +30,21 @@ window.AlfaBlocks = (function () {
     return cache[pageKey];
   }
 
-  async function apply(pageKey) {
+  // Páginas como o checkout chamam apply() várias vezes seguidas (a cada
+  // renderAll(), inclusive em onblur de campo) sem esperar a chamada
+  // anterior terminar. Como applyNow() é assíncrona e recalcula a posição
+  // dos blocos a partir do DOM atual, duas chamadas sobrepostas liam o DOM
+  // no meio uma da outra e produziam uma ordem final inconsistente (blocos
+  // trocando de lugar sozinhos). Por isso apply() só enfileira: cada
+  // chamada espera a anterior terminar antes de ler o DOM e reordenar.
+  function apply(pageKey) {
+    var prev = queue[pageKey] || Promise.resolve();
+    var next = prev.then(function () { return applyNow(pageKey); }).catch(function (e) { console.error('page-blocks', e); });
+    queue[pageKey] = next;
+    return next;
+  }
+
+  async function applyNow(pageKey) {
     var config = await loadConfig(pageKey);
     if (!config.length) return;
     var device = currentDevice();
@@ -55,7 +70,20 @@ window.AlfaBlocks = (function () {
     });
     var anchor = found[byDomOrder[byDomOrder.length - 1].block_key].nextSibling;
 
-    ordered.forEach(function (c, i) {
+    // Percorre de TRÁS pra FRENTE, usando sempre o elemento já processado
+    // (ou a âncora, pro último) como referência do insertBefore. Andar pra
+    // FRENTE (elemento i usando o elemento i+1 como referência) parece
+    // equivalente mas não é: no momento em que i é processado, i+1 ainda
+    // não foi movido pra sua posição final, então usá-lo como referência
+    // podia deslocar elementos já corretos (ex: "Entrega" acabava sendo
+    // empurrado pra depois de "Pagamento" só porque a config tinha um
+    // empate de "ordem" entre dois blocos mais adiante na lista). De trás
+    // pra frente, a referência de cada passo já está garantidamente na
+    // posição final, então o resultado é sempre determinístico e correto
+    // numa única passada — nunca depende da ordem anterior do DOM.
+    var ref = anchor;
+    for (var i = ordered.length - 1; i >= 0; i--) {
+      var c = ordered[i];
       var el = found[c.block_key];
       var hideByDevice = c.visibilidade === 'desktop' && device !== 'desktop'
         || c.visibilidade === 'celular' && device !== 'celular';
@@ -74,11 +102,11 @@ window.AlfaBlocks = (function () {
       // cartão do Mercado Pago no checkout), isso reseta esse iframe do
       // zero a cada chamada. Só mexe no DOM quando a posição realmente
       // precisa mudar.
-      var target = (i + 1 < ordered.length) ? found[ordered[i + 1].block_key] : anchor;
-      if (el.parentNode !== parent || el.nextSibling !== target) {
-        parent.insertBefore(el, target);
+      if (el.parentNode !== parent || el.nextSibling !== ref) {
+        parent.insertBefore(el, ref);
       }
-    });
+      ref = el;
+    }
   }
 
   return { apply: apply };

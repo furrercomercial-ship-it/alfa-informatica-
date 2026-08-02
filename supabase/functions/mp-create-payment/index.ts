@@ -52,7 +52,7 @@ const SHIPPING_OPTIONS: Record<string, { name: string; price: number }> = {
   retirada: { name: 'Retirada na loja', price: 0 },
 };
 
-const PIX_DISCOUNT_RATE = 0.05; // mesma regra de negócio já existente no checkout hoje
+const DEFAULT_PIX_DISCOUNT_PERCENT = 5; // fallback pra produto sem o campo preenchido
 
 // Como a função roda sem verificação de JWT do Supabase (precisa aceitar
 // visitante sem login), estas duas defesas substituem o que o Supabase
@@ -227,12 +227,13 @@ Deno.serve(async (req) => {
     if (!productIds.length) return fail(400, 'Carrinho inválido.');
 
     const { data: products, error: prodErr } = await admin
-      .from('products').select('id,name,price,stock,active,images,cost_price')
+      .from('products').select('id,name,price,stock,active,images,cost_price,pix_discount_percent')
       .in('id', productIds);
     if (prodErr) return fail(500, 'Não foi possível validar os produtos. Tente novamente.');
 
     const productMap = new Map((products || []).map((p: any) => [p.id, p]));
     let subtotal = 0;
+    let pixDiscountTotal = 0;
     const orderItemsPayload: any[] = [];
     for (const item of normalizedItems) {
       const p = productMap.get(item.product_id);
@@ -242,6 +243,8 @@ Deno.serve(async (req) => {
       if (p.stock < qty) return fail(409, `Estoque insuficiente para "${p.name}".`);
       const lineTotal = Number(p.price) * qty;
       subtotal += lineTotal;
+      const pixPercent = p.pix_discount_percent != null ? Number(p.pix_discount_percent) : DEFAULT_PIX_DISCOUNT_PERCENT;
+      pixDiscountTotal += lineTotal * (pixPercent / 100);
       orderItemsPayload.push({
         product_id: p.id, product_name_snapshot: p.name,
         product_image_snapshot: p.images && p.images[0] ? p.images[0] : null,
@@ -270,8 +273,8 @@ Deno.serve(async (req) => {
     if (!shipping) return fail(400, 'Selecione uma forma de envio.');
     const freight = shipping.price;
 
-    // desconto de Pix (mesma regra já existente no checkout)
-    if (paymentMethod === 'pix') discount += subtotal * PIX_DISCOUNT_RATE;
+    // desconto de Pix — soma do % configurado por produto (padrão do admin)
+    if (paymentMethod === 'pix') discount += pixDiscountTotal;
 
     const total = Math.max(0, subtotal - discount + freight);
     if (total <= 0) return fail(400, 'Valor do pedido inválido.');
@@ -353,12 +356,19 @@ Deno.serve(async (req) => {
 
     // Log de diagnóstico do que estamos mandando pro Mercado Pago — nunca
     // inclui número de cartão/CVV (eles nem chegam até aqui, só o token de
-    // uso único do SDK), e mesmo o token é mascarado por precaução. Isso
-    // aparece nos logs da Edge Function no painel do Supabase e é o que
+    // uso único do SDK, mascarado por precaução) e também não inclui CPF/
+    // e-mail/nome do cliente em texto puro (são dados pessoais — LGPD; os
+    // logs da Edge Function ficam guardados no painel do Supabase). Isso
     // permite auditar exatamente o payload de uma tentativa real sem expor
     // dado sensível.
     console.log('[mp-create-payment] enviando order ao Mercado Pago', JSON.stringify({
       ...mpBody,
+      payer: {
+        email: '[presente]',
+        first_name: '[presente]',
+        last_name: '[presente]',
+        identification: { type: mpBody.payer.identification.type, number: '[presente]' },
+      },
       transactions: {
         payments: mpBody.transactions.payments.map((p: any) => ({
           ...p,
@@ -420,10 +430,15 @@ Deno.serve(async (req) => {
 
     // Log da resposta de sucesso COMPLETA só pra Pix — nunca tínhamos visto
     // uma Order de Pix aprovada/pendente de verdade até agora, então o
-    // caminho abaixo pra achar o QR code era um chute educado. Sem dado
-    // sensível aqui (Pix não tem token de cartão nem CVV).
+    // caminho abaixo pra achar o QR code era um chute educado. Sem token de
+    // cartão/CVV aqui (Pix não tem), mas a Mercado Pago ecoa de volta o
+    // payer (CPF/e-mail/nome) — mascarado abaixo pelo mesmo motivo do log
+    // de envio acima (dado pessoal não vai pra log em texto puro).
     if (paymentMethod === 'pix') {
-      console.log('[mp-create-payment] resposta completa da Order de Pix', JSON.stringify(mpData));
+      console.log('[mp-create-payment] resposta completa da Order de Pix', JSON.stringify({
+        ...mpData,
+        payer: mpData.payer ? { ...mpData.payer, email: '[presente]', first_name: '[presente]', last_name: '[presente]', identification: mpData.payer.identification ? { ...mpData.payer.identification, number: '[presente]' } : undefined } : undefined,
+      }));
     }
 
     // Pix: confirmado numa Order real (log acima) que o QR code vem dentro
