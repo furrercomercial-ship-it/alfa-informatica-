@@ -178,6 +178,7 @@ create table if not exists public.products (
   price               numeric(12,2) not null default 0,
   old_price           numeric(12,2),
   cost_price          numeric(12,2),
+  pix_discount_percent numeric(5,2) not null default 5,
   stock               int not null default 0,
   min_stock           int not null default 0,
   weight              numeric,
@@ -196,6 +197,7 @@ create table if not exists public.products (
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()
 );
+alter table public.products add column if not exists pix_discount_percent numeric(5,2) not null default 5;
 
 create or replace function public.set_updated_at()
 returns trigger language plpgsql as $$
@@ -310,9 +312,19 @@ create policy profiles_update_self on public.profiles for update
   using (id = auth.uid())
   with check (id = auth.uid() and role = (select role from public.profiles where id = auth.uid()));
 
+-- Quem só tem "clientes.editar" (ex: Suporte, Gerente) só pode editar linhas
+-- que já são de cliente, e não pode mudar o role pra sair de 'cliente' —
+-- só quem tem "equipe.gerenciar" pode tocar em contas de equipe / trocar cargos.
 drop policy if exists profiles_update_staff on public.profiles;
 create policy profiles_update_staff on public.profiles for update
-  using (public.has_permission('equipe.gerenciar') or public.has_permission('clientes.editar'));
+  using (
+    public.has_permission('equipe.gerenciar')
+    or (public.has_permission('clientes.editar') and role = 'cliente')
+  )
+  with check (
+    public.has_permission('equipe.gerenciar')
+    or (public.has_permission('clientes.editar') and role = 'cliente')
+  );
 
 -- permissions / role_permissions (leitura p/ staff, escrita só quem gerencia equipe)
 drop policy if exists permissions_select on public.permissions;
