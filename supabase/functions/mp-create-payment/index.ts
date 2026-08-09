@@ -250,6 +250,13 @@ Deno.serve(async (req) => {
       if (!p || !p.active) return fail(400, `Um dos produtos do carrinho não está mais disponível.`);
       if (qty < 1) return fail(400, 'Quantidade inválida.');
       if (p.stock < qty) return fail(409, `Estoque insuficiente para "${p.name}".`);
+      // Sem peso/dimensão cadastrada não dá pra calcular o frete direito —
+      // bloqueia a venda até o cadastro ser completado (mesma checagem que
+      // já trava o botão de comprar em produto.html/alfa-replica.html, mas
+      // aqui é a que realmente impede a compra, não só a tela).
+      if (!p.weight || !p.comprimento_cm || !p.largura_cm || !p.altura_cm) {
+        return fail(400, `"${p.name}" está com o cadastro incompleto (peso/dimensões) e não pode ser vendido ainda.`);
+      }
       const lineTotal = Number(p.price) * qty;
       subtotal += lineTotal;
       const pixPercent = p.pix_discount_percent != null ? Number(p.pix_discount_percent) : DEFAULT_PIX_DISCOUNT_PERCENT;

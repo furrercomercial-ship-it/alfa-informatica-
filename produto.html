@@ -353,6 +353,7 @@ function renderProduct(p) {
   const disc       = p.old ? Math.round((p.old - p.price) / p.old * 100) : 0;
   const stockOk    = p.stock > 0;
   const stockTxt   = p.stock > 10 ? 'PRODUTO DISPONÍVEL' : p.stock > 0 ? `APENAS ${p.stock} EM ESTOQUE` : 'SEM ESTOQUE';
+  const podeComprar = stockOk && p.freteOk;
 
   // Images
   const NO_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#CFCFCF"/></svg>');
@@ -427,6 +428,7 @@ function renderProduct(p) {
           <span class="status-available" style="color:${stockOk?'var(--success)':'#D71920'}">${stockTxt}</span>
           <span class="status-sku">Sku: ALFA-${String(p.id).padStart(4,'0')}</span>
         </div>
+        ${!p.freteOk ? '<div style="font-size:12.5px;color:#D71920;margin-top:6px;">Produto temporariamente indisponível pra compra (cadastro incompleto). Já estamos resolvendo.</div>' : ''}
 
         <div class="brand-row">Marca: <strong>${p.brand}</strong></div>
 
@@ -456,7 +458,7 @@ function renderProduct(p) {
         </div>
 
         <!-- BUTTONS -->
-        <button class="btn-comprar" onclick="buyNow()" ${!stockOk?'disabled style="opacity:.4;cursor:not-allowed"':''}>
+        <button class="btn-comprar" onclick="buyNow()" ${!podeComprar?'disabled style="opacity:.4;cursor:not-allowed"':''}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg>
           <div class="btn-comprar-left">
             <span class="btn-comprar-main" data-text="comprar">Comprar</span>
@@ -464,7 +466,7 @@ function renderProduct(p) {
           </div>
         </button>
 
-        <button class="btn-add-cart" onclick="addCart()" ${!stockOk?'disabled style="opacity:.4;cursor:not-allowed"':''}>
+        <button class="btn-add-cart" onclick="addCart()" ${!podeComprar?'disabled style="opacity:.4;cursor:not-allowed"':''}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg>
           Adicionar ao carrinho
         </button>

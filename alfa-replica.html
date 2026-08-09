@@ -1140,7 +1140,7 @@ function showToast(msg, color) {
           '<div class="prod-pix">' + (Math.round(pixPct * 10) / 10) + '% de desconto no PIX</div>' +
           '<div class="prod-install"><span class="prod-inst-pix">R$ ' + fmtBRL(pixPrice) + '</span>Em até 12x de R$ ' + fmtBRL(inst) + '<br>Sem juros no cartão</div>' +
         '</div>' +
-        '<div class="prod-actions"><button class="prod-btn" data-text="comprar">Comprar</button><button class="prod-cart" aria-label="Carrinho"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>' +
+        '<div class="prod-actions"><button class="prod-btn" data-text="comprar"' + (p.freteOk ? '' : ' disabled style="opacity:.5;cursor:not-allowed;"') + '>' + (p.freteOk ? 'Comprar' : 'Indisponível') + '</button><button class="prod-cart" aria-label="Carrinho"' + (p.freteOk ? '' : ' disabled style="opacity:.5;cursor:not-allowed;"') + '><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/></svg></button></div>' +
       '</div>'
     );
   }
@@ -1166,6 +1166,7 @@ function showToast(msg, color) {
     if (cartBtn) {
       cartBtn.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (!p.freteOk) return;
         Store.addToCart(p);
         showToast('Adicionado ao carrinho!');
       });
@@ -1173,6 +1174,7 @@ function showToast(msg, color) {
     var buyBtn = cardEl.querySelector('.prod-btn');
     if (buyBtn) {
       buyBtn.addEventListener('click', function () {
+        if (!p.freteOk) return;
         Store.addToCart(p);
         Store.setCheckoutItems([Object.assign({}, p, { qty: 1, selected: true })]);
         location.href = 'checkout.html';

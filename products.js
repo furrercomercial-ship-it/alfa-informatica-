@@ -9,7 +9,7 @@ window.PRODUCTS_DB = [];
 (async function loadProducts() {
   const { data, error } = await window.sb
     .from('products')
-    .select('id,name,brand,price,old_price,pix_discount_percent,stock,rating,reviews_count,images,description,specs,featured,best_seller,is_new,nivel,subcategories(slug)')
+    .select('id,name,brand,price,old_price,pix_discount_percent,stock,rating,reviews_count,images,description,specs,featured,best_seller,is_new,nivel,weight,comprimento_cm,largura_cm,altura_cm,subcategories(slug)')
     .eq('active', true)
     .order('id', { ascending: true });
 
@@ -30,6 +30,14 @@ window.PRODUCTS_DB = [];
     bestSeller: !!row.best_seller,
     isNew: !!row.is_new,
     nivel: row.nivel || null,
+    weight: row.weight != null ? Number(row.weight) : null,
+    comprimentoCm: row.comprimento_cm != null ? Number(row.comprimento_cm) : null,
+    larguraCm: row.largura_cm != null ? Number(row.largura_cm) : null,
+    alturaCm: row.altura_cm != null ? Number(row.altura_cm) : null,
+    // Sem peso/dimensão cadastrada, o frete não pode ser calculado direito
+    // — bloqueado pra compra até alguém completar o cadastro (ver
+    // admin-produtos.html, que já exige isso pra produto novo/editado).
+    freteOk: !!(row.weight && row.comprimento_cm && row.largura_cm && row.altura_cm),
     cat: row.subcategories ? row.subcategories.slug : null,
     stock: row.stock,
     rating: Number(row.rating),
