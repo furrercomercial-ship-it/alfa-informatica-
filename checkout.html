@@ -218,13 +218,62 @@ a{color:inherit;text-decoration:none;}
 var WPP = 'https://wa.me/5565992655883';
 var items = [];
 
-var state = { addressId:null, addingAddress:false, shipId:null, payId:null, terms:false, cupom:null, cupomErro:'', cupomChecking:false, guestName:'', guestEmail:'', guestCpf:'', paying:false };
+var state = { addressId:null, addingAddress:false, shipId:null, payId:null, terms:false, cupom:null, cupomErro:'', cupomChecking:false, guestName:'', guestEmail:'', guestCpf:'', paying:false, shipOpts:[], shipLoading:false, shipError:'', shipWhatsapp:false };
 
-var shipOpts = [
-  {id:'economico', name:'Econômico',       price:18.90, days:'7–10 dias úteis'},
-  {id:'expresso',  name:'Expresso',        price:34.90, days:'3–5 dias úteis'},
-  {id:'retirada',  name:'Retirada na loja',price:0,     days:'Disponível a partir de 1h'}
-];
+// Opção fixa, sempre disponível — nunca é calculada pelos Correios.
+var RETIRADA_OPT = {id:'retirada', name:'Retirada na loja', price:0, days:'Disponível a partir de 1h'};
+var ENTREGA_LOCAL_OPT = {id:'entrega_local', name:'Entrega local (Alfa)', price:0, days:'Entregamos pessoalmente'};
+// Cidades onde a própria Alfa faz a entrega — nunca passam pelos Correios.
+// Lista com e sem acento pra não depender de normalização Unicode (o
+// endereço pode vir digitado à mão, sem acento, ou preenchido pela API dos
+// Correios, com acento).
+var CIDADES_ENTREGA_LOCAL = ['cuiaba', 'cuiabá', 'varzea grande', 'várzea grande'];
+var ENTREGA_LOCAL_VALOR_MINIMO_GRATIS = 200;
+
+function normalizarCidade(s){
+  return (s || '').toLowerCase().trim();
+}
+
+// Consulta o frete real (Correios) pro CEP do endereço selecionado, EXCETO
+// pra Cuiabá/Várzea Grande — aí a entrega é feita pela própria Alfa, nunca
+// pelos Correios (ver ENTREGA_LOCAL_OPT abaixo). Chamada depois de escolher/
+// salvar endereço — ver init(), saveAddress() e selectAddress().
+async function refreshShipping(){
+  var addrs = Store.getAddresses();
+  var addr = addrs.find(function(a){ return a.id === state.addressId; });
+  if (!addr) { state.shipOpts = []; return; }
+
+  state.shipWhatsapp = false;
+  if (CIDADES_ENTREGA_LOCAL.indexOf(normalizarCidade(addr.cid)) !== -1) {
+    var subtotalLocal = items.reduce(function(s,i){ return s + i.price*i.qty; }, 0);
+    if (subtotalLocal >= ENTREGA_LOCAL_VALOR_MINIMO_GRATIS) {
+      state.shipOpts = [ENTREGA_LOCAL_OPT, RETIRADA_OPT];
+    } else {
+      // Abaixo do mínimo o frete varia por bairro — não dá pra automatizar,
+      // o cliente combina direto no WhatsApp. Retirada continua disponível.
+      state.shipWhatsapp = true;
+      state.shipOpts = [RETIRADA_OPT];
+    }
+    renderAll();
+    return;
+  }
+
+  state.shipLoading = true; state.shipError = ''; renderAll();
+  try {
+    var resp = await window.sb.functions.invoke('correios-frete', { body: { cep_destino: addr.cep } });
+    var opcoes = (resp.data && resp.data.ok) ? resp.data.opcoes : [];
+    if (!opcoes.length) throw new Error('sem opções');
+    state.shipOpts = opcoes.map(function(o){
+      return { id:o.codigo, name:o.nome, price:o.valor, days: o.prazoDias ? (o.prazoDias+' dias úteis') : '—' };
+    }).concat([RETIRADA_OPT]);
+  } catch (e) {
+    state.shipError = 'Não foi possível calcular o frete agora.';
+    state.shipOpts = [];
+  }
+  state.shipLoading = false;
+  if (state.shipId && !state.shipOpts.some(function(s){ return s.id === state.shipId; })) state.shipId = null;
+  renderAll();
+}
 
 // Só os 2 métodos que realmente funcionam de verdade via Mercado Pago
 // (Checkout Transparente / API de Orders, ambiente de TESTE). Os outros 3
@@ -263,6 +312,7 @@ function init() {
   var addrs0 = Store.getAddresses();
   if (addrs0.length && !state.addressId) state.addressId = addrs0[0].id;
   renderAll();
+  if (state.addressId) refreshShipping();
   if (window.AlfaEvents) {
     window.AlfaEvents.track('begin_checkout', {
       value: items.reduce(function(s,i){ return s + i.price*i.qty; }, 0),
@@ -308,7 +358,11 @@ function removeCupom() { state.cupom = null; state.cupomErro = ''; renderAll(); 
 function renderAll(){
   var user = Store.getUser() || {};
   var addrs = Store.getAddresses();
-  var ship = shipOpts.find(function(s){ return s.id === state.shipId; });
+  var ship = state.shipOpts.find(function(s){ return s.id === state.shipId; });
+
+  var subtotal = items.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
+  var pixDiscountPct = subtotal ? items.reduce(function(s,i){ return s + i.price * i.qty * (i.pixDiscountPercent != null ? i.pixDiscountPercent : 5); }, 0) / subtotal : 5;
+  var pixDiscount = state.payId === 'pix' ? subtotal * (pixDiscountPct / 100) : 0;
 
   // Sem o wrapper <div class="form-card ck-card" data-block="contato"> aqui
   // — ele já existe fixo no HTML da página (#contatoArea); duplicar o
@@ -330,7 +384,8 @@ function renderAll(){
   var addrBody;
   if (state.addingAddress) {
     addrBody =
-      '<div class="two-col"><div class="field"><label>CEP</label><input id="aCep" placeholder="00000-000" maxlength="9"></div><div class="field"><label>Cidade</label><input id="aCidade" placeholder="Cuiabá"></div></div>' +
+      '<div class="two-col"><div class="field"><label>CEP</label><input id="aCep" placeholder="00000-000" maxlength="9" onblur="onCepBlur()"></div><div class="field"><label>Cidade</label><input id="aCidade" placeholder="Cuiabá"></div></div>' +
+      '<div id="aCepMsg" style="font-size:12px;color:var(--text-secondary);margin:-6px 0 6px;"></div>' +
       '<div class="two-col"><div class="field"><label>Rua</label><input id="aRua" placeholder="Rua das Palmeiras"></div><div class="field"><label>Número</label><input id="aNumero" placeholder="123"></div></div>' +
       '<div class="two-col"><div class="field"><label>Complemento</label><input id="aCompl" placeholder="Apto, bloco... (opcional)"></div><div class="field"><label>Bairro</label><input id="aBairro" placeholder="Centro"></div></div>' +
       '<div class="two-col"><div class="field"><label>Estado</label><select id="aUf"><option value="">UF</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option selected>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div><div class="field"><label>Nome do destinatário</label><input id="aDest" placeholder="Quem vai receber"></div></div>' +
@@ -359,15 +414,25 @@ function renderAll(){
   var envioBody;
   if (!state.addressId) {
     envioBody = '<div class="ck-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Selecione um endereço primeiro</span></div>';
+  } else if (state.shipLoading) {
+    envioBody = '<div class="ck-locked"><span>Calculando frete...</span></div>';
+  } else if (state.shipError) {
+    envioBody = '<div class="ck-locked"><span>' + state.shipError + ' <a href="#" onclick="event.preventDefault();refreshShipping();">Tentar novamente</a></span></div>';
   } else {
-    envioBody = shipOpts.map(function(s){
-      var sel = s.id === state.shipId;
-      return '<div class="ship-opt' + (sel?' sel':'') + '" onclick="selectShip(\'' + s.id + '\')">' +
-        '<div class="ck-radio"></div>' +
-        '<div class="ship-info"><div class="ship-name">' + s.name + '</div><div class="ship-days">' + s.days + '</div></div>' +
-        '<div class="ship-price">' + (s.price ? fmt(s.price) : 'Grátis') + '</div>' +
-        '</div>';
-    }).join('');
+    envioBody =
+      (state.shipWhatsapp
+        ? '<div class="ck-alert" style="margin-bottom:10px;"><div class="ck-alert-h">Entrega em Cuiabá/Várzea Grande abaixo de ' + fmt(ENTREGA_LOCAL_VALOR_MINIMO_GRATIS) + '</div>' +
+          '<p style="margin:4px 0 8px;font-size:12.5px;">O frete pra essa região varia por bairro — fala com a gente no WhatsApp pra combinar o valor, ou escolhe "Retirada na loja" abaixo.</p>' +
+          '<a href="' + WPP + '" target="_blank" class="btn-secondary" style="display:inline-block;text-decoration:none;padding:8px 14px;">Falar no WhatsApp</a></div>'
+        : '') +
+      state.shipOpts.map(function(s){
+        var sel = s.id === state.shipId;
+        return '<div class="ship-opt' + (sel?' sel':'') + '" onclick="selectShip(\'' + s.id + '\')">' +
+          '<div class="ck-radio"></div>' +
+          '<div class="ship-info"><div class="ship-name">' + s.name + '</div><div class="ship-days">' + s.days + '</div></div>' +
+          '<div class="ship-price">' + (s.price ? fmt(s.price) : 'Grátis') + '</div>' +
+          '</div>';
+      }).join('');
   }
   var envioHtml =
     '<div class="ck-head-row"><div class="section-head' + (!state.addressId?' faded':'') + '" style="margin:0;"><div class="section-ico-badge' + (!state.addressId?' faded':'') + '"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><span data-text="checkout_envio">Método de Envio</span></div>' + (state.shipId?'<div class="ck-check">'+checkIco()+'</div>':'') + '</div>' +
@@ -377,14 +442,17 @@ function renderAll(){
   if (!state.shipId) {
     pagListHtml = '<div class="ck-locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Selecione um método de envio primeiro</span></div>';
   } else {
+    var pixPctLabel = (Math.round(pixDiscountPct * 10) / 10) + '%';
     pagListHtml = '<div class="pay-list">' + payOpts.map(function(p){
       var sel = p.id === state.payId;
+      var desc = p.id === 'pix' ? ('Aprovação imediata — ' + pixPctLabel + ' de desconto') : p.desc;
+      var badge = p.id === 'pix' ? (pixPctLabel + ' OFF') : p.badge;
       return '<div class="pay-opt' + (sel?' active':'') + '" onclick="selectPay(\'' + p.id + '\')">' +
         '<label>' +
           '<div class="ck-radio" style="border-radius:50%;"></div>' +
           '<div class="pay-icon" style="background:rgba(0,102,255,.08);color:var(--primary);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">' + p.icon + '</svg></div>' +
-          '<div class="pay-txt"><div class="pay-name">' + p.label + '</div><div class="pay-desc">' + p.desc + '</div></div>' +
-          (p.badge ? '<span class="pay-badge" style="background:rgba(22,163,74,.12);color:var(--success);">' + p.badge + '</span>' : '') +
+          '<div class="pay-txt"><div class="pay-name">' + p.label + '</div><div class="pay-desc">' + desc + '</div></div>' +
+          (badge ? '<span class="pay-badge" style="background:rgba(22,163,74,.12);color:var(--success);">' + badge + '</span>' : '') +
         '</label></div>';
     }).join('') + '</div>';
   }
@@ -409,8 +477,6 @@ function renderAll(){
   if (window.AlfaBlocks) AlfaBlocks.apply('checkout');
   if (window.AlfaTexts) AlfaTexts.apply();
 
-  var subtotal = items.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
-  var pixDiscount = state.payId === 'pix' ? subtotal * .05 : 0;
   var cupomDiscount = cupomDiscountValue(state.cupom, subtotal);
   var discount = pixDiscount + cupomDiscount;
   var freight = ship ? ship.price : 0;
@@ -446,7 +512,7 @@ function renderAll(){
   var summaryHtml = '<div class="summary"><div class="sum-head" data-text="checkout_resumo_pedido">Resumo do pedido</div><div class="sum-items">' + itemsHtml + '</div>' +
     cupomHtml +
     '<div class="sum-row"><span>Subtotal (' + items.length + ' item' + (items.length>1?'s':'') + ')</span><span>' + fmt(subtotal) + '</span></div>' +
-    (pixDiscount ? '<div class="sum-row"><span>Desconto Pix (5%)</span><span style="color:var(--success);">− ' + fmt(pixDiscount) + '</span></div>' : '') +
+    (pixDiscount ? '<div class="sum-row"><span>Desconto Pix</span><span style="color:var(--success);">− ' + fmt(pixDiscount) + '</span></div>' : '') +
     (cupomDiscount ? '<div class="sum-row"><span>Cupom ' + state.cupom.codigo + '</span><span style="color:var(--success);">− ' + fmt(cupomDiscount) + '</span></div>' : '') +
     '<div class="sum-row"><span>Frete</span><span>' + (state.shipId ? (freight?fmt(freight):'Grátis') : 'A calcular') + '</span></div>' +
     '<div class="sum-total"><span class="lbl">Total</span><span class="val">' + fmt(total) + '</span></div>' +
@@ -472,7 +538,32 @@ function updateContactField(field, value) {
   renderAll();
 }
 
-function selectAddress(id){ if (state.addressId === id) return; state.addressId = id; renderAll(); }
+function selectAddress(id){ if (state.addressId === id) return; state.addressId = id; state.shipId = null; renderAll(); refreshShipping(); }
+
+// Auto-completa cidade/UF/bairro/rua a partir do CEP digitado, assim que o
+// campo perde o foco. Só preenche o que o cliente ainda não digitou (não
+// sobrescreve o que ele já tiver editado à mão).
+async function onCepBlur(){
+  var cepInput = document.getElementById('aCep');
+  var msg = document.getElementById('aCepMsg');
+  var cep = (cepInput.value||'').replace(/\D/g,'');
+  if (cep.length !== 8) { if (msg) msg.textContent = ''; return; }
+  if (msg) msg.textContent = 'Buscando endereço...';
+  try {
+    var resp = await window.sb.functions.invoke('correios-cep', { body: { cep: cep } });
+    var endereco = (resp.data && resp.data.ok) ? resp.data.endereco : null;
+    if (!endereco) { if (msg) msg.textContent = 'CEP não encontrado — preencha manualmente.'; return; }
+    var cidadeEl = document.getElementById('aCidade'), ruaEl = document.getElementById('aRua'),
+        bairroEl = document.getElementById('aBairro'), ufEl = document.getElementById('aUf');
+    if (cidadeEl && !cidadeEl.value) cidadeEl.value = endereco.cidade;
+    if (ruaEl && !ruaEl.value) ruaEl.value = endereco.logradouro;
+    if (bairroEl && !bairroEl.value) bairroEl.value = endereco.bairro;
+    if (ufEl && endereco.uf) ufEl.value = endereco.uf;
+    if (msg) msg.textContent = '';
+  } catch (e) {
+    if (msg) msg.textContent = '';
+  }
+}
 
 function saveAddress(){
   var cep = (document.getElementById('aCep').value||'').trim();
@@ -489,13 +580,15 @@ function saveAddress(){
   var addrs2 = Store.getAddresses();
   state.addressId = addrs2[addrs2.length-1].id;
   state.addingAddress = false;
+  state.shipId = null;
   renderAll();
+  refreshShipping();
 }
 
 function selectShip(id){
   if (state.shipId === id) return; // clicar de novo na mesma opção não deve redesenhar nada
   state.shipId = id; renderAll();
-  var ship = shipOpts.find(function(s){ return s.id === id; });
+  var ship = state.shipOpts.find(function(s){ return s.id === id; });
   if (window.AlfaEvents && ship) window.AlfaEvents.track('add_shipping_info', { shipping_tier: ship.name, value: ship.price });
 }
 function selectPay(id){
@@ -610,7 +703,7 @@ async function finalize(){
 
   var addrs = Store.getAddresses();
   var addr = addrs.find(function(a){ return a.id === state.addressId; });
-  var ship = shipOpts.find(function(s){ return s.id === state.shipId; });
+  var ship = state.shipOpts.find(function(s){ return s.id === state.shipId; });
   var user = Store.getUser() || {};
 
   var payerEmail = user.email || state.guestEmail;

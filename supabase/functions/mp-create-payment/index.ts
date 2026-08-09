@@ -20,6 +20,10 @@
 // SUPABASE_SERVICE_ROLE_KEY NÃO precisa ser configurada manualmente — o
 // Supabase já injeta ela automaticamente em toda Edge Function hospedada.
 //
+// Também depende das secrets CORREIOS_* (ver ../_shared/correios.ts e
+// supabase/.env.example) — o frete agora é recalculado de verdade com os
+// Correios em vez de usar uma tabela de preço fixa.
+//
 // --no-verify-jwt é necessário porque o checkout aceita compra de visitante
 // sem login (a chave pública do projeto não é um JWT, então o Supabase
 // bloquearia até a chamada de visitante antes de chegar aqui). Como isso
@@ -28,6 +32,7 @@
 // à mão logo no início da função (ver RATE_LIMIT_* abaixo).
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { calcularFrete } from '../_shared/correios.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -44,13 +49,12 @@ const MP_API_BASE = 'https://api.mercadopago.com';
 //   supabase secrets set MP_TEST_BUYER_EMAIL=test_user_XXXXXXXXX@testuser.com
 const MP_TEST_BUYER_EMAIL = Deno.env.get('MP_TEST_BUYER_EMAIL') || '';
 
-// Mesmas 3 opções que já existem em checkout.html — precisam viver aqui
-// também porque o frontend só pode mandar o ID escolhido, nunca o preço.
-const SHIPPING_OPTIONS: Record<string, { name: string; price: number }> = {
-  economico: { name: 'Econômico', price: 18.90 },
-  expresso: { name: 'Expresso', price: 34.90 },
-  retirada: { name: 'Retirada na loja', price: 0 },
-};
+// Cidades onde a própria Alfa entrega (nunca passa pelos Correios) — mesma
+// regra de checkout.html. Grátis a partir do valor mínimo; abaixo disso o
+// cliente combina o frete no WhatsApp, então não existe opção de checkout
+// automática nesse caso (shippingMethodId nunca seria 'entrega_local').
+const CIDADES_ENTREGA_LOCAL = ['cuiaba', 'cuiabá', 'varzea grande', 'várzea grande'];
+const ENTREGA_LOCAL_VALOR_MINIMO_GRATIS = 200;
 
 const DEFAULT_PIX_DISCOUNT_PERCENT = 5; // fallback pra produto sem o campo preenchido
 
@@ -268,10 +272,36 @@ Deno.serve(async (req) => {
       couponApplied = cupom.codigo;
     }
 
-    // frete
-    const shipping = SHIPPING_OPTIONS[shippingMethodId];
-    if (!shipping) return fail(400, 'Selecione uma forma de envio.');
-    const freight = shipping.price;
+    // frete — nunca confia no preço vindo do cliente (mesmo espírito da
+    // recomputação de produtos/cupom acima): só aceita o ID do serviço
+    // escolhido e recalcula o valor direto com os Correios.
+    let freight = 0;
+    let shippingName = 'Retirada na loja';
+    let servicoCodigo: string | null = null;
+    if (shippingMethodId === 'entrega_local') {
+      const cidadeEndereco = String(address?.cid || '').toLowerCase().trim();
+      if (!CIDADES_ENTREGA_LOCAL.includes(cidadeEndereco)) {
+        return fail(400, 'Entrega local só disponível para Cuiabá/Várzea Grande.');
+      }
+      if (subtotal < ENTREGA_LOCAL_VALOR_MINIMO_GRATIS) {
+        return fail(400, `Entrega local grátis só a partir de ${ENTREGA_LOCAL_VALOR_MINIMO_GRATIS.toFixed(2)}. Abaixo disso, combine o frete pelo WhatsApp.`);
+      }
+      shippingName = 'Entrega local (Alfa)';
+    } else if (shippingMethodId !== 'retirada') {
+      if (!address || !address.cep) return fail(400, 'Endereço com CEP é obrigatório para envio pelos Correios.');
+      let opcoesFrete;
+      try {
+        opcoesFrete = await calcularFrete({ cepDestino: address.cep });
+      } catch (e) {
+        console.error('[mp-create-payment] falha ao consultar frete nos Correios', String(e));
+        return fail(502, 'Não foi possível confirmar o frete no momento. Tente novamente.');
+      }
+      const escolhida = opcoesFrete.find((o) => o.codigo === shippingMethodId);
+      if (!escolhida) return fail(400, 'Selecione uma forma de envio válida.');
+      freight = escolhida.valor;
+      shippingName = escolhida.nome;
+      servicoCodigo = escolhida.codigo;
+    }
 
     // desconto de Pix — soma do % configurado por produto (padrão do admin)
     if (paymentMethod === 'pix') discount += pixDiscountTotal;
@@ -286,7 +316,8 @@ Deno.serve(async (req) => {
       user_id: userId,
       status: 'aguardando_pagamento',
       subtotal, discount, freight, total,
-      shipping_method: shipping.name,
+      shipping_method: shippingName,
+      correios_servico_codigo: servicoCodigo,
       payment_method: paymentMethod === 'pix' ? 'Pix' : 'Cartão de crédito',
       address_snapshot: address || null,
     }).select().single();

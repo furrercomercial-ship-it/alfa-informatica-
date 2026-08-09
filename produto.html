@@ -346,7 +346,8 @@ function renderProduct(p) {
   document.title = p.name + ' — Alfa Informática';
 
   // Prices
-  const pixPrice   = p.price * 0.85;          // à vista / PIX
+  const pixPct     = p.pixDiscountPercent != null ? p.pixDiscountPercent : 5;
+  const pixPrice   = p.price * (1 - pixPct / 100); // à vista / PIX
   const cardPrice  = p.price;                  // no cartão (base)
   const instPrice  = p.price / 12;             // 12x sem juros
   const disc       = p.old ? Math.round((p.old - p.price) / p.old * 100) : 0;
@@ -435,7 +436,7 @@ function renderProduct(p) {
             ${p.old ? `<span class="p-old-price">de <s>R$ ${fmt(p.old)}</s> por:</span>` : ''}
             <span class="p-avista-lbl">à vista</span>
             <div class="p-main-val">R$ ${fmt(pixPrice)}</div>
-            <span class="p-pix-note">no PIX com 15% desconto</span>
+            <span class="p-pix-note">no PIX com ${Math.round(pixPct * 10) / 10}% desconto</span>
           </div>
           <div class="price-col-sep"></div>
           <div class="price-col">

@@ -5,3 +5,7 @@
 .env.local
 .env.*.local
 supabase/.env
+
+.vercel
+.env*
+supabase/.temp/

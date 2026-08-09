@@ -377,7 +377,9 @@ function render(){
   const discount=appliedDiscount?subtotal*appliedDiscount:0;
   const freteNum=fretePrice===null?null:(fretePrice==='Grátis'?0:parseFloat(fretePrice.replace('R$ ','').replace(',','.')));
   const total=subtotal-discount+(freteNum||0);
-  const pixTotal=total*0.85;
+  const pixDiscountPct=subtotal?cart.reduce((s,i)=>s+i.price*i.qty*(i.pixDiscountPercent!=null?i.pixDiscountPercent:5),0)/subtotal:5;
+  const pixDiscountVal=subtotal*(pixDiscountPct/100);
+  const pixTotal=total-pixDiscountVal;
   const install=(total/12).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 
   document.getElementById('leftCol').innerHTML=`
@@ -444,7 +446,7 @@ function render(){
 
       <div class="pix-block">
         <div class="pix-price">${fmt(pixTotal)}</div>
-        <div class="pix-cap">No PIX com 15% de desconto</div>
+        <div class="pix-cap">No PIX com ${Math.round(pixDiscountPct * 10) / 10}% de desconto</div>
       </div>
       <div class="or-div"><div class="or-circ">Ou</div></div>
       <div class="card-block">

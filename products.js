@@ -9,7 +9,7 @@ window.PRODUCTS_DB = [];
 (async function loadProducts() {
   const { data, error } = await window.sb
     .from('products')
-    .select('id,name,brand,price,old_price,stock,rating,reviews_count,images,description,specs,subcategories(slug)')
+    .select('id,name,brand,price,old_price,pix_discount_percent,stock,rating,reviews_count,images,description,specs,featured,best_seller,is_new,subcategories(slug)')
     .eq('active', true)
     .order('id', { ascending: true });
 
@@ -25,6 +25,10 @@ window.PRODUCTS_DB = [];
     brand: row.brand,
     price: Number(row.price),
     old: row.old_price != null ? Number(row.old_price) : undefined,
+    pixDiscountPercent: row.pix_discount_percent != null ? Number(row.pix_discount_percent) : 5,
+    featured: !!row.featured,
+    bestSeller: !!row.best_seller,
+    isNew: !!row.is_new,
     cat: row.subcategories ? row.subcategories.slug : null,
     stock: row.stock,
     rating: Number(row.rating),
