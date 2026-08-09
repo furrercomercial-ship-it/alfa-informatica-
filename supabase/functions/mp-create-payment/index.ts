@@ -131,8 +131,12 @@ Deno.serve(async (req) => {
     }
     await admin.from('checkout_rate_limit').insert({ ip: clientIp });
 
-    // Identifica o cliente logado, se houver — checkout de visitante continua
-    // permitido (mesma regra que orders_insert já aceita user_id null).
+    // Checkout de visitante NÃO é mais permitido — precisa estar logado.
+    // Confia só no que o próprio Supabase valida a partir do Authorization
+    // (token da sessão), nunca em nada que o front mande dizendo quem é o
+    // usuário — por isso essa checagem tem que ficar aqui, não só no
+    // checkout.html (que só melhora a experiência, não impede um chamador
+    // direto da function de tentar passar por visitante).
     let userId: string | null = null;
     const authHeader = req.headers.get('Authorization') || '';
     if (authHeader) {
@@ -142,6 +146,7 @@ Deno.serve(async (req) => {
       const { data: { user } } = await callerClient.auth.getUser();
       if (user) userId = user.id;
     }
+    if (!userId) return fail(401, 'Você precisa estar logado para finalizar a compra.');
 
     const body = await req.json().catch(() => null);
     if (!body) return fail(400, 'Dados inválidos.');

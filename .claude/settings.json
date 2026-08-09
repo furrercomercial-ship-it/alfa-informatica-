@@ -70,7 +70,8 @@
       "PowerShell(Start-Process \"http://localhost:5500/setup/insane.html\")",
       "PowerShell(Start-Process \"http://localhost:5500/setup/mad.html\")",
       "Bash(curl -s 'https://ybkgevyahpkkxhiexejy.supabase.co/rest/v1/products?select=id,name,nivel,active&nivel=not.is.null' -H 'apikey: sb_publishable_X3qbw8bNCRrT480eR2CYaw_vd28oY3C' -H 'Authorization: Bearer sb_publishable_X3qbw8bNCRrT480eR2CYaw_vd28oY3C')",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5500/setup/insane.html)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5500/setup/insane.html)",
+      "Bash(curl -s -X POST https://ybkgevyahpkkxhiexejy.supabase.co/functions/v1/mp-create-payment -H 'Origin: http://localhost:5500' -H 'apikey: sb_publishable_X3qbw8bNCRrT480eR2CYaw_vd28oY3C' -H 'Authorization: Bearer sb_publishable_X3qbw8bNCRrT480eR2CYaw_vd28oY3C' -H 'Content-Type: application/json' -d '{\"idempotency_key\":\"teste123\",\"items\":[{\"product_id\":1,\"qty\":1}],\"shipping_method_id\":\"retirada\",\"payment_method\":\"pix\",\"payer\":{\"email\":\"teste@teste.com\",\"cpf\":\"12345678901\"}}' -w '\\\\nHTTP_STATUS:%{http_code}\\\\n')"
     ],
     "additionalDirectories": [
       "C:\\Users\\User\\AppData\\Local\\Temp\\claude\\c--Users-User-Desktop-alfa-informatica\\9db8574d-df39-4d0d-92c1-9dd783618a17\\scratchpad"
