@@ -471,6 +471,11 @@ function renderProduct(p) {
           Adicionar ao carrinho
         </button>
 
+        <button class="btn-add-cart" id="btnFavToggle" onclick="toggleFavCurrent()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="${Store.isFavorite(p.id)?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="btnFavLabel">${Store.isFavorite(p.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}</span>
+        </button>
+
         <!-- PARCELAMENTO -->
         <div class="parcel-section">
           <div class="parcel-title">Parcelamento</div>
@@ -549,6 +554,19 @@ function switchTab(btn, id) {
   document.querySelectorAll('.tab-body').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(id).classList.add('active');
+}
+
+// ── FAVORITOS ────────────────────────────────────────────────────────────────
+function toggleFavCurrent() {
+  const p = window._currentProduct;
+  if (!p) return;
+  const added = Store.toggleFavorite(p);
+  const btn = document.getElementById('btnFavToggle');
+  if (btn) {
+    btn.querySelector('svg').setAttribute('fill', added ? 'currentColor' : 'none');
+    document.getElementById('btnFavLabel').textContent = added ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+  }
+  showToast(added ? 'Adicionado aos favoritos!' : 'Removido dos favoritos', added ? 'rgba(255,77,109,.4)' : 'rgba(40,120,255,.3)');
 }
 
 // ── CART / BUY ───────────────────────────────────────────────────────────────

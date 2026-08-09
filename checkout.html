@@ -303,7 +303,7 @@ function maskCPF(cpf) {
   return '***.***.' + d.slice(6,9) + '-**';
 }
 
-function init() {
+async function init() {
   items = Store.getCheckoutItems();
   if (!items.length) items = Store.getCart().filter(function(i){ return i.selected; });
   if (!items.length) items = Store.getCart();
@@ -312,6 +312,7 @@ function init() {
     document.getElementById('mainLayout').innerHTML = '<div class="center-msg"><div style="font-size:56px;margin-bottom:20px;opacity:.25;">🛒</div><h2>Carrinho vazio</h2><p>Adicione produtos ao carrinho antes de finalizar.</p><a href="alfa-replica.html" class="btn-home">Ir para a loja</a></div>';
     return;
   }
+  await Store.loadAddresses();
   var addrs0 = Store.getAddresses();
   if (addrs0.length && !state.addressId) state.addressId = addrs0[0].id;
   renderAll();
@@ -516,7 +517,7 @@ function renderAll(){
     '<div class="sum-row"><span>Frete</span><span>' + (state.shipId ? (freight?fmt(freight):'Grátis') : 'A calcular') + '</span></div>' +
     '<div class="sum-total"><span class="lbl">Total</span><span class="val">' + fmt(total) + '</span></div>' +
     alertHtml +
-    '<label class="ck-terms"><input type="checkbox" id="ckTerms" ' + (state.terms?'checked':'') + ' onchange="state.terms=this.checked;renderAll();"><span>Estou ciente e concordo com os <a href="#">termos e condições de venda</a> da Alfa Informática.</span></label>' +
+    '<label class="ck-terms"><input type="checkbox" id="ckTerms" ' + (state.terms?'checked':'') + ' onchange="state.terms=this.checked;renderAll();"><span>Estou ciente e concordo com os <a href="pagina.html?slug=termos-de-uso" target="_blank" rel="noopener noreferrer">termos e condições de venda</a> da Alfa Informática.</span></label>' +
     '<button class="btn-submit" ' + (missing.length || state.paying ?'disabled':'') + ' onclick="finalize()">' +
       (state.paying
         ? '<span>Processando pagamento...</span>'
@@ -559,7 +560,7 @@ async function onCepBlur(){
   }
 }
 
-function saveAddress(){
+async function saveAddress(){
   var cep = (document.getElementById('aCep').value||'').trim();
   var rua = (document.getElementById('aRua').value||'').trim();
   var numero = (document.getElementById('aNumero').value||'').trim();
@@ -570,7 +571,7 @@ function saveAddress(){
   var dest = (document.getElementById('aDest').value||'').trim();
   var tel = (document.getElementById('aTel').value||'').trim();
   if (!cep||!rua||!numero||!bairro||!cidade||!uf||!dest||!tel){ alert('Preencha todos os campos do endereço (complemento é opcional).'); return; }
-  Store.addAddress({cep:cep,rua:rua,numero:numero,compl:compl,bairro:bairro,cid:cidade,uf:uf,dest:dest,tel:tel});
+  await Store.addAddress({cep:cep,rua:rua,numero:numero,compl:compl,bairro:bairro,cid:cidade,uf:uf,dest:dest,tel:tel});
   var addrs2 = Store.getAddresses();
   state.addressId = addrs2[addrs2.length-1].id;
   state.addingAddress = false;
@@ -728,17 +729,6 @@ async function finalize(){
       issuerId: formData ? formData.issuerId : null,
     } : null;
 
-    // Diagnóstico sem nunca logar o token inteiro (mascarado por precaução)
-    // — dá pra comparar com o log "[mp-create-payment] payload recebido do
-    // frontend" no painel do Supabase e ver se o valor muda no caminho.
-    console.log('[Checkout] cardData após requestCardToken', cardData ? {
-      token_presente: !!cardData.token,
-      token_tamanho: cardData.token ? cardData.token.length : 0,
-      token_preview: cardData.token ? (cardData.token.slice(0, 4) + '...' + cardData.token.slice(-4)) : null,
-      installments: cardData.installments,
-      paymentMethodId: cardData.paymentMethodId,
-      issuerId: cardData.issuerId,
-    } : null);
     if (!cardData || !cardData.token) {
       state.paying = false;
       setSubmitProcessing(false);

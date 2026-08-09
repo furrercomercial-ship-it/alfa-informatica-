@@ -75,6 +75,11 @@ const ROLE_LABELS = { administrador:'Admin', gerente:'Gerente', funcionario:'Fun
 let STAFF = [];
 let PERMISSIONS = [];
 let ROLE_PERMS = [];
+// Essa página só aparece no menu pra quem tem 'equipe.gerenciar', mas o
+// próprio arquivo nunca checava isso — dependia só do link sumir do menu
+// e da RLS do banco. Trava aqui também (mesmo padrão de admin-clientes.html/
+// admin-pedidos.html), pra não ser a única página "escondida só pela URL".
+let canManage = false;
 
 function showCreateMsg(type, text) {
   const el = document.getElementById('createMsg');
@@ -97,28 +102,34 @@ function renderStaff() {
       <td class="strong">${s.full_name || '—'}</td>
       <td>${s.email || '—'}</td>
       <td>
-        <select class="role-select" onchange="changeRole('${s.id}', this.value)">
+        <select class="role-select" ${canManage ? '' : 'disabled'} onchange="changeRole('${s.id}', this.value)">
           ${ROLES.map(r => `<option value="${r}" ${r===s.role?'selected':''}>${ROLE_LABELS[r]}</option>`).join('')}
         </select>
       </td>
       <td>${s.is_blocked ? '<span class="status-pill red">Bloqueado</span>' : '<span class="status-pill green">Ativo</span>'}</td>
-      <td><button class="btn btn-secondary btn-sm" onclick="toggleBlock('${s.id}', ${s.is_blocked})">${s.is_blocked ? 'Desbloquear' : 'Bloquear'}</button></td>
+      <td>${canManage ? `<button class="btn btn-secondary btn-sm" onclick="toggleBlock('${s.id}', ${s.is_blocked})">${s.is_blocked ? 'Desbloquear' : 'Bloquear'}</button>` : ''}</td>
     </tr>`).join('');
 }
 
 window.changeRole = async function (id, role) {
+  if (!canManage) return;
+  const before = STAFF.find(s => s.id === id);
   const { error } = await window.sb.from('profiles').update({ role }).eq('id', id);
   if (error) { AdminShell.toast('Erro: ' + error.message, 'error'); loadStaff(); return; }
+  AdminShell.logAction('alterar_cargo', 'staff', id, { de: before && before.role, para: role });
   loadStaff();
 };
 
 window.toggleBlock = async function (id, current) {
+  if (!canManage) return;
   const { error } = await window.sb.from('profiles').update({ is_blocked: !current }).eq('id', id);
   if (error) { AdminShell.toast('Erro: ' + error.message, 'error'); return; }
+  AdminShell.logAction(current ? 'desbloquear_staff' : 'bloquear_staff', 'staff', id, null);
   loadStaff();
 };
 
 document.getElementById('createBtn').addEventListener('click', async () => {
+  if (!canManage) return;
   const full_name = document.getElementById('f_name').value.trim();
   const email = document.getElementById('f_email').value.trim();
   const password = document.getElementById('f_pass').value;
@@ -134,6 +145,7 @@ document.getElementById('createBtn').addEventListener('click', async () => {
   if (error) { showCreateMsg('error', 'Erro ao criar conta: ' + error.message); return; }
   if (data && data.error) { showCreateMsg('error', data.error); return; }
   showCreateMsg('success', 'Conta criada com sucesso!');
+  AdminShell.logAction('criar_staff', 'staff', null, { email, role });
   document.getElementById('f_name').value = '';
   document.getElementById('f_email').value = '';
   document.getElementById('f_pass').value = '';
@@ -166,7 +178,9 @@ function renderPermMatrix() {
       html += `<tr><td>${p.label}</td>` + ROLES.map(r => {
         const checked = isAllowed(r, p.key);
         const lockedAdmin = r === 'administrador';
-        return `<td><input type="checkbox" ${checked ? 'checked' : ''} ${lockedAdmin ? 'disabled title="Administrador sempre tem acesso total"' : ''} onchange="togglePerm('${r}','${p.key}',this.checked)"></td>`;
+        const disabled = lockedAdmin || !canManage;
+        const title = lockedAdmin ? 'title="Administrador sempre tem acesso total"' : '';
+        return `<td><input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} ${title} onchange="togglePerm('${r}','${p.key}',this.checked)"></td>`;
       }).join('') + '</tr>';
     });
   });
@@ -175,8 +189,10 @@ function renderPermMatrix() {
 }
 
 window.togglePerm = async function (role, key, allowed) {
+  if (!canManage) return;
   const { error } = await window.sb.from('role_permissions').upsert({ role, permission_key: key, allowed }, { onConflict: 'role,permission_key' });
   if (error) { AdminShell.toast('Erro ao salvar permissão: ' + error.message, 'error'); loadPermMatrix(); return; }
+  AdminShell.logAction('alterar_permissao', 'role_permissions', role, { permissao: key, permitido: allowed });
   const row = ROLE_PERMS.find(r => r.role === role && r.permission_key === key);
   if (row) row.allowed = allowed; else ROLE_PERMS.push({ role, permission_key: key, allowed });
 };
@@ -184,6 +200,12 @@ window.togglePerm = async function (role, key, allowed) {
 (async function () {
   const session = await AdminShell.init('equipe');
   if (!session) return;
+  canManage = AdminShell.can('equipe.gerenciar');
+  if (!canManage) {
+    ['f_name','f_email','f_pass','f_role','createBtn'].forEach(id => { document.getElementById(id).disabled = true; });
+    document.getElementById('createMsg').className = 'admin-login-msg error';
+    document.getElementById('createMsg').textContent = 'Você só pode visualizar esta página — não tem permissão para gerenciar equipe.';
+  }
   await Promise.all([loadStaff(), loadPermMatrix()]);
 })();
 </script>

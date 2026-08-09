@@ -12,6 +12,9 @@
 .detail-line{font-size:13px;color:var(--text-secondary);margin-bottom:3px;}
 .mini-order{display:flex;justify-content:space-between;font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--border-color);}
 .mini-order:last-child{border-bottom:none;}
+.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;font-size:12.5px;color:var(--text-muted);}
+.pagination-bar .pg-controls{display:flex;align-items:center;gap:10px;}
+.pagination-bar .pg-page{color:var(--text-muted);}
 </style>
 </head>
 <body>
@@ -26,6 +29,7 @@
       <div class="toolbar">
         <div class="toolbar-left">
           <input type="search" id="searchInp" class="search-box" placeholder="Buscar por nome ou e-mail...">
+          <button class="btn btn-secondary" id="exportCsvBtn">Exportar CSV</button>
         </div>
         <div id="cliCount" style="font-size:12.5px;color:var(--text-muted);"></div>
       </div>
@@ -36,6 +40,7 @@
           <tbody id="cliTbody"></tbody>
         </table>
       </div>
+      <div class="pagination-bar" id="cliPagination"></div>
     </div>
   </div>
 </div>
@@ -58,13 +63,49 @@
 let CLIENTS = [];
 let currentDetailId = null;
 let canEdit = false;
+let currentPage = 1;
+const PAGE_SIZE = 25;
 
 function fmtBRL(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
 function fmtDate(iso) { return new Date(iso).toLocaleDateString('pt-BR'); }
 
+/* ── CSV helpers ── */
+function csvEscape(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadCsv(filename, rows) {
+  const content = '﻿' + rows.map(r => r.map(csvEscape).join(';')).join('\r\n');
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+/* ── Paginação ── */
+function renderPagination(containerId, totalItems, page, onChange) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const start = totalItems ? (page - 1) * PAGE_SIZE + 1 : 0;
+  const end = Math.min(page * PAGE_SIZE, totalItems);
+  el.innerHTML = `
+    <div class="pg-info">Mostrando ${start}–${end} de ${totalItems}</div>
+    <div class="pg-controls">
+      <button class="btn btn-secondary btn-sm" id="${containerId}PrevBtn" ${page <= 1 ? 'disabled' : ''}>Anterior</button>
+      <span class="pg-page">Página ${page} de ${totalPages}</span>
+      <button class="btn btn-secondary btn-sm" id="${containerId}NextBtn" ${page >= totalPages ? 'disabled' : ''}>Próxima</button>
+    </div>`;
+  document.getElementById(containerId + 'PrevBtn').addEventListener('click', () => onChange(page - 1));
+  document.getElementById(containerId + 'NextBtn').addEventListener('click', () => onChange(page + 1));
+}
+
 async function loadClients() {
   const [{ data: profiles }, { data: orders }] = await Promise.all([
-    window.sb.from('profiles').select('id,full_name,cpf,phone,is_blocked,created_at').eq('role', 'cliente').order('created_at', { ascending: false }),
+    window.sb.from('profiles').select('id,full_name,email,cpf,phone,is_blocked,created_at').eq('role', 'cliente').order('created_at', { ascending: false }),
     window.sb.from('orders').select('id,user_id,total,status,created_at,order_number'),
   ]);
 
@@ -77,13 +118,26 @@ async function loadClients() {
   renderTable();
 }
 
-function renderTable() {
+function getFilteredClients() {
   const q = document.getElementById('searchInp').value.trim().toLowerCase();
-  let list = CLIENTS.filter(c => !q || (c.full_name || '').toLowerCase().includes(q));
+  return CLIENTS.filter(c => !q || (c.full_name || '').toLowerCase().includes(q));
+}
+
+function renderTable() {
+  const list = getFilteredClients();
   document.getElementById('cliCount').textContent = list.length + ' cliente' + (list.length !== 1 ? 's' : '');
+
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const pageItems = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const tbody = document.getElementById('cliTbody');
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhum cliente encontrado.</td></tr>'; return; }
-  tbody.innerHTML = list.map(c => `
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhum cliente encontrado.</td></tr>';
+    renderPagination('cliPagination', 0, currentPage, p => { currentPage = p; renderTable(); });
+    return;
+  }
+  tbody.innerHTML = pageItems.map(c => `
     <tr>
       <td class="strong">${c.full_name || '—'}</td>
       <td>${c.phone || '—'}</td>
@@ -93,6 +147,23 @@ function renderTable() {
       <td>${c.is_blocked ? '<span class="status-pill red">Bloqueado</span>' : '<span class="status-pill green">Ativo</span>'}</td>
       <td><button class="btn btn-secondary btn-sm" onclick="openDetail('${c.id}')">Ver detalhes</button></td>
     </tr>`).join('');
+  renderPagination('cliPagination', list.length, currentPage, p => { currentPage = p; renderTable(); });
+}
+
+function exportClientsCsv() {
+  const list = getFilteredClients();
+  const rows = [['Nome', 'E-mail', 'CPF', 'Telefone', 'Status', 'Data de Cadastro']];
+  list.forEach(c => {
+    rows.push([
+      c.full_name || '',
+      c.email || '',
+      c.cpf || '',
+      c.phone || '',
+      c.is_blocked ? 'Bloqueado' : 'Ativo',
+      fmtDate(c.created_at),
+    ]);
+  });
+  downloadCsv('clientes-' + todayStr() + '.csv', rows);
 }
 
 window.openDetail = function (id) {
@@ -129,12 +200,14 @@ document.getElementById('blockBtn').addEventListener('click', async () => {
   if (!c) return;
   const { error } = await window.sb.from('profiles').update({ is_blocked: !c.is_blocked }).eq('id', c.id);
   if (error) { AdminShell.toast('Erro: ' + error.message, 'error'); return; }
+  AdminShell.logAction(c.is_blocked ? 'desbloquear_cliente' : 'bloquear_cliente', 'cliente', c.id, { nome: c.full_name });
   closeModal();
   loadClients();
 });
 
 function closeModal() { document.getElementById('cliModal').classList.remove('open'); }
-document.getElementById('searchInp').addEventListener('input', renderTable);
+document.getElementById('searchInp').addEventListener('input', () => { currentPage = 1; renderTable(); });
+document.getElementById('exportCsvBtn').addEventListener('click', exportClientsCsv);
 
 (async function () {
   const session = await AdminShell.init('clientes');

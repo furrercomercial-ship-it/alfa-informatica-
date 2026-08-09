@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Estoque — Painel Admin</title>
+<script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
+<link rel="stylesheet" href="admin.css">
+<style>
+.stock-tabs{display:flex;gap:6px;margin-bottom:18px;}
+.stock-tabs button{padding:9px 16px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--text-secondary);font-size:12px;font-weight:700;cursor:pointer;border-radius:var(--radius-sm);}
+.stock-tabs button.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.hist-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.hist-filters select{background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text-main);font-size:12.5px;outline:none;}
+.qtd-pos{color:var(--success);font-weight:700;}
+.qtd-neg{color:var(--danger);font-weight:700;}
+.mov-prod-info{font-size:12.5px;color:var(--text-muted);margin:-6px 0 16px;}
+.field-hint{font-size:11px;color:var(--text-muted);margin-top:5px;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div id="admin-sidebar-mount"></div>
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">Estoque</div>
+    </div>
+    <div class="admin-content">
+      <div class="admin-insight-bar" id="admin-insight-bar" style="display:none"></div>
+
+      <div class="metrics-grid" id="metricsGrid"></div>
+
+      <div class="stock-tabs" id="stockTabs">
+        <button data-tab="produtos" class="active">Produtos</button>
+        <button data-tab="historico">Histórico de Movimentações</button>
+      </div>
+
+      <div id="panel-produtos">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <input type="search" id="prodSearchInp" class="search-box" placeholder="Buscar produto por nome...">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Produto</th><th>Estoque</th><th>Mínimo</th><th>Localização</th><th>Status</th><th></th></tr></thead>
+            <tbody id="prodTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="panel-historico" style="display:none">
+        <div class="toolbar">
+          <div class="hist-filters">
+            <select id="histTipoFilter">
+              <option value="">Todos os tipos</option>
+              <option value="entrada_manual">Entrada manual</option>
+              <option value="saida_manual">Saída manual</option>
+              <option value="venda">Venda</option>
+              <option value="cancelamento">Cancelamento</option>
+              <option value="reposicao">Reposição</option>
+              <option value="ajuste">Ajuste</option>
+            </select>
+            <select id="histProdFilter">
+              <option value="">Todos os produtos</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Quando</th><th>Produto</th><th>Tipo</th><th>Quantidade</th><th>Saldo após</th><th>Referência</th><th>Motivo</th><th>Usuário</th></tr></thead>
+            <tbody id="histTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="movModal">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-head"><div class="modal-title" id="movModalTitle">Movimentar Estoque</div><button class="modal-close" onclick="closeMovModal()">✕</button></div>
+    <div class="mov-prod-info" id="movProdInfo"></div>
+
+    <div class="field">
+      <label>Tipo de movimentação *</label>
+      <select id="f_mov_tipo">
+        <option value="entrada_manual">Entrada manual</option>
+        <option value="saida_manual">Saída manual</option>
+        <option value="ajuste">Ajuste</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Quantidade *</label>
+      <input type="number" id="f_mov_qtd" step="1">
+      <div class="field-hint" id="f_mov_qtd_hint"></div>
+    </div>
+    <div class="field"><label>Motivo *</label><input id="f_mov_motivo" placeholder="Ex: Compra de reposição, quebra, inventário..."></div>
+    <div class="field"><label>Lote</label><input id="f_mov_lote" placeholder="Opcional"></div>
+
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeMovModal()">Cancelar</button>
+      <button class="btn btn-primary" id="movSaveBtn">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script src="admin-shell.js"></script>
+<script>
+let PRODUCTS = [];
+let MOVES = [];
+let canEdit = false;
+let movProductId = null;
+
+const TIPO_LABELS = {
+  entrada_manual: 'Entrada manual',
+  saida_manual: 'Saída manual',
+  venda: 'Venda',
+  cancelamento: 'Cancelamento',
+  reposicao: 'Reposição',
+  ajuste: 'Ajuste',
+};
+const TIPO_PILL = {
+  entrada_manual: 'green',
+  saida_manual: 'amber',
+  venda: 'blue',
+  cancelamento: 'amber',
+  reposicao: 'green',
+  ajuste: 'gray',
+};
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function fmtDateTime(d) { return new Date(d).toLocaleString('pt-BR'); }
+
+// ── Produtos ────────────────────────────────────────────────────────────
+async function loadProducts() {
+  const { data, error } = await window.sb.from('products').select('id,name,stock,min_stock,localizacao').order('name');
+  if (error) { AdminShell.toast('Erro ao carregar produtos: ' + error.message, 'error'); return; }
+  PRODUCTS = data || [];
+  renderMetrics();
+  renderProductsTable();
+  populateProductFilter();
+}
+
+function renderMetrics() {
+  const zerado = PRODUCTS.filter(p => p.stock <= 0).length;
+  const baixo = PRODUCTS.filter(p => p.stock > 0 && p.stock <= (p.min_stock || 0)).length;
+  document.getElementById('metricsGrid').innerHTML = `
+    <div class="metric-card"><div class="metric-lbl">Produtos sem estoque</div><div class="metric-val">${zerado}</div>${zerado ? '<div class="metric-sub down">Repor o quanto antes</div>' : '<div class="metric-sub">Tudo certo</div>'}</div>
+    <div class="metric-card"><div class="metric-lbl">Estoque abaixo do mínimo</div><div class="metric-val">${baixo}</div>${baixo ? '<div class="metric-sub down">Atenção</div>' : '<div class="metric-sub">Tudo certo</div>'}</div>
+    <div class="metric-card"><div class="metric-lbl">Total de produtos</div><div class="metric-val">${PRODUCTS.length}</div></div>
+  `;
+}
+
+function renderProductsTable() {
+  const q = document.getElementById('prodSearchInp').value.trim().toLowerCase();
+  const list = PRODUCTS.filter(p => !q || p.name.toLowerCase().includes(q));
+  const tbody = document.getElementById('prodTbody');
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="6" class="table-empty">Nenhum produto encontrado.</td></tr>'; return; }
+  tbody.innerHTML = list.map(p => {
+    const pill = p.stock <= 0 ? '<span class="status-pill red">Sem estoque</span>'
+      : p.stock <= (p.min_stock || 0) ? '<span class="status-pill amber">Baixo</span>'
+      : '<span class="status-pill green">OK</span>';
+    return `<tr>
+      <td class="strong">${escapeHtml(p.name)}</td>
+      <td>${p.stock}</td>
+      <td>${p.min_stock ?? 0}</td>
+      <td>${p.localizacao ? escapeHtml(p.localizacao) : '—'}</td>
+      <td>${pill}</td>
+      <td>${canEdit ? `<button class="btn btn-secondary btn-sm" onclick="openMovModal(${p.id})">Movimentar</button>` : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('prodSearchInp').addEventListener('input', renderProductsTable);
+
+function populateProductFilter() {
+  const sel = document.getElementById('histProdFilter');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Todos os produtos</option>' + PRODUCTS.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  sel.value = current;
+}
+
+// ── Modal de movimentação ──────────────────────────────────────────────
+window.openMovModal = function (productId) {
+  const p = PRODUCTS.find(x => x.id === productId);
+  if (!p) return;
+  movProductId = productId;
+  document.getElementById('movModalTitle').textContent = 'Movimentar Estoque — ' + p.name;
+  document.getElementById('movProdInfo').textContent = 'Estoque atual: ' + p.stock + ' unidade(s)' + (p.min_stock ? ' · Mínimo: ' + p.min_stock : '');
+  document.getElementById('f_mov_tipo').value = 'entrada_manual';
+  document.getElementById('f_mov_qtd').value = '';
+  document.getElementById('f_mov_motivo').value = '';
+  document.getElementById('f_mov_lote').value = '';
+  updateMovQtyHint();
+  document.getElementById('movModal').classList.add('open');
+};
+
+window.closeMovModal = function () { document.getElementById('movModal').classList.remove('open'); };
+
+function updateMovQtyHint() {
+  const tipo = document.getElementById('f_mov_tipo').value;
+  const hint = document.getElementById('f_mov_qtd_hint');
+  if (tipo === 'entrada_manual') hint.textContent = 'Informe a quantidade que está entrando no estoque.';
+  else if (tipo === 'saida_manual') hint.textContent = 'Informe a quantidade que está saindo do estoque.';
+  else hint.textContent = 'Ajuste direto do saldo: use um número negativo para reduzir ou positivo para aumentar.';
+}
+document.getElementById('f_mov_tipo').addEventListener('change', updateMovQtyHint);
+
+document.getElementById('movSaveBtn').addEventListener('click', async () => {
+  if (!movProductId) return;
+  const p = PRODUCTS.find(x => x.id === movProductId);
+  const tipo = document.getElementById('f_mov_tipo').value;
+  const rawQtd = parseInt(document.getElementById('f_mov_qtd').value, 10);
+  const motivo = document.getElementById('f_mov_motivo').value.trim();
+  const lote = document.getElementById('f_mov_lote').value.trim();
+
+  if (!rawQtd || isNaN(rawQtd) || rawQtd === 0) { AdminShell.toast('Informe uma quantidade válida.', 'error'); return; }
+  if (!motivo) { AdminShell.toast('Informe o motivo da movimentação.', 'error'); return; }
+
+  let quantidade;
+  if (tipo === 'entrada_manual') quantidade = Math.abs(rawQtd);
+  else if (tipo === 'saida_manual') quantidade = -Math.abs(rawQtd);
+  else quantidade = rawQtd;
+
+  if (p && (p.stock + quantidade) < 0) {
+    if (!confirm('Essa movimentação deixará o estoque negativo (' + (p.stock + quantidade) + '). Continuar mesmo assim?')) return;
+  }
+
+  const saveBtn = document.getElementById('movSaveBtn');
+  saveBtn.disabled = true;
+  const { data, error } = await window.sb.from('estoque_movimentacoes')
+    .insert({ product_id: movProductId, tipo, quantidade, motivo, lote: lote || null })
+    .select('saldo_apos')
+    .single();
+  saveBtn.disabled = false;
+
+  if (error) { AdminShell.toast('Erro ao registrar movimentação: ' + error.message, 'error'); return; }
+  AdminShell.toast('Movimentação registrada! Novo saldo: ' + data.saldo_apos + ' unidade(s).', 'success');
+  closeMovModal();
+  await loadProducts();
+  await loadHistorico();
+});
+
+// ── Histórico ───────────────────────────────────────────────────────────
+async function loadHistorico() {
+  const { data, error } = await window.sb
+    .from('estoque_movimentacoes')
+    .select('id,product_id,tipo,quantidade,saldo_apos,motivo,lote,pedido_id,usuario_id,created_at,products(name),orders(order_number),profiles(full_name)')
+    .order('created_at', { ascending: false })
+    .limit(300);
+  if (error) { AdminShell.toast('Erro ao carregar histórico: ' + error.message, 'error'); return; }
+  MOVES = data || [];
+  renderHistorico();
+}
+
+function renderHistorico() {
+  const tipoF = document.getElementById('histTipoFilter').value;
+  const prodF = document.getElementById('histProdFilter').value;
+  let list = MOVES;
+  if (tipoF) list = list.filter(m => m.tipo === tipoF);
+  if (prodF) list = list.filter(m => String(m.product_id) === prodF);
+
+  const tbody = document.getElementById('histTbody');
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" class="table-empty">Nenhuma movimentação encontrada.</td></tr>'; return; }
+
+  tbody.innerHTML = list.map(m => {
+    const qtdClass = m.quantidade > 0 ? 'qtd-pos' : 'qtd-neg';
+    const qtdTxt = (m.quantidade > 0 ? '+' : '') + m.quantidade;
+    const pill = TIPO_PILL[m.tipo] || 'gray';
+    const ref = m.orders ? 'Pedido #' + escapeHtml(m.orders.order_number || m.pedido_id)
+      : (m.lote ? 'Lote: ' + escapeHtml(m.lote) : '—');
+    return `<tr>
+      <td>${fmtDateTime(m.created_at)}</td>
+      <td class="strong">${m.products ? escapeHtml(m.products.name) : '—'}</td>
+      <td><span class="status-pill ${pill}">${TIPO_LABELS[m.tipo] || m.tipo}</span></td>
+      <td class="${qtdClass}">${qtdTxt}</td>
+      <td>${m.saldo_apos}</td>
+      <td>${ref}</td>
+      <td>${m.motivo ? escapeHtml(m.motivo) : '—'}</td>
+      <td>${m.profiles ? escapeHtml(m.profiles.full_name || '—') : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('histTipoFilter').addEventListener('change', renderHistorico);
+document.getElementById('histProdFilter').addEventListener('change', renderHistorico);
+
+// ── Tabs ────────────────────────────────────────────────────────────────
+document.querySelectorAll('#stockTabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#stockTabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('panel-produtos').style.display = tab === 'produtos' ? '' : 'none';
+    document.getElementById('panel-historico').style.display = tab === 'historico' ? '' : 'none';
+  });
+});
+
+// ── Init ────────────────────────────────────────────────────────────────
+(async function () {
+  const session = await AdminShell.init('estoque');
+  if (!session) return;
+  if (!AdminShell.can('estoque.visualizar')) {
+    document.querySelector('.admin-content').innerHTML = '<div class="table-empty">Você não tem permissão pra ver esta página.</div>';
+    return;
+  }
+  canEdit = AdminShell.can('estoque.editar');
+  await loadProducts();
+  await loadHistorico();
+})();
+</script>
+</body>
+</html>

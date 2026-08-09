@@ -15,6 +15,9 @@
 .checks-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:14px;}
 .field-section-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:20px 0 10px;padding-top:14px;border-top:1px solid var(--border-color);}
 .field-section-title:first-child{margin-top:0;padding-top:0;border-top:none;}
+.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;font-size:12.5px;color:var(--text-muted);}
+.pagination-bar .pg-controls{display:flex;align-items:center;gap:10px;}
+.pagination-bar .pg-page{color:var(--text-muted);}
 </style>
 </head>
 <body>
@@ -44,6 +47,7 @@
             <option value="lowstock">Estoque baixo</option>
             <option value="nostock">Sem estoque</option>
           </select>
+          <button class="btn btn-secondary" id="exportCsvBtn">Exportar CSV</button>
         </div>
         <div id="prodCount" style="font-size:12.5px;color:var(--text-muted);"></div>
       </div>
@@ -54,6 +58,7 @@
           <tbody id="prodTbody"></tbody>
         </table>
       </div>
+      <div class="pagination-bar" id="prodPagination"></div>
     </div>
   </div>
 </div>
@@ -168,8 +173,44 @@ let CATS = [];
 let PRODUCTS = [];
 let editingId = null;
 let canDelete = false;
+let currentPage = 1;
+const PAGE_SIZE = 25;
 
 function fmtBRL(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
+
+/* ── CSV helpers ── */
+function csvEscape(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadCsv(filename, rows) {
+  const content = '﻿' + rows.map(r => r.map(csvEscape).join(';')).join('\r\n');
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+/* ── Paginação ── */
+function renderPagination(containerId, totalItems, page, onChange) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const start = totalItems ? (page - 1) * PAGE_SIZE + 1 : 0;
+  const end = Math.min(page * PAGE_SIZE, totalItems);
+  el.innerHTML = `
+    <div class="pg-info">Mostrando ${start}–${end} de ${totalItems}</div>
+    <div class="pg-controls">
+      <button class="btn btn-secondary btn-sm" id="${containerId}PrevBtn" ${page <= 1 ? 'disabled' : ''}>Anterior</button>
+      <span class="pg-page">Página ${page} de ${totalPages}</span>
+      <button class="btn btn-secondary btn-sm" id="${containerId}NextBtn" ${page >= totalPages ? 'disabled' : ''}>Próxima</button>
+    </div>`;
+  document.getElementById(containerId + 'PrevBtn').addEventListener('click', () => onChange(page - 1));
+  document.getElementById(containerId + 'NextBtn').addEventListener('click', () => onChange(page + 1));
+}
 
 async function loadCategories() {
   const [{ data: cats }, { data: subs }] = await Promise.all([
@@ -203,12 +244,12 @@ async function loadProducts() {
   renderTable();
 }
 
-function renderTable() {
+function getFilteredProducts() {
   const q = document.getElementById('searchInp').value.trim().toLowerCase();
   const catF = document.getElementById('catFilter').value;
   const statusF = document.getElementById('statusFilter').value;
 
-  let list = PRODUCTS.filter(p => {
+  return PRODUCTS.filter(p => {
     if (q && !p.name.toLowerCase().includes(q) && !(p.brand || '').toLowerCase().includes(q)) return false;
     if (catF && String(p.category_id) !== String(catF)) return false;
     if (statusF === 'active' && !p.active) return false;
@@ -217,13 +258,25 @@ function renderTable() {
     if (statusF === 'nostock' && p.stock > 0) return false;
     return true;
   });
+}
+
+function renderTable() {
+  const list = getFilteredProducts();
 
   document.getElementById('prodCount').textContent = list.length + ' produto' + (list.length !== 1 ? 's' : '');
 
-  const tbody = document.getElementById('prodTbody');
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhum produto encontrado.</td></tr>'; return; }
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const pageItems = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  tbody.innerHTML = list.map(p => {
+  const tbody = document.getElementById('prodTbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhum produto encontrado.</td></tr>';
+    renderPagination('prodPagination', 0, currentPage, p => { currentPage = p; renderTable(); });
+    return;
+  }
+
+  tbody.innerHTML = pageItems.map(p => {
     const img = p.images && p.images[0] ? p.images[0] : 'img teste.jpg';
     const stockBadge = p.stock <= 0 ? '<span class="status-pill red">Sem estoque</span>'
       : p.stock <= p.min_stock ? '<span class="status-pill amber">' + p.stock + ' (baixo)</span>'
@@ -244,6 +297,24 @@ function renderTable() {
       </div></td>
     </tr>`;
   }).join('');
+  renderPagination('prodPagination', list.length, currentPage, p => { currentPage = p; renderTable(); });
+}
+
+function exportProductsCsv() {
+  const list = getFilteredProducts();
+  const rows = [['Nome', 'Marca', 'Categoria', 'Preço', 'Preço Antigo', 'Estoque', 'Ativo']];
+  list.forEach(p => {
+    rows.push([
+      p.name,
+      p.brand || '',
+      (p.categories ? p.categories.nome : '') + (p.subcategories ? ' / ' + p.subcategories.nome : ''),
+      Number(p.price).toFixed(2).replace('.', ','),
+      p.old_price ? Number(p.old_price).toFixed(2).replace('.', ',') : '',
+      p.stock,
+      p.active ? 'Sim' : 'Não',
+    ]);
+  });
+  downloadCsv('produtos-' + todayStr() + '.csv', rows);
 }
 
 /* ── SPECS DINÂMICAS ── */
@@ -353,8 +424,10 @@ window.duplicateProduct = async function (id) {
 
 window.deleteProduct = async function (id) {
   if (!confirm('Excluir este produto permanentemente? Essa ação não pode ser desfeita.')) return;
+  const prod = PRODUCTS.find(p => p.id === id);
   const { error } = await window.sb.from('products').delete().eq('id', id);
   if (error) { AdminShell.toast('Erro ao excluir: ' + error.message, 'error'); return; }
+  AdminShell.logAction('excluir_produto', 'produto', id, { nome: prod && prod.name });
   loadProducts();
 };
 
@@ -444,9 +517,10 @@ document.getElementById('addSpecBtn').addEventListener('click', () => addSpecRow
 document.getElementById('addImgBtn').addEventListener('click', () => addImgRow(''));
 document.getElementById('f_price').addEventListener('input', updateMarginHint);
 document.getElementById('f_cost_price').addEventListener('input', updateMarginHint);
-document.getElementById('searchInp').addEventListener('input', renderTable);
-document.getElementById('catFilter').addEventListener('change', renderTable);
-document.getElementById('statusFilter').addEventListener('change', renderTable);
+document.getElementById('searchInp').addEventListener('input', () => { currentPage = 1; renderTable(); });
+document.getElementById('catFilter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+document.getElementById('statusFilter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+document.getElementById('exportCsvBtn').addEventListener('click', exportProductsCsv);
 
 (async function () {
   const session = await AdminShell.init('produtos');

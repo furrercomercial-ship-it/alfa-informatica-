@@ -26,6 +26,7 @@
 //   https://<seu-project-ref>.supabase.co/functions/v1/mp-webhook
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { enviarEmailPedidoConfirmado } from '../_shared/email.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -215,7 +216,50 @@ Deno.serve(async (req) => {
       // disso, mas evita um UPDATE/trigger à toa quando não há mudança.
       const { data: pedidoAtual } = await admin.from('orders').select('status').eq('id', pagamento.pedido_id).single();
       if (pedidoAtual && pedidoAtual.status !== newOrderStatus) {
-        await admin.from('orders').update({ status: newOrderStatus }).eq('id', pagamento.pedido_id);
+        // Se isso falhar (ex: baixa de estoque do trigger bateria negativo —
+        // ver "products_stock_nao_negativo" em schema-auditoria-fixes.sql),
+        // o pedido fica preso no status anterior mesmo o Pix já tendo
+        // compensado de verdade — de propósito: trava contra vender 2x a
+        // última unidade quando duas compras concorrentes ficam pendentes
+        // ao mesmo tempo. Fica visível pro admin resolver em Pedidos (nunca
+        // vira "pago" sozinho quando isso acontece).
+        const { error: statusErr } = await admin.from('orders').update({ status: newOrderStatus }).eq('id', pagamento.pedido_id);
+        if (statusErr) {
+          console.error('[mp-webhook] pedido pago no MP mas não pôde mudar de status (provável estoque insuficiente)', pagamento.pedido_id, statusErr.message);
+        }
+
+        // Pix confirmado assincronamente (o e-mail não saiu na criação do
+        // pedido, só quando o pagamento realmente compensa — ver
+        // mp-create-payment). Nunca deve travar a resposta do webhook, por
+        // isso fica isolado num try/catch próprio, só logando se falhar.
+        if (!statusErr && newOrderStatus === 'pago') {
+          try {
+            const { data: pedidoCompleto } = await admin
+              .from('orders')
+              .select('order_number,subtotal,discount,freight,total,shipping_method,payment_method,profiles(email,full_name)')
+              .eq('id', pagamento.pedido_id)
+              .single();
+            const { data: itensPedido } = await admin
+              .from('order_items')
+              .select('product_name_snapshot,qty,unit_price')
+              .eq('order_id', pagamento.pedido_id);
+            const cliente = pedidoCompleto?.profiles as { email?: string; full_name?: string } | null;
+            if (pedidoCompleto && cliente?.email) {
+              await enviarEmailPedidoConfirmado({
+                destinatario: cliente.email,
+                nomeCliente: cliente.full_name || cliente.email,
+                orderNumber: pedidoCompleto.order_number,
+                itens: (itensPedido || []).map((i: any) => ({ nome: i.product_name_snapshot, qty: i.qty, preco: i.unit_price })),
+                subtotal: pedidoCompleto.subtotal, discount: pedidoCompleto.discount,
+                freight: pedidoCompleto.freight, total: pedidoCompleto.total,
+                shippingMethod: pedidoCompleto.shipping_method,
+                paymentMethod: pedidoCompleto.payment_method,
+              });
+            }
+          } catch (e) {
+            console.error('[mp-webhook] falha ao enviar e-mail de confirmação', String(e));
+          }
+        }
       }
     }
 

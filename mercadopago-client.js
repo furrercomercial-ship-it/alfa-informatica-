@@ -71,21 +71,12 @@ window.MPClient = (function () {
           setTimeout(() => { if (onReady) onReady(cardForm); }, 0);
         },
         onError: (error) => console.error('[MPClient] erro no formulário de cartão', error),
-        // Se isso nunca aparecer no console ao digitar o número do cartão,
-        // o problema está ANTES de tudo: o SDK não está nem detectando o
-        // que foi digitado no campo (então getIssuers()/getInstallments()
-        // nunca chegam a ser chamados — não é um bug de parsing, é a
-        // origem dos dois nunca disparar).
-        onBinChange: (bin) => console.log('[MPClient] onBinChange — bin detectado:', bin),
-        onValidityChange: (error, field) => console.log('[MPClient] onValidityChange', field, error),
+        onBinChange: () => {},
+        onValidityChange: () => {},
         // O SDK NÃO preenche <select> sozinho — os campos de parcelas/banco
         // emissor são só onde ele lê o valor escolhido, quem desenha as
         // opções somos nós, a partir do que esses dois retornos avisam.
-        // Faz log do formato bruto de propósito: se o formato vier
-        // diferente do que a doc descreve, dá pra ver exatamente o que
-        // ajustar sem precisar adivinhar de novo.
         onIssuersReceived: (error, issuers) => {
-          console.log('[MPClient] onIssuersReceived', error, issuers);
           if (error) return;
           var select = document.getElementById(elementIds.issuer);
           if (!select) return;
@@ -95,7 +86,6 @@ window.MPClient = (function () {
             : '<option value="">Banco emissor</option>';
         },
         onInstallmentsReceived: (error, installments) => {
-          console.log('[MPClient] onInstallmentsReceived', error, installments);
           if (error) return;
           var select = document.getElementById(elementIds.installments);
           if (!select) return;
@@ -111,21 +101,14 @@ window.MPClient = (function () {
             : '<option value="">Parcelas</option>';
         },
         onIdentificationTypesReceived: (error, types) => {
-          console.log('[MPClient] onIdentificationTypesReceived', error, types);
           if (error) return;
           var select = document.getElementById(elementIds.identificationType);
           if (!select || select.options.length) return; // já populado, não sobrescreve
           var list = Array.isArray(types) ? types : [];
           select.innerHTML = list.map((t) => '<option value="' + t.id + '">' + (t.name || t.id) + '</option>').join('');
         },
-        // Segundo a doc oficial, onReady só dispara depois que TODOS os
-        // iframes (número/validade/CVV) estão prontos de verdade — mais
-        // tarde que onFormMounted. Log só pra diagnóstico: se isso nunca
-        // aparecer no console, o SDK visualmente montou mas não terminou de
-        // inicializar de verdade.
-        onReady: () => { console.log('[MPClient] onReady — cardForm 100% inicializado (iframes prontos)'); },
+        onReady: () => {},
         onCardTokenReceived: (error, data) => {
-          console.log('[MPClient] onCardTokenReceived', error, data ? { token_presente: !!data.token } : null);
           var resolvers = pendingTokenResolvers;
           pendingTokenResolvers = [];
           resolvers.forEach(function (resolve) { resolve(error ? null : data); });

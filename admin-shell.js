@@ -31,6 +31,8 @@ window.AdminShell = (function () {
     cupons: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.17L4 3a1 1 0 0 0-1 1l.17 5.59a2 2 0 0 0 .66 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>',
     lucro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
     despesas: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8h20"/><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 16h4"/></svg>',
+    estoque: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>',
+    notas_fiscais: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>',
   };
 
   const NAV = [
@@ -38,13 +40,15 @@ window.AdminShell = (function () {
 
     { key: 'produtos',   label: 'Produtos',   href: 'admin-produtos.html',   perm: 'produtos.editar', group: 'Catálogo', icon: ICONS.produtos },
     { key: 'categorias', label: 'Categorias', href: 'admin-categorias.html', perm: 'categorias.editar', group: 'Catálogo', icon: ICONS.categorias },
+    { key: 'estoque',    label: 'Estoque',    href: 'admin-estoque.html',    perm: 'estoque.visualizar', group: 'Catálogo', icon: ICONS.estoque },
 
     { key: 'pedidos',    label: 'Pedidos',    href: 'admin-pedidos.html',    perm: 'pedidos.visualizar', group: 'Vendas', icon: ICONS.pedidos },
     { key: 'clientes',   label: 'Clientes',   href: 'admin-clientes.html',   perm: 'clientes.visualizar', group: 'Vendas', icon: ICONS.clientes },
     { key: 'cupons',     label: 'Cupons',     href: 'admin-cupons.html',     perm: 'precos.editar', group: 'Vendas', icon: ICONS.cupons },
 
-    { key: 'lucro',      label: 'Lucro',      href: 'admin-lucro.html',      perm: 'faturamento.visualizar', group: 'Financeiro', icon: ICONS.lucro },
-    { key: 'despesas',   label: 'Despesas',   href: 'admin-despesas.html',   perm: 'faturamento.visualizar', group: 'Financeiro', icon: ICONS.despesas },
+    { key: 'lucro',         label: 'Lucro',          href: 'admin-lucro.html',          perm: 'faturamento.visualizar', group: 'Financeiro', icon: ICONS.lucro },
+    { key: 'despesas',      label: 'Despesas',       href: 'admin-despesas.html',       perm: 'faturamento.visualizar', group: 'Financeiro', icon: ICONS.despesas },
+    { key: 'notas_fiscais', label: 'Notas Fiscais',  href: 'admin-notas-fiscais.html',  perm: 'notas_fiscais.visualizar', group: 'Financeiro', icon: ICONS.notas_fiscais },
 
     { key: 'avaliacoes', label: 'Avaliações', href: 'admin-avaliacoes.html', perm: 'avaliacoes.moderar', group: 'Engajamento', icon: ICONS.avaliacoes },
 
@@ -283,6 +287,22 @@ window.AdminShell = (function () {
     }, 3200);
   }
 
+  // Log de auditoria de ações administrativas sensíveis (excluir produto,
+  // mudar status de pedido, bloquear cliente, gerenciar equipe...) — grava
+  // em admin_audit_log (ver schema-auditoria-fixes.sql). Nunca deve travar
+  // a ação principal por causa disso, por isso só loga o erro se falhar
+  // (ex: rodar antes de aplicar aquele schema).
+  async function logAction(acao, entidade, entidadeId, detalhes) {
+    try {
+      await window.sb.from('admin_audit_log').insert({
+        usuario_id: _profile && _profile.id,
+        acao, entidade,
+        entidade_id: entidadeId != null ? String(entidadeId) : null,
+        detalhes: detalhes || null,
+      });
+    } catch (e) { console.error('[admin-shell] falha ao gravar log de auditoria', e); }
+  }
+
   async function init(activeKey) {
     const profile = await guard();
     if (!profile) return null;
@@ -292,5 +312,5 @@ window.AdminShell = (function () {
     return { profile, can };
   }
 
-  return { init, can, toast, get profile() { return _profile; } };
+  return { init, can, toast, logAction, get profile() { return _profile; } };
 })();

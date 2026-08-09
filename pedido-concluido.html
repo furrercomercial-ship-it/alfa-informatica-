@@ -178,12 +178,16 @@ function renderPedido(order) {
     ? '<div class="oc-retry-note">Se o carrinho ainda estiver salvo no seu navegador, você pode <a href="checkout.html" style="color:var(--primary);">tentar novamente aqui</a>.</div>'
     : '';
 
+  const trackingHtml = order.tracking_code
+    ? `<div class="oc-retry-note">Código de rastreio (${order.carrier || 'Correios'}): <b>${order.tracking_code}</b> — <a href="https://rastreamento.correios.com.br/app/index.php?objetos=${encodeURIComponent(order.tracking_code)}" target="_blank" rel="noopener noreferrer" style="color:var(--primary);">acompanhar entrega</a></div>`
+    : '';
+
   document.getElementById('ocOrderCard').innerHTML =
     `<span class="oc-status-pill ${group}">${statusLabel}</span>` +
     `<div class="oc-order-num">Pedido <b>${order.order_number}</b> — ${new Date(order.created_at).toLocaleDateString('pt-BR')}</div>` +
     (order.order_items || []).map(i => `<div class="oc-item"><span>${i.qty}x ${i.product_name_snapshot}</span><span>${fmt(i.line_total)}</span></div>`).join('') +
     `<div class="oc-total-row"><span>Total</span><span>${fmt(order.total)}</span></div>` +
-    pixHtml + retryHtml;
+    pixHtml + trackingHtml + retryHtml;
 
   return group;
 }

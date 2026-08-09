@@ -216,6 +216,8 @@ input,button{font-family:inherit;}
 .frete-name{flex:1;font-weight:600;color:var(--text-main);}
 .frete-price{color:var(--success);font-weight:700;font-size:12.5px;}
 .frete-days{color:var(--text-secondary);font-size:10.5px;}
+.frete-loading,.frete-error{font-size:12px;color:var(--text-secondary);padding:10px 2px;}
+.frete-error{color:var(--warning,#c97a1f);}
 
 /* empty */
 .empty{grid-column:1/-1;text-align:center;padding:120px 0;}
@@ -336,8 +338,43 @@ function getSpecs(item){
   return tags.slice(0,5);
 }
 
-let appliedDiscount=0,fretePrice=null;
+// fretePrice: null (não calculado ainda) | número em R$ (0 = grátis).
+// appliedCupom: objeto vindo da tabela `cupons` do Supabase, ou null — igual
+// ao checkout.html, pra não mostrar um desconto que o checkout depois não
+// vai aplicar do mesmo jeito (cupom fixo no JS que nem batia com o painel).
+// Tudo isso fica em variável de módulo (não só no DOM) porque render() é
+// chamado por qualquer mudança no carrinho (qty, remover item...) e recria
+// o HTML inteiro da coluna direita — sem guardar o estado aqui, cada
+// render() por outro motivo apagava o CEP digitado e as opções de frete.
+let appliedCupom=null,fretePrice=null,cepValue='',couponValue='';
+let freteOpts=[],freteSelectedCodigo=null,freteStatus='idle',freteErrorMsg='';
 let openAcc={frete:false,cupom:false,afiliado:false};
+
+function freteOptionsHtml(){
+  if(freteStatus==='loading') return '<div class="frete-loading">Calculando frete...</div>';
+  if(freteStatus==='error') return '<div class="frete-error">'+freteErrorMsg+'</div>';
+  if(freteStatus==='whatsapp') return '<div class="frete-error">Pra esse CEP e valor de pedido, o frete é combinado direto pelo WhatsApp da Alfa.</div>';
+  if(!freteOpts.length) return '';
+  return '<div style="margin-bottom:16px">'+
+    freteOpts.map(o=>`
+    <label class="frete-opt">
+      <input type="radio" name="frete" value="${o.codigo}" ${o.codigo===freteSelectedCodigo?'checked':''} onchange="selectFrete('${o.codigo}')">
+      <span class="frete-name">${o.nome}</span>
+      <span class="frete-price">${o.valor===0?'Grátis':fmt(o.valor)}</span>
+      <span class="frete-days">${o.dias}</span>
+    </label>`).join('')+'</div>';
+}
+
+// Mesmas cidades/regra de checkout.html — carrinho.html só mostra uma
+// prévia (o cálculo de verdade que vale a compra roda de novo no checkout).
+const CIDADES_ENTREGA_LOCAL_CART=['cuiaba','cuiabá','varzea grande','várzea grande'];
+const ENTREGA_LOCAL_VALOR_MINIMO_GRATIS_CART=200;
+
+function cupomDiscountValueCart(cupom, subtotal){
+  if(!cupom) return 0;
+  const d = cupom.tipo==='percentual' ? subtotal*(cupom.valor/100) : Number(cupom.valor);
+  return Math.min(d, subtotal);
+}
 
 function ofertasHtml(){
   const items=(window.PRODUCTS_DB||[]).filter(p=>p.old && p.old>p.price).slice(0,4);
@@ -374,8 +411,8 @@ function render(){
   }
 
   const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  const discount=appliedDiscount?subtotal*appliedDiscount:0;
-  const freteNum=fretePrice===null?null:(fretePrice==='Grátis'?0:parseFloat(fretePrice.replace('R$ ','').replace(',','.')));
+  const discount=cupomDiscountValueCart(appliedCupom,subtotal);
+  const freteNum=fretePrice;
   const total=subtotal-discount+(freteNum||0);
   const pixDiscountPct=subtotal?cart.reduce((s,i)=>s+i.price*i.qty*(i.pixDiscountPercent!=null?i.pixDiscountPercent:5),0)/subtotal:5;
   const pixDiscountVal=subtotal*(pixDiscountPct/100);
@@ -440,9 +477,9 @@ function render(){
     <div class="sum-body">
       <div class="sum-title">Resumo</div>
       <div class="sum-plain-row"><span>SubTotal</span><span>${fmt(subtotal)}</span></div>
-      ${appliedDiscount?`<div class="sum-plain-row" style="color:var(--success);"><span>Desconto (${appliedDiscount*100}%)</span><span>− ${fmt(discount)}</span></div>`:''}
-      <div class="sum-plain-row"><span>Frete</span><span id="freteVal">${fretePrice===null?'A calcular':fretePrice==='Grátis'?'Grátis':fretePrice}</span></div>
-      <div class="sum-total-row"><span>Total</span><span>${fmt(total)}</span></div>
+      ${appliedCupom?`<div class="sum-plain-row" style="color:var(--success);"><span>Cupom ${appliedCupom.codigo}</span><span>− ${fmt(discount)}</span></div>`:''}
+      <div class="sum-plain-row"><span>Frete</span><span id="freteVal">${fretePrice===null?'A calcular':fretePrice===0?'Grátis':fmt(fretePrice)}</span></div>
+      <div class="sum-total-row"><span>Total</span><span class="total-r">${fmt(total)}</span></div>
 
       <div class="pix-block">
         <div class="pix-price">${fmt(pixTotal)}</div>
@@ -470,10 +507,10 @@ function render(){
         </div>
         <div class="acc-body"><div class="acc-body-in">
           <div class="sinput-row">
-            <input class="sinput" type="text" id="cepInput" placeholder="00000-000" maxlength="9">
+            <input class="sinput" type="text" id="cepInput" placeholder="00000-000" maxlength="9" value="${cepValue}" oninput="cepValue=this.value">
             <button class="sbtn" onclick="calcFrete()">Calcular</button>
           </div>
-          <div id="freteOptions"></div>
+          <div id="freteOptions">${freteOptionsHtml()}</div>
         </div></div>
       </div>
       <div class="acc-item ${openAcc.cupom?'open':''}">
@@ -484,9 +521,10 @@ function render(){
         </div>
         <div class="acc-body"><div class="acc-body-in">
           <div class="sinput-row">
-            <input class="sinput" type="text" id="couponInput" placeholder="Código do cupom">
+            <input class="sinput" type="text" id="couponInput" placeholder="Código do cupom" value="${couponValue}" oninput="couponValue=this.value">
             <button class="sbtn" onclick="applyCoupon()">Aplicar</button>
           </div>
+          ${appliedCupom?`<div class="frete-days" style="margin-top:8px;">Cupom <b>${appliedCupom.codigo}</b> aplicado.</div>`:''}
         </div></div>
       </div>
       <div class="acc-item ${openAcc.afiliado?'open':''}">
@@ -511,37 +549,69 @@ function applyAffiliate(){
   if(code){ showToast('✓ Cupom de afiliado "'+code+'" aplicado!'); }
 }
 
-function applyCoupon(){
-  const code=document.getElementById('couponInput')?.value.trim().toUpperCase();
-  if(code==='ALFA10'){appliedDiscount=.10;showToast('✓ Cupom ALFA10 aplicado — 10% de desconto!');render();}
-  else if(code==='ALFA20'){appliedDiscount=.20;showToast('✓ Cupom ALFA20 aplicado — 20% de desconto!');render();}
-  else{showToast('Cupom inválido ou expirado.');}
+async function applyCoupon(){
+  const code=(document.getElementById('couponInput')?.value||'').trim().toUpperCase();
+  if(!code) return;
+  const subtotal=Store.getCart().reduce((s,i)=>s+i.price*i.qty,0);
+  const { data, error } = await window.sb.from('cupons').select('*').eq('codigo',code).eq('ativo',true).maybeSingle();
+  if(error || !data){ appliedCupom=null; showToast('Cupom inválido ou expirado.'); return; }
+  const now=new Date();
+  if(data.validade_inicio && new Date(data.validade_inicio)>now){ appliedCupom=null; showToast('Este cupom ainda não está válido.'); return; }
+  if(data.validade_fim && new Date(data.validade_fim)<now){ appliedCupom=null; showToast('Este cupom expirou.'); return; }
+  if(data.limite_uso && data.usos>=data.limite_uso){ appliedCupom=null; showToast('Este cupom já atingiu o limite de uso.'); return; }
+  if(data.valor_minimo && subtotal<data.valor_minimo){ appliedCupom=null; showToast('Pedido mínimo de '+fmt(data.valor_minimo)+' para usar este cupom.'); return; }
+  appliedCupom=data;
+  showToast('✓ Cupom '+data.codigo+' aplicado!');
+  render();
 }
 
-function calcFrete(){
-  const cep=document.getElementById('cepInput')?.value.replace(/\D/g,'');
-  if(cep.length<8){showToast('CEP inválido. Informe 8 dígitos.');return;}
-  const opts=[['Econômico','R$ 18,90','7–10 dias úteis'],['Expresso','R$ 34,90','3–5 dias úteis'],['Retirada na loja','Grátis','A partir de 1h']];
-  document.getElementById('freteOptions').innerHTML=`<div style="margin-bottom:16px">`+
-    opts.map(([n,p,d],i)=>`
-    <label class="frete-opt">
-      <input type="radio" name="frete" value="${p}" ${i===0?'checked':''} onchange="selectFrete('${p}')">
-      <span class="frete-name">${n}</span>
-      <span class="frete-price">${p}</span>
-      <span class="frete-days">${d}</span>
-    </label>`).join('')+`</div>`;
-  fretePrice='R$ 18,90';
-  document.getElementById('freteVal').textContent='R$ 18,90';
+// Só uma prévia — o valor que vale a compra é sempre recalculado no
+// checkout (endereço completo + Correios reais), igual ao resto do site já
+// faz. Aqui só evita mostrar um frete inventado que nunca bateria depois.
+async function calcFrete(){
+  const cepDigits=(document.getElementById('cepInput')?.value||'').replace(/\D/g,'');
+  if(cepDigits.length<8){showToast('CEP inválido. Informe 8 dígitos.');return;}
+  freteStatus='loading'; freteOpts=[]; fretePrice=null; freteSelectedCodigo=null;
+  render();
+
+  const cart=Store.getCart();
+  const itemsPayload=cart.map(i=>({product_id:i.id,qty:i.qty}));
+
+  try{
+    const cepResp=await window.sb.functions.invoke('correios-cep',{body:{cep:cepDigits}});
+    const cidade=(cepResp.data&&cepResp.data.ok&&cepResp.data.endereco&&cepResp.data.endereco.cidade||'').toLowerCase().trim();
+
+    if(CIDADES_ENTREGA_LOCAL_CART.includes(cidade)){
+      const subtotal=cart.reduce((s,i)=>s+i.price*i.qty,0);
+      if(subtotal>=ENTREGA_LOCAL_VALOR_MINIMO_GRATIS_CART){
+        freteOpts=[{codigo:'entrega_local',nome:'Entrega local (Alfa)',valor:0,dias:'Combinamos com você'}];
+        freteStatus='ok';
+        selectFrete('entrega_local');
+      } else {
+        freteStatus='whatsapp';
+        render();
+      }
+      return;
+    }
+
+    const resp=await window.sb.functions.invoke('correios-frete',{body:{cep_destino:cepDigits,items:itemsPayload}});
+    const opcoes=(resp.data&&resp.data.ok)?resp.data.opcoes:[];
+    if(!opcoes.length) throw new Error('sem opções');
+    freteOpts=opcoes.map(o=>({codigo:o.codigo,nome:o.nome,valor:o.valor,dias:o.prazoDias?(o.prazoDias+' dias úteis'):'—'}));
+    freteStatus='ok';
+    selectFrete(freteOpts[0].codigo);
+  }catch(e){
+    freteStatus='error';
+    freteErrorMsg='Não foi possível calcular o frete agora — o valor final é sempre confirmado no checkout.';
+    render();
+  }
 }
 
-function selectFrete(p){
-  fretePrice=p;
-  document.getElementById('freteVal').textContent=p==='Grátis'?'Grátis':p;
-  const cart=Store.getCart(),selected=cart.filter(i=>i.selected);
-  const sub=selected.reduce((s,i)=>s+i.price*i.qty,0);
-  const disc=appliedDiscount?sub*appliedDiscount:0;
-  const fn=p==='Grátis'?0:parseFloat(p.replace('R$ ','').replace(',','.'));
-  document.querySelector('.total-r').textContent=fmt(sub-disc+fn);
+function selectFrete(codigo){
+  freteSelectedCodigo=codigo;
+  const opt=freteOpts.find(o=>o.codigo===codigo);
+  fretePrice=opt?opt.valor:null;
+  render();
 }
 
 function goCheckout(){

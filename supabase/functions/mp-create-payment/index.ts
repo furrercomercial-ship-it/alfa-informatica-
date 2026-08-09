@@ -33,6 +33,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { calcularFrete, calcularPacoteAgregado } from '../_shared/correios.ts';
+import { enviarEmailPedidoConfirmado } from '../_shared/email.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -147,6 +148,12 @@ Deno.serve(async (req) => {
       if (user) userId = user.id;
     }
     if (!userId) return fail(401, 'Você precisa estar logado para finalizar a compra.');
+
+    // Cliente bloqueado não pode comprar — as outras rotas administrativas
+    // já checavam isso, essa (a mais importante, porque move dinheiro)
+    // ainda não checava.
+    const { data: buyerProfile } = await admin.from('profiles').select('is_blocked').eq('id', userId).single();
+    if (buyerProfile?.is_blocked) return fail(403, 'Sua conta está bloqueada. Entre em contato com o suporte.');
 
     const body = await req.json().catch(() => null);
     if (!body) return fail(400, 'Dados inválidos.');
@@ -271,6 +278,7 @@ Deno.serve(async (req) => {
     // cupom (mesmas regras que hoje só existiam no cliente)
     let discount = 0;
     let couponApplied: string | null = null;
+    let couponAppliedId: number | null = null;
     if (couponCode) {
       const { data: cupom } = await admin.from('cupons').select('*').eq('codigo', String(couponCode).toUpperCase().trim()).eq('ativo', true).maybeSingle();
       if (!cupom) return fail(400, 'Cupom inválido.');
@@ -279,9 +287,13 @@ Deno.serve(async (req) => {
       if (cupom.validade_fim && new Date(cupom.validade_fim) < now) return fail(400, 'Este cupom expirou.');
       if (cupom.limite_uso && cupom.usos >= cupom.limite_uso) return fail(400, 'Este cupom já atingiu o limite de uso.');
       if (cupom.valor_minimo && subtotal < cupom.valor_minimo) return fail(400, 'O pedido não atinge o valor mínimo para este cupom.');
+      // Uso único por cliente — antes só existia o limite global de usos.
+      const { count: jaUsou } = await admin.from('cupom_usos').select('id', { count: 'exact', head: true }).eq('cupom_id', cupom.id).eq('user_id', userId);
+      if (jaUsou) return fail(400, 'Você já usou este cupom antes.');
       const cupomDiscount = cupom.tipo === 'percentual' ? subtotal * (cupom.valor / 100) : Number(cupom.valor);
       discount += Math.min(cupomDiscount, subtotal);
       couponApplied = cupom.codigo;
+      couponAppliedId = cupom.id;
     }
 
     // frete — nunca confia no preço vindo do cliente (mesmo espírito da
@@ -343,7 +355,10 @@ Deno.serve(async (req) => {
     if (orderErr || !order) return fail(500, 'Não foi possível criar o pedido. Tente novamente.');
 
     await admin.from('order_items').insert(orderItemsPayload.map((i) => ({ ...i, order_id: order.id })));
-    if (couponApplied) await admin.rpc('incrementar_uso_cupom', { p_codigo: couponApplied });
+    if (couponApplied) {
+      await admin.rpc('incrementar_uso_cupom', { p_codigo: couponApplied });
+      if (couponAppliedId) await admin.from('cupom_usos').insert({ cupom_id: couponAppliedId, user_id: userId, pedido_id: order.id });
+    }
 
     // ── reivindica a idempotency_key ANTES de chamar o Mercado Pago (não só
     // depois): fecha a janela de corrida em que duas requisições quase
@@ -518,7 +533,43 @@ Deno.serve(async (req) => {
     // Cartão aprovado sincronamente no modo automático: já reflete no pedido
     // sem esperar o webhook (ele confirma de novo, é idempotente).
     if (normalizedStatus === 'aprovado') {
-      await admin.from('orders').update({ status: 'pago' }).eq('id', order.id);
+      // Se isso falhar (ex: baixa de estoque do trigger bateria negativo —
+      // ver "products_stock_nao_negativo" em schema-auditoria-fixes.sql),
+      // o pedido fica preso em "aguardando_pagamento" mesmo já pago de
+      // verdade no Mercado Pago — de propósito: é a trava contra vender
+      // 2x a última unidade em checkouts simultâneos. Isso NÃO pode travar
+      // a resposta do pagamento (o cliente já pagou), só fica visível pro
+      // admin resolver manualmente em Pedidos (o pedido nunca vira "pago"
+      // sozinho quando isso acontece, então chama atenção lá).
+      const { error: statusErr } = await admin.from('orders').update({ status: 'pago' }).eq('id', order.id);
+      if (statusErr) {
+        console.error('[mp-create-payment] pedido pago no MP mas não pôde ser marcado como pago (provável estoque insuficiente)', orderNumber, statusErr.message);
+      }
+
+      // E-mail só sai quando o pagamento já está confirmado (nunca no Pix
+      // pendente — esse caso é tratado depois pelo mp-webhook, quando o
+      // pagamento compensar). Nunca deve travar a resposta, por isso fica
+      // isolado num try/catch próprio, só logando se falhar.
+      //
+      // Destinatário/nome vêm do cadastro (profiles), NUNCA do `payer` que
+      // o corpo da requisição manda — esse é só o que vai pro Mercado Pago
+      // como dado do pagador, e é controlado pelo próprio chamador (poderia
+      // ser qualquer e-mail/nome, inclusive de terceiros). Usar profiles
+      // garante que o e-mail só vai pro dono de verdade da conta logada.
+      try {
+        const { data: perfil } = await admin.from('profiles').select('email,full_name').eq('id', userId).single();
+        if (perfil?.email) await enviarEmailPedidoConfirmado({
+          destinatario: perfil.email,
+          nomeCliente: perfil.full_name || perfil.email,
+          orderNumber,
+          itens: orderItemsPayload.map((i: any) => ({ nome: i.product_name_snapshot, qty: i.qty, preco: i.unit_price })),
+          subtotal, discount, freight, total,
+          shippingMethod: shippingName,
+          paymentMethod: paymentMethod === 'pix' ? 'Pix' : 'Cartão de crédito',
+        });
+      } catch (e) {
+        console.error('[mp-create-payment] falha ao enviar e-mail de confirmação', String(e));
+      }
     } else if (normalizedStatus === 'recusado') {
       await admin.from('orders').update({ status: 'recusado' }).eq('id', order.id);
     }

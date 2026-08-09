@@ -15,6 +15,9 @@
 .totals-box{margin-top:8px;padding-top:10px;border-top:1px solid var(--border-color);}
 .totals-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;}
 .totals-row.grand{font-weight:800;font-size:15px;color:var(--text-main);}
+.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;font-size:12.5px;color:var(--text-muted);}
+.pagination-bar .pg-controls{display:flex;align-items:center;gap:10px;}
+.pagination-bar .pg-page{color:var(--text-muted);}
 </style>
 </head>
 <body>
@@ -32,12 +35,18 @@
           <select id="statusFilter" style="padding:9px 12px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-main);">
             <option value="">Todos os status</option>
             <option value="aguardando_pagamento">Aguardando Pagamento</option>
+            <option value="processando">Processando</option>
             <option value="pago">Pago</option>
             <option value="preparando">Em Preparação</option>
             <option value="enviado">Em Transporte</option>
             <option value="entregue">Entregue</option>
             <option value="cancelado">Cancelado</option>
+            <option value="recusado">Pagamento Recusado</option>
+            <option value="estornado">Estornado</option>
+            <option value="estorno_parcial">Estornado Parcialmente</option>
+            <option value="expirado">Expirado</option>
           </select>
+          <button class="btn btn-secondary" id="exportCsvBtn">Exportar CSV</button>
         </div>
         <div id="ordCount" style="font-size:12.5px;color:var(--text-muted);"></div>
       </div>
@@ -48,6 +57,7 @@
           <tbody id="ordTbody"></tbody>
         </table>
       </div>
+      <div class="pagination-bar" id="ordPagination"></div>
     </div>
   </div>
 </div>
@@ -66,13 +76,56 @@
 <script src="supabase-client.js"></script>
 <script src="admin-shell.js"></script>
 <script>
-const STATUS_LABELS = { aguardando_pagamento:'Aguardando Pagamento', pago:'Pago', preparando:'Em Preparação', enviado:'Em Transporte', entregue:'Entregue', cancelado:'Cancelado' };
-const STATUS_COLORS = { aguardando_pagamento:'amber', pago:'blue', preparando:'blue', enviado:'blue', entregue:'green', cancelado:'red' };
+const STATUS_LABELS = {
+  aguardando_pagamento:'Aguardando Pagamento', processando:'Processando', pago:'Pago',
+  preparando:'Em Preparação', enviado:'Em Transporte', entregue:'Entregue', cancelado:'Cancelado',
+  recusado:'Pagamento Recusado', estornado:'Estornado', estorno_parcial:'Estornado Parcialmente', expirado:'Expirado',
+};
+const STATUS_COLORS = {
+  aguardando_pagamento:'amber', processando:'amber', pago:'blue', preparando:'blue', enviado:'blue', entregue:'green',
+  cancelado:'red', recusado:'red', estornado:'red', estorno_parcial:'amber', expirado:'gray',
+};
 let ORDERS = [];
 let canEdit = false;
+let currentPage = 1;
+const PAGE_SIZE = 25;
 
 function fmtBRL(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
 function fmtDate(iso) { return new Date(iso).toLocaleDateString('pt-BR') + ' ' + new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }
+
+/* ── CSV helpers ── */
+function csvEscape(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadCsv(filename, rows) {
+  const content = '﻿' + rows.map(r => r.map(csvEscape).join(';')).join('\r\n');
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+/* ── Paginação ── */
+function renderPagination(containerId, totalItems, page, onChange) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const start = totalItems ? (page - 1) * PAGE_SIZE + 1 : 0;
+  const end = Math.min(page * PAGE_SIZE, totalItems);
+  el.innerHTML = `
+    <div class="pg-info">Mostrando ${start}–${end} de ${totalItems}</div>
+    <div class="pg-controls">
+      <button class="btn btn-secondary btn-sm" id="${containerId}PrevBtn" ${page <= 1 ? 'disabled' : ''}>Anterior</button>
+      <span class="pg-page">Página ${page} de ${totalPages}</span>
+      <button class="btn btn-secondary btn-sm" id="${containerId}NextBtn" ${page >= totalPages ? 'disabled' : ''}>Próxima</button>
+    </div>`;
+  document.getElementById(containerId + 'PrevBtn').addEventListener('click', () => onChange(page - 1));
+  document.getElementById(containerId + 'NextBtn').addEventListener('click', () => onChange(page + 1));
+}
 
 async function loadOrders() {
   const { data, error } = await window.sb
@@ -84,18 +137,33 @@ async function loadOrders() {
   renderTable();
 }
 
-function renderTable() {
-  const q = document.getElementById('searchInp').value.trim().toLowerCase();
+function getFilteredOrders() {
+  // Tira o "#" do início — o número do pedido aparece como "#ALFA-..." em
+  // toda a tela, então é natural digitar/colar com o # junto.
+  const q = document.getElementById('searchInp').value.trim().toLowerCase().replace(/^#/, '');
   const statusF = document.getElementById('statusFilter').value;
-  let list = ORDERS.filter(o => {
+  return ORDERS.filter(o => {
     if (q && !(o.order_number || '').toLowerCase().includes(q)) return false;
     if (statusF && o.status !== statusF) return false;
     return true;
   });
+}
+
+function renderTable() {
+  const list = getFilteredOrders();
   document.getElementById('ordCount').textContent = list.length + ' pedido' + (list.length !== 1 ? 's' : '');
+
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const pageItems = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const tbody = document.getElementById('ordTbody');
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="6" class="table-empty">Nenhum pedido encontrado.</td></tr>'; return; }
-  tbody.innerHTML = list.map(o => `
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="table-empty">Nenhum pedido encontrado.</td></tr>';
+    renderPagination('ordPagination', 0, currentPage, p => { currentPage = p; renderTable(); });
+    return;
+  }
+  tbody.innerHTML = pageItems.map(o => `
     <tr>
       <td class="strong">#${o.order_number || o.id}</td>
       <td>${o.profiles ? o.profiles.full_name : 'Visitante'}</td>
@@ -104,6 +172,22 @@ function renderTable() {
       <td><span class="status-pill ${STATUS_COLORS[o.status] || 'gray'}">${STATUS_LABELS[o.status] || o.status}</span></td>
       <td><button class="btn btn-secondary btn-sm" onclick="openDetail(${o.id})">Ver detalhes</button></td>
     </tr>`).join('');
+  renderPagination('ordPagination', list.length, currentPage, p => { currentPage = p; renderTable(); });
+}
+
+function exportOrdersCsv() {
+  const list = getFilteredOrders();
+  const rows = [['Nº Pedido', 'Cliente', 'Data', 'Status', 'Total']];
+  list.forEach(o => {
+    rows.push([
+      o.order_number || o.id,
+      o.profiles ? o.profiles.full_name : 'Visitante',
+      fmtDate(o.created_at),
+      STATUS_LABELS[o.status] || o.status,
+      Number(o.total).toFixed(2).replace('.', ','),
+    ]);
+  });
+  downloadCsv('pedidos-' + todayStr() + '.csv', rows);
 }
 
 window.openDetail = async function (id) {
@@ -164,8 +248,10 @@ window.openDetail = async function (id) {
 
 window.saveStatus = async function (id) {
   const status = document.getElementById('statusSelect').value;
+  const before = ORDERS.find(o => o.id === id);
   const { error } = await window.sb.from('orders').update({ status }).eq('id', id);
   if (error) { AdminShell.toast('Erro ao salvar: ' + error.message, 'error'); return; }
+  AdminShell.logAction('alterar_status_pedido', 'pedido', id, { de: before && before.status, para: status });
   AdminShell.toast('Status atualizado!', 'success');
   closeModal();
   loadOrders();
@@ -202,8 +288,9 @@ window.atualizarRastreio = async function (id) {
 
 function closeModal() { document.getElementById('ordModal').classList.remove('open'); }
 
-document.getElementById('searchInp').addEventListener('input', renderTable);
-document.getElementById('statusFilter').addEventListener('change', renderTable);
+document.getElementById('searchInp').addEventListener('input', () => { currentPage = 1; renderTable(); });
+document.getElementById('statusFilter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+document.getElementById('exportCsvBtn').addEventListener('click', exportOrdersCsv);
 
 (async function () {
   const session = await AdminShell.init('pedidos');

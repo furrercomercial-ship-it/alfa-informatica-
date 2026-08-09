@@ -38,6 +38,16 @@
   +'      <span class="hdr-act-line2" id="hdr-user-line2">Entrar / Cadastrar</span>'
   +'    </div>'
   +'  </a>'
+  +'  <a href="favoritos.html" class="hdr-act">'
+  +'    <div class="hdr-cart-icon-wrap">'
+  +'      <div class="hdr-badge" id="fav-badge" style="display:none">0</div>'
+  +'      <svg class="hdr-act-icon" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
+  +'    </div>'
+  +'    <div class="hdr-act-text">'
+  +'      <span class="hdr-act-line1">Favoritos</span>'
+  +'      <span class="hdr-act-line2" id="fav-count-lbl">0 itens</span>'
+  +'    </div>'
+  +'  </a>'
   +'  <a href="carrinho.html" class="hdr-act hdr-act-cart">'
   +'    <div class="hdr-cart-icon-wrap">'
   +'      <div class="hdr-badge" id="cart-badge" style="display:none">0</div>'
@@ -74,6 +84,7 @@
   +'    </div>'
   +'    <div class="mob-menu-title">Categorias</div>'
   +'    <div class="mob-menu-list" id="mobMenuList"></div>'
+  +'    <a href="categorias.html" style="display:block;margin-top:14px;padding:12px 0;text-align:center;font-size:12.5px;font-weight:700;color:var(--primary,#0066FF);text-decoration:none;border-top:1px solid var(--border-color,rgba(128,128,128,.2));">Ver todas as categorias →</a>'
   +'  </div>'
   +'</div>';
 
@@ -213,6 +224,11 @@
     if (cb){ cb.textContent = cc; cb.style.display = cc>0 ? 'flex' : 'none'; }
     var tl = document.getElementById('cart-total-lbl');
     if (tl) tl.textContent = cc + (cc===1 ? ' Item ' : ' Itens ') + 'R$' + (ct||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    var fc = Store.favCount ? Store.favCount() : 0;
+    var fb = document.getElementById('fav-badge');
+    if (fb){ fb.textContent = fc; fb.style.display = fc>0 ? 'flex' : 'none'; }
+    var fl = document.getElementById('fav-count-lbl');
+    if (fl) fl.textContent = fc + (fc===1 ? ' item' : ' itens');
     var user = Store.getUser ? Store.getUser() : null;
     var lbl = document.getElementById('hdr-user-lbl');
     if (lbl && user) lbl.textContent = user.name.split(' ')[0];

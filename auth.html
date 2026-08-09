@@ -138,7 +138,7 @@ button{font-family:inherit;cursor:pointer;}
 
 /* Rodapé agora vem de footer.js/footer.css (componente compartilhado). */
 @media(max-width:900px){.acc-split{grid-template-columns:1fr;}.acc-divider{width:auto;height:1px;flex-direction:row;padding:0;}.acc-divider span{position:static;margin:24px 0;}.cli-wrap{grid-template-columns:1fr;}.cli-menu{position:static;}}
-@media(max-width:580px){.nlt-in{flex-direction:column;text-align:center;}.acc-col{padding:34px 24px;}}
+@media(max-width:580px){.acc-col{padding:34px 24px;}}
 
 /* ══ SUPORTE FLUTUANTE ══ */
 .wpp-float{position:fixed;bottom:26px;right:26px;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35);color:#fff;z-index:9999;transition:transform .2s,box-shadow .2s;}
@@ -250,7 +250,7 @@ button{font-family:inherit;cursor:pointer;}
           </div>
         </div>
       </div>
-      <label class="cklabel" style="margin-bottom:8px;" onclick="tck('rt')"><div class="cbox" id="rt"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cktxt">Li e aceito os Termos de Uso e a Política de Privacidade</span></label>
+      <label class="cklabel" style="margin-bottom:8px;" onclick="tck('rt')"><div class="cbox" id="rt"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="cktxt">Li e aceito os <a href="pagina.html?slug=termos-de-uso" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Termos de Uso</a> e a <a href="pagina.html?slug=politica-de-privacidade" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Política de Privacidade</a></span></label>
       <button class="btn" style="margin-top:14px;" onclick="doReg()">CRIAR MINHA CONTA &nbsp;→</button>
       <div class="lnks"><button class="lsm" onclick="stab('login')">← Já tenho conta</button></div>
     </div>
@@ -465,7 +465,9 @@ async function renderOrders(){
   const orders=await Store.getOrders();
   if(!orders.length){list.innerHTML='<div class="ord-empty">Você ainda não tem pedidos.</div>';return;}
   list.innerHTML=orders.map(o=>
-    '<div class="ord-item"><div><div class="ord-id">Pedido #'+o.id+' &middot; '+o.date+'</div><div class="ord-name">'+o.items+'</div></div>'+
+    '<div class="ord-item"><div><div class="ord-id">Pedido #'+o.id+' &middot; '+o.date+'</div><div class="ord-name">'+o.items+'</div>'+
+    (o.trackingCode?'<div class="ord-name">Rastreio ('+(o.carrier||'Correios')+'): <a href="https://rastreamento.correios.com.br/app/index.php?objetos='+encodeURIComponent(o.trackingCode)+'" target="_blank" rel="noopener noreferrer">'+o.trackingCode+'</a></div>':'')+
+    '</div>'+
     '<span class="ord-status'+(o.status==='Entregue'?' done':'')+'">'+o.status+'</span><div class="ord-total">'+o.total+'</div></div>'
   ).join('');
 }
@@ -482,7 +484,8 @@ function saveDados(){
   const m=document.getElementById('dadosMsg');m.style.display='block';
   setTimeout(()=>m.style.display='none',2200);
 }
-function renderAddresses(){
+async function renderAddresses(){
+  await Store.loadAddresses();
   const list=document.getElementById('addrList');
   const addrs=Store.getAddresses();
   if(!addrs.length){list.innerHTML='<div class="addr-empty">Nenhum endereço cadastrado.</div>';return;}
@@ -491,16 +494,16 @@ function renderAddresses(){
     '<button class="addr-rm" onclick="rmAddr('+a.id+')">Remover</button></div>'
   ).join('');
 }
-function addAddr(){
+async function addAddr(){
   const rua=document.getElementById('aRua').value.trim(),cid=document.getElementById('aCid').value.trim(),
         uf=document.getElementById('aUf').value.trim(),cep=document.getElementById('aCep').value.trim();
   if(!rua||!cid||!uf) return;
-  Store.addAddress({rua,cid,uf,cep});
+  await Store.addAddress({rua,cid,uf,cep});
   document.getElementById('aRua').value='';document.getElementById('aCid').value='';
   document.getElementById('aUf').value='';document.getElementById('aCep').value='';
   renderAddresses();
 }
-function rmAddr(id){Store.removeAddress(id);renderAddresses();}
+async function rmAddr(id){ await Store.removeAddress(id); renderAddresses(); }
 function renderFavorites(){
   const grid=document.getElementById('favGrid');
   const favs=Store.getFavorites();

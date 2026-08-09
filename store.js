@@ -142,7 +142,7 @@ const Store = {
     if (!session) return [];
     const { data, error } = await window.sb
       .from('orders')
-      .select('id,order_number,status,total,created_at,order_items(product_name_snapshot,qty)')
+      .select('id,order_number,status,total,created_at,tracking_code,carrier,order_items(product_name_snapshot,qty)')
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
     if (error) { console.error(error); return []; }
@@ -152,18 +152,42 @@ const Store = {
       status: Store.ORDER_STATUS_LABELS[o.status] || o.status,
       total: Store.fmt(Number(o.total)),
       items: (o.order_items || []).map(i => i.qty + 'x ' + i.product_name_snapshot).join(', '),
+      trackingCode: o.tracking_code || null,
+      carrier: o.carrier || null,
     }));
   },
 
-  // ── ADDRESSES (mock) ──────────────────────────────────
-  getAddresses:   () => JSON.parse(localStorage.getItem('alfa_addresses') || '[]'),
-  addAddress:     (addr) => {
-    const list = Store.getAddresses();
-    list.push({ ...addr, id: Date.now() });
-    localStorage.setItem('alfa_addresses', JSON.stringify(list));
+  // ── ADDRESSES (Supabase) ────────────────────────────────
+  // Cache síncrona pro resto do site continuar chamando Store.getAddresses()
+  // sem reescrever pra await em todo lugar — mesmo padrão de window.PRODUCTS_DB
+  // em products.js. Store.loadAddresses() é quem preenche ela; quem for
+  // renderizar endereços precisa dar await nela antes da primeira leitura.
+  _addresses: [],
+  loadAddresses: async () => {
+    const { data: { session } } = await window.sb.auth.getSession();
+    if (!session) { Store._addresses = []; return; }
+    const { data, error } = await window.sb
+      .from('addresses').select('*').eq('user_id', session.user.id).order('created_at', { ascending: true });
+    if (error) { console.error(error); return; }
+    Store._addresses = (data || []).map(row => ({
+      id: row.id, rua: row.street, numero: row.number, compl: row.complement,
+      bairro: row.neighborhood, cid: row.city, uf: row.state, cep: row.cep, dest: row.recipient_name,
+    }));
   },
-  removeAddress:  (id) => {
-    localStorage.setItem('alfa_addresses', JSON.stringify(Store.getAddresses().filter(a => a.id !== id)));
+  getAddresses: () => Store._addresses,
+  addAddress: async (addr) => {
+    const { data: { session } } = await window.sb.auth.getSession();
+    if (!session) return;
+    await window.sb.from('addresses').insert({
+      user_id: session.user.id, recipient_name: addr.dest || null, cep: addr.cep || null,
+      street: addr.rua || null, number: addr.numero || null, complement: addr.compl || null,
+      neighborhood: addr.bairro || null, city: addr.cid || null, state: addr.uf || null,
+    });
+    await Store.loadAddresses();
+  },
+  removeAddress: async (id) => {
+    await window.sb.from('addresses').delete().eq('id', id);
+    await Store.loadAddresses();
   },
 
   // ── REVIEWS (Supabase) ────────────────────────────────

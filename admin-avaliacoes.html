@@ -26,6 +26,9 @@
 .rv-media{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
 .rv-media img,.rv-media video{width:70px;height:70px;object-fit:cover;border:1px solid var(--border-color);}
 .rv-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;font-size:12.5px;color:var(--text-muted);}
+.pagination-bar .pg-controls{display:flex;align-items:center;gap:10px;}
+.pagination-bar .pg-page{color:var(--text-muted);}
 </style>
 </head>
 <body>
@@ -36,8 +39,15 @@
     <div class="admin-topbar"><div class="admin-topbar-title">Avaliações</div></div>
     <div class="admin-content">
       <div class="admin-insight-bar" id="admin-insight-bar" style="display:none"></div>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <input type="search" id="searchInp" class="search-box" placeholder="Buscar por produto, cliente ou comentário...">
+          <button class="btn btn-secondary" id="exportCsvBtn">Exportar CSV</button>
+        </div>
+      </div>
       <div class="tabs" id="tabsArea"></div>
       <div id="listArea"></div>
+      <div class="pagination-bar" id="avPagination"></div>
     </div>
   </div>
 </div>
@@ -50,6 +60,42 @@ let activeTab = 'pending';
 let ALL_REVIEWS = [];
 let canModerate = false;
 const PRODUCT_NAMES = {};
+let currentPage = 1;
+const PAGE_SIZE = 25;
+
+/* ── CSV helpers ── */
+function csvEscape(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadCsv(filename, rows) {
+  const content = '﻿' + rows.map(r => r.map(csvEscape).join(';')).join('\r\n');
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+/* ── Paginação ── */
+function renderPagination(containerId, totalItems, page, onChange) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const start = totalItems ? (page - 1) * PAGE_SIZE + 1 : 0;
+  const end = Math.min(page * PAGE_SIZE, totalItems);
+  el.innerHTML = `
+    <div class="pg-info">Mostrando ${start}–${end} de ${totalItems}</div>
+    <div class="pg-controls">
+      <button class="btn btn-secondary btn-sm" id="${containerId}PrevBtn" ${page <= 1 ? 'disabled' : ''}>Anterior</button>
+      <span class="pg-page">Página ${page} de ${totalPages}</span>
+      <button class="btn btn-secondary btn-sm" id="${containerId}NextBtn" ${page >= totalPages ? 'disabled' : ''}>Próxima</button>
+    </div>`;
+  document.getElementById(containerId + 'PrevBtn').addEventListener('click', () => onChange(page - 1));
+  document.getElementById(containerId + 'NextBtn').addEventListener('click', () => onChange(page + 1));
+}
 
 function starsHtml(n) {
   let out = '<span class="rv-stars">';
@@ -97,16 +143,37 @@ function renderTabs() {
   ).join('');
 }
 
-function selectTab(id) { activeTab = id; renderTabs(); renderList(); }
+function selectTab(id) { activeTab = id; currentPage = 1; renderTabs(); renderList(); }
+
+function getFilteredReviews() {
+  const q = document.getElementById('searchInp').value.trim().toLowerCase();
+  let list = activeTab === 'all' ? ALL_REVIEWS : ALL_REVIEWS.filter(r => r.status === activeTab);
+  if (q) {
+    list = list.filter(r =>
+      (PRODUCT_NAMES[r.product_id] || '').toLowerCase().includes(q) ||
+      (r.customer_name || '').toLowerCase().includes(q) ||
+      (r.comment || '').toLowerCase().includes(q)
+    );
+  }
+  return list;
+}
 
 function renderList() {
-  const list = activeTab === 'all' ? ALL_REVIEWS : ALL_REVIEWS.filter(r => r.status === activeTab);
+  const list = getFilteredReviews();
   const area = document.getElementById('listArea');
-  if (!list.length) { area.innerHTML = '<div class="table-empty">Nenhuma avaliação nesta aba.</div>'; return; }
+  if (!list.length) {
+    area.innerHTML = '<div class="table-empty">Nenhuma avaliação nesta aba.</div>';
+    renderPagination('avPagination', 0, currentPage, p => { currentPage = p; renderList(); });
+    return;
+  }
   const statusColor = { pending: 'amber', approved: 'green', rejected: 'red' };
   const statusLabel = { pending: 'Pendente', approved: 'Aprovada', rejected: 'Rejeitada' };
 
-  area.innerHTML = '<div class="rv-list">' + list.map(r => `
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const pageItems = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  area.innerHTML = '<div class="rv-list">' + pageItems.map(r => `
     <div class="rv-card">
       <div class="rv-top">
         <div>
@@ -130,7 +197,28 @@ function renderList() {
         <button class="btn btn-danger btn-sm" onclick="removeReview('${r.id}')">Excluir</button>
       </div>` : ''}
     </div>`).join('') + '</div>';
+  renderPagination('avPagination', list.length, currentPage, p => { currentPage = p; renderList(); });
 }
+
+function exportAvaliacoesCsv() {
+  const list = getFilteredReviews();
+  const statusLabel = { pending: 'Pendente', approved: 'Aprovada', rejected: 'Rejeitada' };
+  const rows = [['Produto', 'Cliente', 'Nota', 'Comentário', 'Status', 'Data']];
+  list.forEach(r => {
+    rows.push([
+      PRODUCT_NAMES[r.product_id] || ('Produto #' + r.product_id),
+      r.customer_name || '',
+      r.rating,
+      r.comment || '',
+      statusLabel[r.status] || r.status,
+      fmtDate(r.created_at),
+    ]);
+  });
+  downloadCsv('avaliacoes-' + todayStr() + '.csv', rows);
+}
+
+document.getElementById('searchInp').addEventListener('input', () => { currentPage = 1; renderList(); });
+document.getElementById('exportCsvBtn').addEventListener('click', exportAvaliacoesCsv);
 
 window.approveReview = async function (id) { await window.sb.from('reviews').update({ status: 'approved' }).eq('id', id); loadReviews(); };
 window.rejectReview = async function (id) { await window.sb.from('reviews').update({ status: 'rejected' }).eq('id', id); loadReviews(); };

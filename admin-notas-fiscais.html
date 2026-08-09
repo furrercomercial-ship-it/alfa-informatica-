@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notas Fiscais — Painel Admin</title>
+<script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
+<link rel="stylesheet" href="admin.css">
+<style>
+.detail-section{margin-bottom:18px;}
+.detail-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:8px;}
+.detail-line{font-size:13px;color:var(--text-secondary);margin-bottom:3px;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;}
+.nf-count{font-size:12.5px;color:var(--text-muted);}
+tr.nf-row-deleted td{opacity:.5;}
+.nf-picker{position:relative;}
+.nf-picker-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);max-height:220px;overflow-y:auto;z-index:20;display:none;}
+.nf-picker-results.open{display:block;}
+.nf-picker-item{padding:9px 13px;cursor:pointer;font-size:12.5px;border-bottom:1px solid var(--border-color);}
+.nf-picker-item:last-child{border-bottom:none;}
+.nf-picker-item:hover{background:rgba(128,128,128,.08);}
+.nf-picker-item .nf-picker-sub{font-size:11px;color:var(--text-muted);}
+.nf-picker-empty{padding:12px 13px;font-size:12px;color:var(--text-muted);}
+.nf-selected-order{display:flex;align-items:center;justify-content:space-between;background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-sm);padding:10px 13px;font-size:12.5px;}
+.nf-selected-order .nf-picker-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.nf-file-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.nf-file-current{font-size:11.5px;color:var(--text-muted);}
+.nf-file-hint{font-size:11px;color:var(--text-muted);margin-top:5px;}
+.nf-actions{display:flex;gap:6px;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div id="admin-sidebar-mount"></div>
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">Notas Fiscais</div>
+      <div class="admin-topbar-actions">
+        <button class="btn btn-primary" id="newNfBtn">+ Anexar Nota Fiscal</button>
+      </div>
+    </div>
+    <div class="admin-content">
+      <div class="admin-insight-bar" id="admin-insight-bar" style="display:none"></div>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <input type="search" id="searchInp" class="search-box" placeholder="Buscar por NF-e, pedido ou cliente...">
+          <select id="statusFilter" style="padding:9px 12px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-main);">
+            <option value="">Todos os status</option>
+            <option value="anexada">Anexada</option>
+            <option value="pendente">Pendente</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="substituida">Substituída</option>
+          </select>
+        </div>
+        <div class="nf-count" id="nfCount"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>NF-e</th><th>Pedido</th><th>Cliente</th><th>Emissão</th><th>Valor</th><th>Status</th><th></th></tr></thead>
+          <tbody id="nfTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: criar/editar -->
+<div class="modal-overlay" id="nfModal">
+  <div class="modal" style="max-width:620px;">
+    <div class="modal-head"><div class="modal-title" id="nfModalTitle">Anexar Nota Fiscal</div><button class="modal-close" onclick="closeNfModal()">✕</button></div>
+
+    <div class="field" id="orderPickerField">
+      <label>Pedido *</label>
+      <div class="nf-picker">
+        <input type="search" id="f_order_search" placeholder="Buscar por nº do pedido ou nome do cliente...">
+        <div class="nf-picker-results" id="orderPickerResults"></div>
+      </div>
+      <div id="orderPickerSelected" style="display:none;margin-top:8px;"></div>
+    </div>
+
+    <div class="field-row">
+      <div class="field"><label>Nº da NF-e *</label><input id="f_numero_nfe" placeholder="Ex: 1234"></div>
+      <div class="field"><label>Série *</label><input id="f_serie" placeholder="Ex: 1"></div>
+    </div>
+    <div class="field">
+      <label>Chave de Acesso * (44 dígitos)</label>
+      <input id="f_chave_acesso" maxlength="44" placeholder="Somente números, 44 dígitos">
+      <div class="field-hint">Encontrada no XML/DANFE da nota, sem espaços ou pontuação.</div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Data de Emissão *</label><input type="date" id="f_data_emissao"></div>
+      <div class="field"><label>Valor Total (R$) *</label><input type="number" id="f_valor_total" step="0.01" min="0"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Tipo de Documento</label>
+        <select id="f_tipo_documento">
+          <option value="principal">Principal</option>
+          <option value="complementar">Complementar</option>
+          <option value="devolucao">Devolução</option>
+        </select>
+      </div>
+      <div class="field"><label>Natureza da Operação</label><input id="f_natureza_operacao" placeholder="Opcional"></div>
+    </div>
+    <div class="field"><label>Observações</label><textarea id="f_observacoes" placeholder="Opcional"></textarea></div>
+
+    <div class="field">
+      <label>Arquivo XML *</label>
+      <div class="nf-file-row">
+        <input type="file" id="f_xml_file" accept=".xml,text/xml,application/xml">
+        <span class="nf-file-current" id="f_xml_current"></span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Arquivo PDF (DANFE) *</label>
+      <div class="nf-file-row">
+        <input type="file" id="f_pdf_file" accept=".pdf,application/pdf">
+        <span class="nf-file-current" id="f_pdf_current"></span>
+      </div>
+      <div class="nf-file-hint" id="nfFileHintEdit" style="display:none;">Deixe em branco pra manter o arquivo atual.</div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeNfModal()">Cancelar</button>
+      <button class="btn btn-primary" id="saveNfBtn">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: detalhes (somente leitura) -->
+<div class="modal-overlay" id="nfDetailModal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="nfDetailTitle">Nota Fiscal</div><button class="modal-close" onclick="closeNfDetailModal()">✕</button></div>
+    <div id="nfDetailBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeNfDetailModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-client.js"></script>
+<script src="admin-shell.js"></script>
+<script>
+const STATUS_LABELS = { anexada: 'Anexada', pendente: 'Pendente', cancelada: 'Cancelada', substituida: 'Substituída' };
+const STATUS_COLORS = { anexada: 'green', pendente: 'amber', cancelada: 'red', substituida: 'gray' };
+const TIPO_LABELS = { principal: 'Principal', complementar: 'Complementar', devolucao: 'Devolução' };
+
+let NOTAS = [];
+let ORDERS_CACHE = null; // carregado sob demanda, ao abrir o modal de anexar/editar
+let editingId = null;
+let pickedOrder = null; // pedido selecionado no picker (objeto {id, order_number, profiles:{...}})
+let canManage = false;
+let canDelete = false;
+
+function fmtBRL(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
+function fmtDate(d) { if (!d) return '—'; return new Date(d.length <= 10 ? d + 'T00:00:00' : d).toLocaleDateString('pt-BR'); }
+function fmtDateTime(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('pt-BR') + ' ' + new Date(d).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
+function fmtBytes(n) { if (!n) return ''; if (n < 1024) return n + ' B'; if (n < 1024 * 1024) return (n / 1024).toFixed(0) + ' KB'; return (n / (1024 * 1024)).toFixed(1) + ' MB'; }
+function esc(s) { return (s == null ? '' : String(s)).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+// ── Listagem ────────────────────────────────────────────────────────────
+async function loadNotas() {
+  const { data, error } = await window.sb
+    .from('notas_fiscais')
+    .select('*, orders(order_number, profiles(full_name, cpf))')
+    .order('created_at', { ascending: false });
+  if (error) { AdminShell.toast('Erro ao carregar notas fiscais: ' + error.message, 'error'); return; }
+  NOTAS = data || [];
+  renderTable();
+}
+
+function statusPillHtml(n) {
+  if (n.deleted_at) return '<span class="status-pill red">Excluída</span>';
+  return `<span class="status-pill ${STATUS_COLORS[n.status] || 'gray'}">${STATUS_LABELS[n.status] || n.status}</span>`;
+}
+
+function renderTable() {
+  const q = document.getElementById('searchInp').value.trim().toLowerCase();
+  const statusF = document.getElementById('statusFilter').value;
+  let list = NOTAS.filter(n => {
+    if (statusF && n.status !== statusF) return false;
+    if (q) {
+      const pedidoNum = n.orders ? String(n.orders.order_number || n.pedido_id) : String(n.pedido_id);
+      const cliente = n.cliente_nome || (n.orders && n.orders.profiles ? n.orders.profiles.full_name : '');
+      const hay = [n.numero_nfe, pedidoNum, cliente].filter(Boolean).join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  document.getElementById('nfCount').textContent = list.length + ' nota' + (list.length !== 1 ? 's' : '');
+  const tbody = document.getElementById('nfTbody');
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhuma nota fiscal encontrada.</td></tr>'; return; }
+  tbody.innerHTML = list.map(n => {
+    const pedidoNum = n.orders ? (n.orders.order_number || n.pedido_id) : n.pedido_id;
+    const cliente = n.cliente_nome || (n.orders && n.orders.profiles ? n.orders.profiles.full_name : '—');
+    const rowCls = n.deleted_at ? ' class="nf-row-deleted"' : '';
+    const canAct = !n.deleted_at;
+    return `
+    <tr${rowCls}>
+      <td class="strong">${esc(n.numero_nfe)}/${esc(n.serie)}</td>
+      <td>#${esc(pedidoNum)}</td>
+      <td>${esc(cliente)}</td>
+      <td>${fmtDate(n.data_emissao)}</td>
+      <td class="strong">${fmtBRL(n.valor_total)}</td>
+      <td>${statusPillHtml(n)}</td>
+      <td>
+        <div class="nf-actions">
+          <button class="btn btn-secondary btn-sm" onclick="openDetail(${n.id})">Ver detalhes</button>
+          <button class="btn btn-secondary btn-sm" onclick="downloadFile(${n.id},'xml')">Baixar XML</button>
+          <button class="btn btn-secondary btn-sm" onclick="downloadFile(${n.id},'pdf')">Baixar PDF</button>
+          ${canManage && canAct ? `<button class="btn btn-secondary btn-sm" onclick="openEdit(${n.id})">Editar</button>` : ''}
+          ${canDelete && canAct ? `<button class="btn btn-danger btn-sm" onclick="deleteNota(${n.id})">Excluir</button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('searchInp').addEventListener('input', renderTable);
+document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+// ── Download (signed URL, bucket privado) ─────────────────────────────────
+window.downloadFile = async function (id, kind) {
+  const n = NOTAS.find(x => x.id === id);
+  if (!n) return;
+  const path = kind === 'xml' ? n.xml_storage_path : n.pdf_storage_path;
+  if (!path) { AdminShell.toast('Arquivo não encontrado.', 'error'); return; }
+  const { data, error } = await window.sb.storage.from('notas-fiscais').createSignedUrl(path, 60);
+  if (error || !data) { AdminShell.toast('Erro ao gerar link de download: ' + (error ? error.message : ''), 'error'); return; }
+  window.open(data.signedUrl, '_blank');
+};
+
+// ── Ver detalhes (somente leitura) ────────────────────────────────────────
+window.openDetail = function (id) {
+  const n = NOTAS.find(x => x.id === id);
+  if (!n) return;
+  const pedidoNum = n.orders ? (n.orders.order_number || n.pedido_id) : n.pedido_id;
+  const clienteNome = n.cliente_nome || (n.orders && n.orders.profiles ? n.orders.profiles.full_name : '—');
+  const clienteDoc = n.cliente_documento || (n.orders && n.orders.profiles ? n.orders.profiles.cpf : '') || '—';
+
+  document.getElementById('nfDetailTitle').textContent = 'NF-e ' + n.numero_nfe + '/' + n.serie;
+  document.getElementById('nfDetailBody').innerHTML = `
+    <div class="detail-section">
+      <div class="detail-section-title">Status</div>
+      <div class="detail-line">${statusPillHtml(n)} &nbsp; <span style="color:var(--text-muted);">${TIPO_LABELS[n.tipo_documento] || n.tipo_documento}</span></div>
+      ${n.deleted_at ? `<div class="detail-line" style="color:var(--danger);">Excluída em ${fmtDateTime(n.deleted_at)}${n.deletion_reason ? ' — Motivo: ' + esc(n.deletion_reason) : ''}</div>` : ''}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Pedido &amp; Cliente</div>
+      <div class="detail-line">Pedido #${esc(pedidoNum)}</div>
+      <div class="detail-line">${esc(clienteNome)}${clienteDoc && clienteDoc !== '—' ? ' — ' + esc(clienteDoc) : ''}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Dados da NF-e</div>
+      <div class="detail-grid">
+        <div class="detail-line">Número: <b>${esc(n.numero_nfe)}</b></div>
+        <div class="detail-line">Série: <b>${esc(n.serie)}</b></div>
+        <div class="detail-line">Emissão: ${fmtDate(n.data_emissao)}</div>
+        <div class="detail-line">Saída: ${fmtDate(n.data_saida)}</div>
+        <div class="detail-line">Valor: <b>${fmtBRL(n.valor_total)}</b></div>
+        <div class="detail-line">Protocolo: ${esc(n.protocolo_autorizacao) || '—'}</div>
+      </div>
+      <div class="detail-line" style="margin-top:6px;">Chave de acesso: <span style="font-family:monospace;">${esc(n.chave_acesso)}</span></div>
+      <div class="detail-line">Natureza da operação: ${esc(n.natureza_operacao) || '—'}</div>
+      ${n.emitente_nome || n.emitente_documento ? `<div class="detail-line">Emitente: ${esc(n.emitente_nome) || ''}${n.emitente_documento ? ' — ' + esc(n.emitente_documento) : ''}</div>` : ''}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Arquivos</div>
+      <div class="detail-line">XML: ${esc(n.xml_nome_original) || 'arquivo.xml'} ${n.xml_tamanho ? '(' + fmtBytes(n.xml_tamanho) + ')' : ''} &nbsp; <button class="btn btn-secondary btn-sm" onclick="downloadFile(${n.id},'xml')">Baixar</button></div>
+      <div class="detail-line">PDF: ${esc(n.pdf_nome_original) || 'arquivo.pdf'} ${n.pdf_tamanho ? '(' + fmtBytes(n.pdf_tamanho) + ')' : ''} &nbsp; <button class="btn btn-secondary btn-sm" onclick="downloadFile(${n.id},'pdf')">Baixar</button></div>
+    </div>
+    ${n.observacoes ? `<div class="detail-section"><div class="detail-section-title">Observações</div><div class="detail-line">${esc(n.observacoes)}</div></div>` : ''}
+    <div class="detail-section">
+      <div class="detail-section-title">Registro</div>
+      <div class="detail-line">Anexada em ${fmtDateTime(n.created_at)}</div>
+      ${n.updated_at && n.updated_at !== n.created_at ? `<div class="detail-line">Última atualização em ${fmtDateTime(n.updated_at)}</div>` : ''}
+    </div>
+  `;
+  document.getElementById('nfDetailModal').classList.add('open');
+};
+function closeNfDetailModal() { document.getElementById('nfDetailModal').classList.remove('open'); }
+
+// ── Excluir (exclusão lógica) ──────────────────────────────────────────────
+window.deleteNota = async function (id) {
+  const n = NOTAS.find(x => x.id === id);
+  if (!n) return;
+  const motivo = prompt('Motivo da exclusão desta nota fiscal (' + n.numero_nfe + '/' + n.serie + '):');
+  if (motivo === null) return;
+  if (!motivo.trim()) { AdminShell.toast('Informe o motivo da exclusão.', 'error'); return; }
+
+  const uid = AdminShell.profile && AdminShell.profile.id;
+  const { error } = await window.sb.from('notas_fiscais').update({
+    deleted_at: new Date().toISOString(),
+    deleted_by: uid,
+    deletion_reason: motivo.trim(),
+  }).eq('id', id);
+  if (error) { AdminShell.toast('Erro ao excluir: ' + error.message, 'error'); return; }
+
+  await window.sb.from('notas_fiscais_historico').insert({
+    nota_fiscal_id: id,
+    acao: 'removida',
+    dados_anteriores: { status: n.status, deleted_at: null },
+    dados_novos: { deletion_reason: motivo.trim() },
+    usuario_id: uid,
+  });
+
+  AdminShell.toast('Nota fiscal excluída.', 'success');
+  loadNotas();
+};
+
+// ── Picker de pedido (busca client-side, mesmo padrão de admin-pedidos.html) ─
+async function ensureOrdersCache() {
+  if (ORDERS_CACHE) return ORDERS_CACHE;
+  const { data, error } = await window.sb
+    .from('orders')
+    .select('id, order_number, total, created_at, profiles(full_name, cpf)')
+    .order('created_at', { ascending: false })
+    .limit(500);
+  if (error) { AdminShell.toast('Erro ao carregar pedidos: ' + error.message, 'error'); ORDERS_CACHE = []; return ORDERS_CACHE; }
+  ORDERS_CACHE = data || [];
+  return ORDERS_CACHE;
+}
+
+function renderOrderPickerResults(list) {
+  const box = document.getElementById('orderPickerResults');
+  if (!list.length) { box.innerHTML = '<div class="nf-picker-empty">Nenhum pedido encontrado.</div>'; box.classList.add('open'); return; }
+  box.innerHTML = list.slice(0, 30).map(o => `
+    <div class="nf-picker-item" data-id="${o.id}">
+      <div>#${esc(o.order_number || o.id)} — ${esc(o.profiles ? o.profiles.full_name : 'Visitante')}</div>
+      <div class="nf-picker-sub">${fmtBRL(o.total)} · ${fmtDate(o.created_at)}</div>
+    </div>`).join('');
+  box.classList.add('open');
+  box.querySelectorAll('.nf-picker-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const order = list.find(o => String(o.id) === el.dataset.id);
+      if (order) selectOrder(order);
+    });
+  });
+}
+
+function selectOrder(order) {
+  pickedOrder = order;
+  document.getElementById('f_order_search').value = '';
+  document.getElementById('orderPickerResults').classList.remove('open');
+  const sel = document.getElementById('orderPickerSelected');
+  sel.style.display = 'block';
+  sel.innerHTML = `
+    <div class="nf-selected-order">
+      <div>
+        <div>Pedido #${esc(order.order_number || order.id)} — ${esc(order.profiles ? order.profiles.full_name : 'Visitante')}</div>
+        <div class="nf-picker-sub">${fmtBRL(order.total)} · ${fmtDate(order.created_at)}</div>
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm" id="clearOrderBtn">Trocar</button>
+    </div>`;
+  document.getElementById('clearOrderBtn').addEventListener('click', () => {
+    pickedOrder = null;
+    sel.style.display = 'none';
+    sel.innerHTML = '';
+  });
+}
+
+let orderSearchTimer = null;
+document.getElementById('f_order_search').addEventListener('input', (e) => {
+  clearTimeout(orderSearchTimer);
+  // Tira o "#" do início — em toda outra tela (Pedidos, Notas, etc.) o
+  // número do pedido aparece como "#ALFA-...", então é natural a pessoa
+  // digitar/colar com o # junto; sem isso a busca nunca batia.
+  const q = e.target.value.trim().toLowerCase().replace(/^#/, '');
+  orderSearchTimer = setTimeout(async () => {
+    const orders = await ensureOrdersCache();
+    if (!q) { document.getElementById('orderPickerResults').classList.remove('open'); return; }
+    const list = orders.filter(o => {
+      const num = String(o.order_number || o.id).toLowerCase();
+      const nome = (o.profiles ? o.profiles.full_name : '').toLowerCase();
+      return num.includes(q) || nome.includes(q);
+    });
+    renderOrderPickerResults(list);
+  }, 200);
+});
+document.addEventListener('click', (e) => {
+  const picker = document.getElementById('orderPickerField');
+  if (picker && !picker.contains(e.target)) document.getElementById('orderPickerResults').classList.remove('open');
+});
+
+// ── Modal criar/editar ──────────────────────────────────────────────────
+function openNfModal() { document.getElementById('nfModal').classList.add('open'); }
+function closeNfModal() { document.getElementById('nfModal').classList.remove('open'); }
+
+function resetNfForm() {
+  editingId = null;
+  pickedOrder = null;
+  document.getElementById('f_order_search').value = '';
+  document.getElementById('orderPickerResults').classList.remove('open');
+  document.getElementById('orderPickerSelected').style.display = 'none';
+  document.getElementById('orderPickerSelected').innerHTML = '';
+  document.getElementById('orderPickerField').style.display = 'block';
+  document.getElementById('f_numero_nfe').value = '';
+  document.getElementById('f_serie').value = '';
+  document.getElementById('f_chave_acesso').value = '';
+  document.getElementById('f_data_emissao').value = '';
+  document.getElementById('f_valor_total').value = '';
+  document.getElementById('f_tipo_documento').value = 'principal';
+  document.getElementById('f_natureza_operacao').value = '';
+  document.getElementById('f_observacoes').value = '';
+  document.getElementById('f_xml_file').value = '';
+  document.getElementById('f_pdf_file').value = '';
+  document.getElementById('f_xml_current').textContent = '';
+  document.getElementById('f_pdf_current').textContent = '';
+  document.getElementById('nfFileHintEdit').style.display = 'none';
+}
+
+document.getElementById('newNfBtn').addEventListener('click', () => {
+  resetNfForm();
+  document.getElementById('nfModalTitle').textContent = 'Anexar Nota Fiscal';
+  openNfModal();
+});
+
+window.openEdit = function (id) {
+  const n = NOTAS.find(x => x.id === id);
+  if (!n) return;
+  resetNfForm();
+  editingId = id;
+  document.getElementById('nfModalTitle').textContent = 'Editar Nota Fiscal';
+  // Pedido não muda numa edição — só exibe, sem permitir trocar.
+  document.getElementById('orderPickerField').style.display = 'none';
+  pickedOrder = { id: n.pedido_id, order_number: n.orders ? n.orders.order_number : n.pedido_id, profiles: n.orders ? n.orders.profiles : null, total: null, created_at: null };
+
+  document.getElementById('f_numero_nfe').value = n.numero_nfe;
+  document.getElementById('f_serie').value = n.serie;
+  document.getElementById('f_chave_acesso').value = n.chave_acesso;
+  document.getElementById('f_data_emissao').value = n.data_emissao;
+  document.getElementById('f_valor_total').value = n.valor_total;
+  document.getElementById('f_tipo_documento').value = n.tipo_documento || 'principal';
+  document.getElementById('f_natureza_operacao').value = n.natureza_operacao || '';
+  document.getElementById('f_observacoes').value = n.observacoes || '';
+  document.getElementById('f_xml_current').textContent = 'Atual: ' + (n.xml_nome_original || 'arquivo.xml');
+  document.getElementById('f_pdf_current').textContent = 'Atual: ' + (n.pdf_nome_original || 'arquivo.pdf');
+  document.getElementById('nfFileHintEdit').style.display = 'block';
+  openNfModal();
+};
+
+// Upload de arquivo pro bucket privado "notas-fiscais" — mesmo padrão de
+// chamada do AdminUpload.uploadImage (admin-upload.js), adaptado pra bucket
+// privado (retorna o path do Storage, não uma URL pública) e qualquer tipo
+// de arquivo (XML/PDF), já que aquele helper só serve pra imagens públicas.
+async function uploadNotaFile(file, pedidoId) {
+  const safeName = file.name.replace(/[^a-z0-9.]/gi, '_');
+  const path = 'pedido_' + pedidoId + '/' + Date.now() + '_' + safeName;
+  const { error } = await window.sb.storage.from('notas-fiscais').upload(path, file, { upsert: false });
+  if (error) throw error;
+  return { path, nome: file.name, tamanho: file.size };
+}
+
+async function removeNotaFileBestEffort(path) {
+  if (!path) return;
+  try { await window.sb.storage.from('notas-fiscais').remove([path]); } catch (e) { console.error('[notas-fiscais] falha ao limpar arquivo órfão', e); }
+}
+
+function friendlyNfError(error) {
+  const msg = (error && error.message) || '';
+  if (error && error.code === '23505') {
+    if (msg.includes('chave_acesso')) return 'Essa chave de acesso já está cadastrada em outra nota ativa.';
+    if (msg.includes('pedido_principal')) return 'Já existe uma nota fiscal principal ativa para este pedido. Use "Complementar"/"Devolução" ou edite a nota existente.';
+  }
+  return 'Erro: ' + msg;
+}
+
+document.getElementById('saveNfBtn').addEventListener('click', async () => {
+  const numero_nfe = document.getElementById('f_numero_nfe').value.trim();
+  const serie = document.getElementById('f_serie').value.trim();
+  const chave_acesso = document.getElementById('f_chave_acesso').value.trim().replace(/\D/g, '');
+  const data_emissao = document.getElementById('f_data_emissao').value;
+  const valor_total = parseFloat(document.getElementById('f_valor_total').value);
+  const tipo_documento = document.getElementById('f_tipo_documento').value;
+  const natureza_operacao = document.getElementById('f_natureza_operacao').value.trim() || null;
+  const observacoes = document.getElementById('f_observacoes').value.trim() || null;
+  const xmlInput = document.getElementById('f_xml_file');
+  const pdfInput = document.getElementById('f_pdf_file');
+  const xmlFile = xmlInput.files[0] || null;
+  const pdfFile = pdfInput.files[0] || null;
+
+  if (!pickedOrder) { AdminShell.toast('Selecione o pedido vinculado à nota fiscal.', 'error'); return; }
+  if (!numero_nfe) { AdminShell.toast('Informe o número da NF-e.', 'error'); return; }
+  if (!serie) { AdminShell.toast('Informe a série.', 'error'); return; }
+  if (!/^[0-9]{44}$/.test(chave_acesso)) { AdminShell.toast('A chave de acesso deve ter exatamente 44 dígitos numéricos.', 'error'); return; }
+  if (!data_emissao) { AdminShell.toast('Informe a data de emissão.', 'error'); return; }
+  if (!valor_total || valor_total <= 0) { AdminShell.toast('Informe um valor total válido.', 'error'); return; }
+  if (!editingId && (!xmlFile || !pdfFile)) { AdminShell.toast('Anexe o XML e o PDF (DANFE) da nota fiscal.', 'error'); return; }
+
+  const saveBtn = document.getElementById('saveNfBtn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Salvando...';
+
+  try {
+    const uid = AdminShell.profile && AdminShell.profile.id;
+    const clienteNome = pickedOrder.profiles ? pickedOrder.profiles.full_name : null;
+    const clienteDoc = pickedOrder.profiles ? pickedOrder.profiles.cpf : null;
+
+    if (!editingId) {
+      // ── Criação: sobe os 2 arquivos (obrigatórios) e insere a linha ──
+      let uploadedXml = null, uploadedPdf = null;
+      try {
+        uploadedXml = await uploadNotaFile(xmlFile, pickedOrder.id);
+        uploadedPdf = await uploadNotaFile(pdfFile, pickedOrder.id);
+      } catch (upErr) {
+        if (uploadedXml) await removeNotaFileBestEffort(uploadedXml.path);
+        AdminShell.toast('Erro ao enviar arquivo: ' + upErr.message, 'error');
+        return;
+      }
+
+      const payload = {
+        pedido_id: pickedOrder.id,
+        tipo_documento, numero_nfe, serie, chave_acesso, data_emissao, valor_total,
+        natureza_operacao, observacoes,
+        cliente_nome: clienteNome, cliente_documento: clienteDoc,
+        xml_storage_path: uploadedXml.path, xml_nome_original: uploadedXml.nome, xml_tamanho: uploadedXml.tamanho,
+        pdf_storage_path: uploadedPdf.path, pdf_nome_original: uploadedPdf.nome, pdf_tamanho: uploadedPdf.tamanho,
+        criado_por: uid,
+      };
+      const { data: inserted, error } = await window.sb.from('notas_fiscais').insert(payload).select('id').single();
+      if (error) {
+        await removeNotaFileBestEffort(uploadedXml.path);
+        await removeNotaFileBestEffort(uploadedPdf.path);
+        AdminShell.toast(friendlyNfError(error), 'error');
+        return;
+      }
+
+      await window.sb.from('notas_fiscais_historico').insert({
+        nota_fiscal_id: inserted.id, acao: 'criada', dados_anteriores: null, dados_novos: payload, usuario_id: uid,
+      });
+      AdminShell.toast('Nota fiscal anexada com sucesso!', 'success');
+    } else {
+      // ── Edição: atualiza metadados e, se novos arquivos forem escolhidos, substitui ──
+      const original = NOTAS.find(x => x.id === editingId);
+      const payload = { tipo_documento, numero_nfe, serie, chave_acesso, data_emissao, valor_total, natureza_operacao, observacoes };
+
+      let newXml = null, newPdf = null;
+      try {
+        if (xmlFile) newXml = await uploadNotaFile(xmlFile, pickedOrder.id);
+        if (pdfFile) newPdf = await uploadNotaFile(pdfFile, pickedOrder.id);
+      } catch (upErr) {
+        if (newXml) await removeNotaFileBestEffort(newXml.path);
+        AdminShell.toast('Erro ao enviar arquivo: ' + upErr.message, 'error');
+        return;
+      }
+      if (newXml) { payload.xml_storage_path = newXml.path; payload.xml_nome_original = newXml.nome; payload.xml_tamanho = newXml.tamanho; }
+      if (newPdf) { payload.pdf_storage_path = newPdf.path; payload.pdf_nome_original = newPdf.nome; payload.pdf_tamanho = newPdf.tamanho; }
+
+      const { error } = await window.sb.from('notas_fiscais').update(payload).eq('id', editingId);
+      if (error) {
+        if (newXml) await removeNotaFileBestEffort(newXml.path);
+        if (newPdf) await removeNotaFileBestEffort(newPdf.path);
+        AdminShell.toast(friendlyNfError(error), 'error');
+        return;
+      }
+
+      if (newXml || newPdf) {
+        await window.sb.from('notas_fiscais_historico').insert({
+          nota_fiscal_id: editingId, acao: 'arquivos_substituidos',
+          dados_anteriores: { xml_storage_path: original.xml_storage_path, pdf_storage_path: original.pdf_storage_path },
+          dados_novos: { xml_storage_path: payload.xml_storage_path || original.xml_storage_path, pdf_storage_path: payload.pdf_storage_path || original.pdf_storage_path },
+          usuario_id: uid,
+        });
+        if (newXml) await removeNotaFileBestEffort(original.xml_storage_path);
+        if (newPdf) await removeNotaFileBestEffort(original.pdf_storage_path);
+      }
+      await window.sb.from('notas_fiscais_historico').insert({
+        nota_fiscal_id: editingId, acao: 'editada',
+        dados_anteriores: { numero_nfe: original.numero_nfe, serie: original.serie, chave_acesso: original.chave_acesso, data_emissao: original.data_emissao, valor_total: original.valor_total, tipo_documento: original.tipo_documento, natureza_operacao: original.natureza_operacao, observacoes: original.observacoes },
+        dados_novos: payload,
+        usuario_id: uid,
+      });
+      AdminShell.toast('Nota fiscal atualizada com sucesso!', 'success');
+    }
+
+    closeNfModal();
+    await loadNotas();
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Salvar';
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────
+(async function () {
+  const session = await AdminShell.init('notas_fiscais');
+  if (!session) return;
+  if (!AdminShell.can('notas_fiscais.visualizar')) {
+    document.querySelector('.admin-content').innerHTML = '<div class="card">Você não tem permissão para visualizar notas fiscais.</div>';
+    return;
+  }
+  canManage = AdminShell.can('notas_fiscais.gerenciar');
+  canDelete = AdminShell.can('notas_fiscais.excluir');
+  if (!canManage) document.getElementById('newNfBtn').style.display = 'none';
+  await loadNotas();
+})();
+</script>
+</body>
+</html>

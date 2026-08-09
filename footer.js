@@ -44,9 +44,11 @@
       + '</div>'
       + '<div><p class="ft2-col-h">Atendimento</p>'
       + '<a href="https://wa.me/' + wpp + '?text=' + encodeURIComponent('Olá, preciso de ajuda no site da Alfa Informática.') + '" class="ft2-link" target="_blank" rel="noopener noreferrer">Central de Ajuda</a>'
-      + '<a href="https://wa.me/' + wpp + '?text=' + encodeURIComponent('Olá, preciso falar sobre troca ou devolução.') + '" class="ft2-link" target="_blank" rel="noopener noreferrer">Trocas e Devolu&ccedil;&otilde;es</a>'
-      + '<a href="https://wa.me/' + wpp + '?text=' + encodeURIComponent('Olá, preciso de atendimento sobre garantia.') + '" class="ft2-link" target="_blank" rel="noopener noreferrer">Garantia</a>'
+      + '<a href="pagina.html?slug=trocas-e-devolucoes" class="ft2-link">Trocas e Devolu&ccedil;&otilde;es</a>'
+      + '<a href="pagina.html?slug=garantia" class="ft2-link">Garantia</a>'
       + '<a href="https://wa.me/' + wpp + '?text=' + encodeURIComponent('Olá, gostaria de falar com a Alfa Informática.') + '" class="ft2-link" target="_blank" rel="noopener noreferrer">Fale Conosco</a>'
+      + '<a href="pagina.html?slug=termos-de-uso" class="ft2-link">Termos de Uso</a>'
+      + '<a href="pagina.html?slug=politica-de-privacidade" class="ft2-link">Pol&iacute;tica de Privacidade</a>'
       + scheduleHtml
       + '</div>'
       + '<div><p class="ft2-col-h">Categorias</p>' + catLinks + '</div>'

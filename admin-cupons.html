@@ -10,6 +10,9 @@
 .cupom-code{font-weight:800;letter-spacing:.06em;font-family:monospace;font-size:13px;}
 .cupom-usos-bar{width:60px;height:4px;background:var(--border-color);border-radius:2px;overflow:hidden;display:inline-block;margin-left:8px;vertical-align:middle;}
 .cupom-usos-bar span{display:block;height:100%;background:var(--primary);}
+.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;font-size:12.5px;color:var(--text-muted);}
+.pagination-bar .pg-controls{display:flex;align-items:center;gap:10px;}
+.pagination-bar .pg-page{color:var(--text-muted);}
 </style>
 </head>
 <body>
@@ -29,6 +32,7 @@
       <div class="toolbar">
         <div class="toolbar-left">
           <input type="search" id="searchInp" class="search-box" placeholder="Buscar por código...">
+          <button class="btn btn-secondary" id="exportCsvBtn">Exportar CSV</button>
         </div>
         <div id="cupCount" style="font-size:12.5px;color:var(--text-muted);"></div>
       </div>
@@ -39,6 +43,7 @@
           <tbody id="cupTbody"></tbody>
         </table>
       </div>
+      <div class="pagination-bar" id="cupPagination"></div>
     </div>
   </div>
 </div>
@@ -75,10 +80,46 @@
 <script>
 let CUPONS = [];
 let editingId = null;
+let currentPage = 1;
+const PAGE_SIZE = 25;
 
 function fmtBRL(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
 function fmtDate(iso) { return iso ? new Date(iso).toLocaleDateString('pt-BR') : null; }
 function toLocalInput(iso) { if (!iso) return ''; const d = new Date(iso); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); }
+
+/* ── CSV helpers ── */
+function csvEscape(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadCsv(filename, rows) {
+  const content = '﻿' + rows.map(r => r.map(csvEscape).join(';')).join('\r\n');
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+/* ── Paginação ── */
+function renderPagination(containerId, totalItems, page, onChange) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const start = totalItems ? (page - 1) * PAGE_SIZE + 1 : 0;
+  const end = Math.min(page * PAGE_SIZE, totalItems);
+  el.innerHTML = `
+    <div class="pg-info">Mostrando ${start}–${end} de ${totalItems}</div>
+    <div class="pg-controls">
+      <button class="btn btn-secondary btn-sm" id="${containerId}PrevBtn" ${page <= 1 ? 'disabled' : ''}>Anterior</button>
+      <span class="pg-page">Página ${page} de ${totalPages}</span>
+      <button class="btn btn-secondary btn-sm" id="${containerId}NextBtn" ${page >= totalPages ? 'disabled' : ''}>Próxima</button>
+    </div>`;
+  document.getElementById(containerId + 'PrevBtn').addEventListener('click', () => onChange(page - 1));
+  document.getElementById(containerId + 'NextBtn').addEventListener('click', () => onChange(page + 1));
+}
 
 async function loadCupons() {
   const { data, error } = await window.sb.from('cupons').select('*').order('created_at', { ascending: false });
@@ -96,13 +137,26 @@ function statusOf(c) {
   return { label: 'Ativo', cls: 'green' };
 }
 
-function renderTable() {
+function getFilteredCupons() {
   const q = document.getElementById('searchInp').value.trim().toLowerCase();
-  let list = CUPONS.filter(c => !q || c.codigo.toLowerCase().includes(q));
+  return CUPONS.filter(c => !q || c.codigo.toLowerCase().includes(q));
+}
+
+function renderTable() {
+  const list = getFilteredCupons();
   document.getElementById('cupCount').textContent = list.length + ' cupom' + (list.length !== 1 ? 's' : '');
+
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const pageItems = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const tbody = document.getElementById('cupTbody');
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhum cupom cadastrado.</td></tr>'; return; }
-  tbody.innerHTML = list.map(c => {
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhum cupom cadastrado.</td></tr>';
+    renderPagination('cupPagination', 0, currentPage, p => { currentPage = p; renderTable(); });
+    return;
+  }
+  tbody.innerHTML = pageItems.map(c => {
     const st = statusOf(c);
     const usoPct = c.limite_uso ? Math.min(100, Math.round(c.usos / c.limite_uso * 100)) : 0;
     const validade = (c.validade_inicio || c.validade_fim)
@@ -121,9 +175,32 @@ function renderTable() {
       </td>
     </tr>`;
   }).join('');
+  renderPagination('cupPagination', list.length, currentPage, p => { currentPage = p; renderTable(); });
 }
 
-document.getElementById('searchInp').addEventListener('input', renderTable);
+function exportCuponsCsv() {
+  const list = getFilteredCupons();
+  const rows = [['Código', 'Tipo', 'Valor', 'Valor Mínimo', 'Limite de Uso', 'Usos', 'Ativo', 'Validade']];
+  list.forEach(c => {
+    const validade = (c.validade_inicio || c.validade_fim)
+      ? [fmtDate(c.validade_inicio) || 'agora', fmtDate(c.validade_fim) || 'sem fim'].join(' → ')
+      : '';
+    rows.push([
+      c.codigo,
+      c.tipo === 'percentual' ? 'Percentual' : 'Fixo',
+      c.tipo === 'percentual' ? c.valor + '%' : Number(c.valor).toFixed(2).replace('.', ','),
+      c.valor_minimo > 0 ? Number(c.valor_minimo).toFixed(2).replace('.', ',') : '',
+      c.limite_uso || '',
+      c.usos,
+      c.ativo ? 'Sim' : 'Não',
+      validade,
+    ]);
+  });
+  downloadCsv('cupons-' + todayStr() + '.csv', rows);
+}
+
+document.getElementById('searchInp').addEventListener('input', () => { currentPage = 1; renderTable(); });
+document.getElementById('exportCsvBtn').addEventListener('click', exportCuponsCsv);
 
 function openModal() { document.getElementById('cupModal').classList.add('open'); }
 function closeModal() { document.getElementById('cupModal').classList.remove('open'); }

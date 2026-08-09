@@ -141,9 +141,12 @@ a{color:inherit;text-decoration:none;}
 
 /* === CARD PICHAU === */
 .pc{background:var(--bg-card);border:1px solid var(--border-color);border-radius:0;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;position:relative;}
-.pc-img{background:#CFCFCF;width:100%;height:230px;overflow:hidden;flex-shrink:0;}
+.pc-img{background:#CFCFCF;width:100%;height:230px;overflow:hidden;flex-shrink:0;position:relative;}
 .pc-img img{width:100%;height:100%;object-fit:cover;padding:0;transition:transform .28s ease;display:block;}
 .pc:hover .pc-img img{transform:scale(1.03);}
+.pc-fav{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(20,20,20,.55);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:all .2s;z-index:2;}
+.pc-fav:hover{background:rgba(20,20,20,.8);}
+.pc-fav.active{color:#ff4d6d;background:rgba(255,60,80,.15);border-color:rgba(255,60,80,.4);}
 .pc-bdg{position:absolute;top:7px;left:7px;display:flex;gap:4px;z-index:2;}
 .bdg-d{background:#D71920;color:#fff;font-size:10px;font-weight:700;padding:3px 7px;border-radius:0;line-height:1.4;}
 .pc-body{padding:12px 12px 18px;display:flex;flex-direction:column;flex:1;}
@@ -385,6 +388,12 @@ let filters = { minPrice:null, maxPrice:null, brands:[], onSale:false };
 // "Escolha seu Nível" na home linka pra cá em vez de páginas próprias.
 const NIVEL_LABELS = { home:'Nível Home', crazy:'Nível Crazy', insane:'Nível Insane', lunatic:'Nível Lunatic', mad:'Nível Mad' };
 let nivelParam = '';
+// Vitrines da home ("Produtos em Destaque"/"Mais Vendidos"/"Lançamentos")
+// reaproveitam essa mesma página via ?vitrine=, igual ?nivel= já fazia —
+// os "Ver todos" dessas seções apontavam pra "#" antes disso existir.
+const VITRINE_LABELS = { destaque:'Produtos em Destaque', mais_vendidos:'Mais Vendidos', lancamentos:'Lançamentos' };
+const VITRINE_FILTERS = { destaque:p=>p.featured, mais_vendidos:p=>p.bestSeller, lancamentos:p=>p.isNew };
+let vitrineParam = '';
 
 // ─── ACCORDION ──────────────────────────────────────────────────────────────
 function toggleAcc(head) {
@@ -466,9 +475,16 @@ function init() {
 
   const p = new URLSearchParams(location.search);
   nivelParam = NIVEL_LABELS[p.get('nivel')] ? p.get('nivel') : '';
+  vitrineParam = VITRINE_LABELS[p.get('vitrine')] ? p.get('vitrine') : '';
   currentSlug = p.get('cat') || 'hardware';
   if (!CATS[currentSlug]) currentSlug = 'outros';
   activeSubcat = '';
+  // ?promo=1 pré-marca o filtro "Em promoção" — usado pelos banners de
+  // oferta da home quando não há link específico configurado pra eles.
+  if (p.get('promo') === '1') {
+    filters.onSale = true;
+    document.getElementById('onSale').checked = true;
+  }
 
   initRange();
 
@@ -492,8 +508,8 @@ function waitReady(cb) {
 function renderPage() {
   const bar = document.getElementById('subcatBar');
 
-  if (nivelParam) {
-    const label = NIVEL_LABELS[nivelParam];
+  if (nivelParam || vitrineParam) {
+    const label = nivelParam ? NIVEL_LABELS[nivelParam] : VITRINE_LABELS[vitrineParam];
     document.title = label + ' — Alfa Informática';
     document.getElementById('breadcrumb').innerHTML =
       '<a href="alfa-replica.html">Home</a><span class="bc-sep">/</span><span class="bc-cur">' + label + '</span>';
@@ -556,6 +572,7 @@ function getRelevantSlugs() {
 // pra listagem final.
 function getBaseProducts() {
   if (nivelParam) return window.PRODUCTS_DB.filter(p => p.nivel === nivelParam);
+  if (vitrineParam) return window.PRODUCTS_DB.filter(VITRINE_FILTERS[vitrineParam]);
   const slugs = getRelevantSlugs();
   return window.PRODUCTS_DB.filter(p => slugs.includes(p.cat));
 }
@@ -654,6 +671,9 @@ function applyFilters() {
     return `<div class="pc" onclick="viewProduct(${p.id})" style="cursor:pointer">
       <div class="pc-bdg">${disc ? `<span class="bdg-d">-${disc}% OFF</span>` : ''}</div>
       <div class="pc-img">
+        <button class="pc-fav ${Store.isFavorite(p.id)?'active':''}" title="Favoritar" onclick="event.stopPropagation();toggleFav(${p.id},this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
         ${p.images && p.images[0] ? `<img src="${p.images[0]}" alt="${p.name}" loading="lazy">` : ''}
       </div>
       <div class="pc-body">
@@ -692,6 +712,13 @@ function clearFilters() {
 
 function viewProduct(id) {
   location.href = 'produto.html?id=' + id;
+}
+
+function toggleFav(id, btnEl) {
+  const p = (window.PRODUCTS_DB || []).find(x => x.id === id);
+  if (!p) return;
+  const added = Store.toggleFavorite(p);
+  if (btnEl) btnEl.classList.toggle('active', added);
 }
 
 waitReady(init);

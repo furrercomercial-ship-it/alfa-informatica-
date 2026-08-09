@@ -9,6 +9,9 @@
 <style>
 .desp-total{font-size:12.5px;color:var(--text-muted);}
 .desp-total b{color:var(--text-main);}
+.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;font-size:12.5px;color:var(--text-muted);}
+.pagination-bar .pg-controls{display:flex;align-items:center;gap:10px;}
+.pagination-bar .pg-page{color:var(--text-muted);}
 </style>
 </head>
 <body>
@@ -28,6 +31,7 @@
       <div class="toolbar">
         <div class="toolbar-left">
           <input type="search" id="searchInp" class="search-box" placeholder="Buscar por categoria ou descrição...">
+          <button class="btn btn-secondary" id="exportCsvBtn">Exportar CSV</button>
         </div>
         <div class="desp-total" id="despTotal"></div>
       </div>
@@ -38,6 +42,7 @@
           <tbody id="despTbody"></tbody>
         </table>
       </div>
+      <div class="pagination-bar" id="despPagination"></div>
     </div>
   </div>
 </div>
@@ -75,9 +80,45 @@
 <script>
 let DESPESAS = [];
 let editingId = null;
+let currentPage = 1;
+const PAGE_SIZE = 25;
 
 function fmtBRL(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
 function fmtDate(d) { return new Date(d + 'T00:00:00').toLocaleDateString('pt-BR'); }
+
+/* ── CSV helpers ── */
+function csvEscape(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function downloadCsv(filename, rows) {
+  const content = '﻿' + rows.map(r => r.map(csvEscape).join(';')).join('\r\n');
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+/* ── Paginação ── */
+function renderPagination(containerId, totalItems, page, onChange) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const start = totalItems ? (page - 1) * PAGE_SIZE + 1 : 0;
+  const end = Math.min(page * PAGE_SIZE, totalItems);
+  el.innerHTML = `
+    <div class="pg-info">Mostrando ${start}–${end} de ${totalItems}</div>
+    <div class="pg-controls">
+      <button class="btn btn-secondary btn-sm" id="${containerId}PrevBtn" ${page <= 1 ? 'disabled' : ''}>Anterior</button>
+      <span class="pg-page">Página ${page} de ${totalPages}</span>
+      <button class="btn btn-secondary btn-sm" id="${containerId}NextBtn" ${page >= totalPages ? 'disabled' : ''}>Próxima</button>
+    </div>`;
+  document.getElementById(containerId + 'PrevBtn').addEventListener('click', () => onChange(page - 1));
+  document.getElementById(containerId + 'NextBtn').addEventListener('click', () => onChange(page + 1));
+}
 
 async function loadDespesas() {
   const { data, error } = await window.sb.from('despesas').select('*').order('data', { ascending: false });
@@ -86,14 +127,27 @@ async function loadDespesas() {
   renderTable();
 }
 
-function renderTable() {
+function getFilteredDespesas() {
   const q = document.getElementById('searchInp').value.trim().toLowerCase();
-  let list = DESPESAS.filter(d => !q || d.categoria.toLowerCase().includes(q) || (d.descricao || '').toLowerCase().includes(q));
+  return DESPESAS.filter(d => !q || d.categoria.toLowerCase().includes(q) || (d.descricao || '').toLowerCase().includes(q));
+}
+
+function renderTable() {
+  const list = getFilteredDespesas();
   const total = list.filter(d => d.ativo).reduce((s, d) => s + Number(d.valor), 0);
   document.getElementById('despTotal').innerHTML = list.length + ' despesa' + (list.length !== 1 ? 's' : '') + ' · <b>' + fmtBRL(total) + '</b> ativas';
+
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const pageItems = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const tbody = document.getElementById('despTbody');
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhuma despesa cadastrada.</td></tr>'; return; }
-  tbody.innerHTML = list.map(d => `
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhuma despesa cadastrada.</td></tr>';
+    renderPagination('despPagination', 0, currentPage, p => { currentPage = p; renderTable(); });
+    return;
+  }
+  tbody.innerHTML = pageItems.map(d => `
     <tr>
       <td class="strong">${d.categoria}</td>
       <td>${d.descricao || '—'}</td>
@@ -106,9 +160,26 @@ function renderTable() {
         <button class="btn btn-danger btn-sm" onclick="deleteDesp(${d.id})">Excluir</button>
       </td>
     </tr>`).join('');
+  renderPagination('despPagination', list.length, currentPage, p => { currentPage = p; renderTable(); });
 }
 
-document.getElementById('searchInp').addEventListener('input', renderTable);
+function exportDespesasCsv() {
+  const list = getFilteredDespesas();
+  const rows = [['Descrição', 'Categoria', 'Valor', 'Recorrente', 'Data']];
+  list.forEach(d => {
+    rows.push([
+      d.descricao || '',
+      d.categoria,
+      Number(d.valor).toFixed(2).replace('.', ','),
+      d.recorrente ? 'Sim' : 'Não',
+      fmtDate(d.data),
+    ]);
+  });
+  downloadCsv('despesas-' + todayStr() + '.csv', rows);
+}
+
+document.getElementById('searchInp').addEventListener('input', () => { currentPage = 1; renderTable(); });
+document.getElementById('exportCsvBtn').addEventListener('click', exportDespesasCsv);
 
 function openModal() { document.getElementById('despModal').classList.add('open'); }
 function closeModal() { document.getElementById('despModal').classList.remove('open'); }
