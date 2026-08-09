@@ -260,7 +260,10 @@ async function refreshShipping(){
 
   state.shipLoading = true; state.shipError = ''; renderAll();
   try {
-    var resp = await window.sb.functions.invoke('correios-frete', { body: { cep_destino: addr.cep } });
+    var resp = await window.sb.functions.invoke('correios-frete', { body: {
+      cep_destino: addr.cep,
+      items: items.map(function(i){ return { product_id: i.id, qty: i.qty }; }),
+    } });
     var opcoes = (resp.data && resp.data.ok) ? resp.data.opcoes : [];
     if (!opcoes.length) throw new Error('sem opções');
     state.shipOpts = opcoes.map(function(o){

@@ -38,12 +38,39 @@ const CODIGO_ADMINISTRATIVO = (Deno.env.get('CORREIOS_CODIGO_ADMINISTRATIVO') ||
 // caso a origem mude no futuro).
 const CEP_ORIGEM = Deno.env.get('CORREIOS_CEP_ORIGEM') || '78065443';
 
+// Usado como fallback — por item sem peso/dimensão cadastrada, ou pro
+// pedido inteiro se ninguém passar um pacote explícito pra calcularFrete().
 export const PACOTE_PADRAO = {
   pesoKg: Number(Deno.env.get('CORREIOS_PACOTE_PESO_KG')) || 1,
   comprimentoCm: Number(Deno.env.get('CORREIOS_PACOTE_COMPRIMENTO_CM')) || 20,
   larguraCm: Number(Deno.env.get('CORREIOS_PACOTE_LARGURA_CM')) || 15,
   alturaCm: Number(Deno.env.get('CORREIOS_PACOTE_ALTURA_CM')) || 10,
 };
+
+export type PacoteInfo = { pesoKg: number; comprimentoCm: number; larguraCm: number; alturaCm: number };
+
+// Agrega peso/dimensão real dos produtos de um pedido num pacote só —
+// peso soma (peso × qty de cada item), comprimento/largura usam o maior
+// item (assume que os outros cabem dentro), altura soma (assume
+// empilhamento). Item sem peso/dimensão cadastrado usa PACOTE_PADRAO só
+// pra aquele item, não trava o cálculo do pedido inteiro.
+export function calcularPacoteAgregado(
+  itens: Array<{ pesoKg: number | null | undefined; comprimentoCm: number | null | undefined; larguraCm: number | null | undefined; alturaCm: number | null | undefined; qty: number }>,
+): PacoteInfo {
+  let pesoKg = 0, comprimentoCm = 0, larguraCm = 0, alturaCm = 0;
+  for (const item of itens) {
+    const peso = item.pesoKg || PACOTE_PADRAO.pesoKg;
+    const comp = item.comprimentoCm || PACOTE_PADRAO.comprimentoCm;
+    const larg = item.larguraCm || PACOTE_PADRAO.larguraCm;
+    const alt = item.alturaCm || PACOTE_PADRAO.alturaCm;
+    pesoKg += peso * item.qty;
+    comprimentoCm = Math.max(comprimentoCm, comp);
+    larguraCm = Math.max(larguraCm, larg);
+    alturaCm += alt * item.qty;
+  }
+  if (!itens.length) return { ...PACOTE_PADRAO };
+  return { pesoKg, comprimentoCm, larguraCm, alturaCm };
+}
 
 // TODO CORREIOS (#4): confirmar se estes são os códigos de serviço
 // habilitados no contrato — 03298/03220 são os códigos padrão de contrato
@@ -153,10 +180,10 @@ function parseNumeroBR(v: unknown): number {
 
 export type OpcaoFrete = { codigo: string; nome: string; valor: number; prazoDias: number | null };
 
-export async function calcularFrete(params: { cepDestino: string }): Promise<OpcaoFrete[]> {
+export async function calcularFrete(params: { cepDestino: string; pacote?: PacoteInfo }): Promise<OpcaoFrete[]> {
   const cepOrigem = requireCepOrigem();
   const cepDestino = params.cepDestino.replace(/\D/g, '');
-  const { pesoKg, comprimentoCm, larguraCm, alturaCm } = PACOTE_PADRAO;
+  const { pesoKg, comprimentoCm, larguraCm, alturaCm } = params.pacote || PACOTE_PADRAO;
 
   const resultados = await Promise.allSettled(
     Object.values(SERVICOS).map(async (servico) => {
@@ -221,9 +248,14 @@ export type ResultadoEtiqueta = {
   trackingCode: string; prepostagemId: string | null; labelUrl: string | null; labelBase64: string | null; raw: any;
 };
 
-export async function gerarEtiqueta(params: { servicoCodigo: string; destinatario: Destinatario; conteudo: ItemConteudo[] }): Promise<ResultadoEtiqueta> {
+export async function gerarEtiqueta(params: { servicoCodigo: string; destinatario: Destinatario; conteudo: ItemConteudo[]; pacote?: PacoteInfo }): Promise<ResultadoEtiqueta> {
   const cepOrigem = requireCepOrigem();
-  const { pesoKg, comprimentoCm, larguraCm, alturaCm } = PACOTE_PADRAO;
+  // TODO: correios-etiqueta (o chamador desta função) ainda não passa o
+  // pacote real agregado do pedido — calcularFrete/correios-frete e
+  // mp-create-payment já usam calcularPacoteAgregado(), etiqueta continua
+  // no pacote fixo por enquanto (função nem está habilitada pelo contrato
+  // ainda, não é prioridade agora).
+  const { pesoKg, comprimentoCm, larguraCm, alturaCm } = params.pacote || PACOTE_PADRAO;
 
   // TODO CORREIOS (#5): endpoint/payload/formato de resposta não
   // confirmados — assumido POST /prepostagem/v1/prepostagens.

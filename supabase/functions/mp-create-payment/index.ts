@@ -32,7 +32,7 @@
 // à mão logo no início da função (ver RATE_LIMIT_* abaixo).
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { calcularFrete } from '../_shared/correios.ts';
+import { calcularFrete, calcularPacoteAgregado } from '../_shared/correios.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -236,7 +236,7 @@ Deno.serve(async (req) => {
     if (!productIds.length) return fail(400, 'Carrinho inválido.');
 
     const { data: products, error: prodErr } = await admin
-      .from('products').select('id,name,price,stock,active,images,cost_price,pix_discount_percent')
+      .from('products').select('id,name,price,stock,active,images,cost_price,pix_discount_percent,weight,comprimento_cm,largura_cm,altura_cm')
       .in('id', productIds);
     if (prodErr) return fail(500, 'Não foi possível validar os produtos. Tente novamente.');
 
@@ -294,9 +294,16 @@ Deno.serve(async (req) => {
       shippingName = 'Entrega local (Alfa)';
     } else if (shippingMethodId !== 'retirada') {
       if (!address || !address.cep) return fail(400, 'Endereço com CEP é obrigatório para envio pelos Correios.');
+      // Pacote real (peso/dimensão dos produtos cadastrados no admin),
+      // igual o que correios-frete já mostrou no checkout — recalculado
+      // aqui do zero a partir do banco, não confia em nada vindo do cliente.
+      const pacote = calcularPacoteAgregado(normalizedItems.map((item) => {
+        const p = productMap.get(item.product_id);
+        return { pesoKg: p?.weight, comprimentoCm: p?.comprimento_cm, larguraCm: p?.largura_cm, alturaCm: p?.altura_cm, qty: item.qty };
+      }));
       let opcoesFrete;
       try {
-        opcoesFrete = await calcularFrete({ cepDestino: address.cep });
+        opcoesFrete = await calcularFrete({ cepDestino: address.cep, pacote });
       } catch (e) {
         console.error('[mp-create-payment] falha ao consultar frete nos Correios', String(e));
         return fail(502, 'Não foi possível confirmar o frete no momento. Tente novamente.');

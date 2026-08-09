@@ -121,9 +121,14 @@
     </div>
 
     <div class="field-section-title">Logística</div>
+    <p class="field-hint" style="margin:-4px 0 10px;">Peso e dimensões são usados pra calcular o frete real dos Correios — sem isso, o produto entra no cálculo com um pacote padrão genérico.</p>
     <div class="field-row">
-      <div class="field"><label>Peso (kg)</label><input type="number" step="0.01" id="f_weight"></div>
-      <div class="field"><label>Dimensões</label><input id="f_dimensions" placeholder="ex: 30x20x10 cm"></div>
+      <div class="field"><label>Peso (kg) *</label><input type="number" step="0.01" id="f_weight"></div>
+      <div class="field"><label>Comprimento (cm) *</label><input type="number" step="0.1" id="f_comprimento_cm"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Largura (cm) *</label><input type="number" step="0.1" id="f_largura_cm"></div>
+      <div class="field"><label>Altura (cm) *</label><input type="number" step="0.1" id="f_altura_cm"></div>
     </div>
     <div class="field-row">
       <div class="field"><label>Garantia</label><input id="f_warranty" placeholder="ex: 12 meses"></div>
@@ -279,7 +284,7 @@ function resetForm() {
   editingId = null;
   document.getElementById('modalTitle').textContent = 'Novo Produto';
   ['name','brand','model','short_description','description','price','old_price','cost_price','stock','min_stock',
-   'sku','ean','ncm','codigo_interno','weight','dimensions','warranty','supplier','video_url'].forEach(k => {
+   'sku','ean','ncm','codigo_interno','weight','comprimento_cm','largura_cm','altura_cm','warranty','supplier','video_url'].forEach(k => {
     document.getElementById('f_' + k).value = '';
   });
   document.getElementById('f_pix_discount_percent').value = 5;
@@ -313,7 +318,9 @@ window.openEdit = async function (id) {
   document.getElementById('f_ncm').value = p.ncm || '';
   document.getElementById('f_codigo_interno').value = p.codigo_interno || '';
   document.getElementById('f_weight').value = p.weight ?? '';
-  document.getElementById('f_dimensions').value = p.dimensions || '';
+  document.getElementById('f_comprimento_cm').value = p.comprimento_cm ?? '';
+  document.getElementById('f_largura_cm').value = p.largura_cm ?? '';
+  document.getElementById('f_altura_cm').value = p.altura_cm ?? '';
   document.getElementById('f_warranty').value = p.warranty || '';
   document.getElementById('f_supplier').value = p.supplier || '';
   document.getElementById('f_video_url').value = p.video_url || '';
@@ -371,8 +378,18 @@ async function saveProduct() {
   const price = parseFloat(document.getElementById('f_price').value);
   const categoryId = document.getElementById('f_category').value;
   const subcategoryId = document.getElementById('f_subcategory').value;
+  const weight = parseFloat(document.getElementById('f_weight').value);
+  const comprimentoCm = parseFloat(document.getElementById('f_comprimento_cm').value);
+  const larguraCm = parseFloat(document.getElementById('f_largura_cm').value);
+  const alturaCm = parseFloat(document.getElementById('f_altura_cm').value);
   if (!name || !price || !categoryId || !subcategoryId) {
     AdminShell.toast('Preencha nome, categoria, subcategoria e preço.', 'error');
+    return;
+  }
+  // Peso/dimensões são obrigatórios — sem isso o cálculo de frete cai no
+  // pacote genérico, cobrando errado (ver _shared/correios.ts).
+  if (!(weight > 0) || !(comprimentoCm > 0) || !(larguraCm > 0) || !(alturaCm > 0)) {
+    AdminShell.toast('Preencha peso e as 3 dimensões (comprimento, largura, altura) — são obrigatórios pro cálculo de frete.', 'error');
     return;
   }
 
@@ -392,8 +409,7 @@ async function saveProduct() {
     ean: document.getElementById('f_ean').value.trim() || null,
     ncm: document.getElementById('f_ncm').value.trim() || null,
     codigo_interno: document.getElementById('f_codigo_interno').value.trim() || null,
-    weight: parseFloat(document.getElementById('f_weight').value) || null,
-    dimensions: document.getElementById('f_dimensions').value.trim() || null,
+    weight, comprimento_cm: comprimentoCm, largura_cm: larguraCm, altura_cm: alturaCm,
     warranty: document.getElementById('f_warranty').value.trim() || null,
     supplier: document.getElementById('f_supplier').value.trim() || null,
     video_url: document.getElementById('f_video_url').value.trim() || null,
