@@ -380,6 +380,12 @@ let activeSubcat = '';
 let searchQuery = '';
 let filters = { minPrice:null, maxPrice:null, brands:[], onSale:false };
 
+// ─── NÍVEL (?nivel=insane etc.) — modo alternativo ao ?cat=, mesma página/
+// visual/filtros, só troca o critério de quais produtos entram na lista.
+// "Escolha seu Nível" na home linka pra cá em vez de páginas próprias.
+const NIVEL_LABELS = { home:'Nível Home', crazy:'Nível Crazy', insane:'Nível Insane', lunatic:'Nível Lunatic', mad:'Nível Mad' };
+let nivelParam = '';
+
 // ─── ACCORDION ──────────────────────────────────────────────────────────────
 function toggleAcc(head) {
   const body = head.nextElementSibling;
@@ -459,6 +465,7 @@ function init() {
   buildCatsMap();
 
   const p = new URLSearchParams(location.search);
+  nivelParam = NIVEL_LABELS[p.get('nivel')] ? p.get('nivel') : '';
   currentSlug = p.get('cat') || 'hardware';
   if (!CATS[currentSlug]) currentSlug = 'outros';
   activeSubcat = '';
@@ -483,33 +490,44 @@ function waitReady(cb) {
 }
 
 function renderPage() {
-  const info = CATS[currentSlug] || { label:'Categoria', parent:null };
-  document.title = info.label + ' — Alfa Informática';
-
-  // Breadcrumb
-  let bc = '<a href="alfa-replica.html">Home</a><span class="bc-sep">/</span>';
-  if (info.parent) {
-    const par = CATS[info.parent];
-    bc += `<a href="categoria.html?cat=${info.parent}">${par.label}</a><span class="bc-sep">/</span>`;
-  }
-  bc += `<span class="bc-cur">${info.label}</span>`;
-  document.getElementById('breadcrumb').innerHTML = bc;
-
-  document.getElementById('catTitle').textContent = info.label;
-
-  // Subcats
   const bar = document.getElementById('subcatBar');
-  if (info.children && info.children.length) {
-    let pills = `<button class="scat-btn ${activeSubcat===''?'active':''}" onclick="filterSubcat(event,'')">Todos</button>`;
-    info.children.forEach(slug => {
-      const child = CATS[slug];
-      if (child) pills += `<button class="scat-btn ${activeSubcat===slug?'active':''}" onclick="filterSubcat(event,'${slug}')">${child.label}</button>`;
-    });
-    bar.innerHTML = pills;
-    bar.style.display = 'flex';
-  } else {
+
+  if (nivelParam) {
+    const label = NIVEL_LABELS[nivelParam];
+    document.title = label + ' — Alfa Informática';
+    document.getElementById('breadcrumb').innerHTML =
+      '<a href="alfa-replica.html">Home</a><span class="bc-sep">/</span><span class="bc-cur">' + label + '</span>';
+    document.getElementById('catTitle').textContent = label;
     bar.innerHTML = '';
     bar.style.display = 'none';
+  } else {
+    const info = CATS[currentSlug] || { label:'Categoria', parent:null };
+    document.title = info.label + ' — Alfa Informática';
+
+    // Breadcrumb
+    let bc = '<a href="alfa-replica.html">Home</a><span class="bc-sep">/</span>';
+    if (info.parent) {
+      const par = CATS[info.parent];
+      bc += `<a href="categoria.html?cat=${info.parent}">${par.label}</a><span class="bc-sep">/</span>`;
+    }
+    bc += `<span class="bc-cur">${info.label}</span>`;
+    document.getElementById('breadcrumb').innerHTML = bc;
+
+    document.getElementById('catTitle').textContent = info.label;
+
+    // Subcats
+    if (info.children && info.children.length) {
+      let pills = `<button class="scat-btn ${activeSubcat===''?'active':''}" onclick="filterSubcat(event,'')">Todos</button>`;
+      info.children.forEach(slug => {
+        const child = CATS[slug];
+        if (child) pills += `<button class="scat-btn ${activeSubcat===slug?'active':''}" onclick="filterSubcat(event,'${slug}')">${child.label}</button>`;
+      });
+      bar.innerHTML = pills;
+      bar.style.display = 'flex';
+    } else {
+      bar.innerHTML = '';
+      bar.style.display = 'none';
+    }
   }
 
   buildBrandFilter();
@@ -533,9 +551,17 @@ function getRelevantSlugs() {
   return [currentSlug];
 }
 
-function buildBrandFilter() {
+// Ponto único de "quais produtos pertencem a essa página" — por categoria
+// (padrão) ou por nível (?nivel=), usado tanto pro filtro de marca quanto
+// pra listagem final.
+function getBaseProducts() {
+  if (nivelParam) return window.PRODUCTS_DB.filter(p => p.nivel === nivelParam);
   const slugs = getRelevantSlugs();
-  const catProds = window.PRODUCTS_DB.filter(p => slugs.includes(p.cat));
+  return window.PRODUCTS_DB.filter(p => slugs.includes(p.cat));
+}
+
+function buildBrandFilter() {
+  const catProds = getBaseProducts();
   const brandCounts = {};
   catProds.forEach(p => { brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1; });
   const brands = Object.keys(brandCounts).sort();
@@ -573,8 +599,7 @@ function updateBrands() {
 }
 
 function getFilteredProducts() {
-  const slugs = getRelevantSlugs();
-  let prods = window.PRODUCTS_DB.filter(p => slugs.includes(p.cat));
+  let prods = getBaseProducts();
 
   if (filters.minPrice !== null) prods = prods.filter(p => p.price >= filters.minPrice);
   if (filters.maxPrice !== null) prods = prods.filter(p => p.price <= filters.maxPrice);

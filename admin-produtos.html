@@ -76,6 +76,19 @@
       <div class="field"><label>Categoria *</label><select id="f_category"></select></div>
       <div class="field"><label>Subcategoria *</label><select id="f_subcategory"></select></div>
     </div>
+    <div class="field-row">
+      <div class="field"><label>Nível (seção "Escolha seu Nível" da home)</label>
+        <select id="f_nivel">
+          <option value="">— nenhum —</option>
+          <option value="home">Home</option>
+          <option value="crazy">Crazy</option>
+          <option value="insane">Insane</option>
+          <option value="lunatic">Lunatic</option>
+          <option value="mad">Mad</option>
+        </select>
+      </div>
+      <div class="field"></div>
+    </div>
     <div class="field"><label>Descrição curta</label><input id="f_short_description"></div>
     <div class="field"><label>Descrição completa (aceita HTML simples, ex: &lt;strong&gt;)</label><textarea id="f_description"></textarea></div>
 
@@ -272,6 +285,7 @@ function resetForm() {
   document.getElementById('f_pix_discount_percent').value = 5;
   document.getElementById('f_category').value = '';
   populateSubcatSelect('', '');
+  document.getElementById('f_nivel').value = '';
   ['active','featured','is_new','best_seller','free_shipping'].forEach(k => document.getElementById('f_' + k).checked = k === 'active');
   document.getElementById('specsWrap').innerHTML = '';
   document.getElementById('imagesWrap').innerHTML = '';
@@ -305,6 +319,7 @@ window.openEdit = async function (id) {
   document.getElementById('f_video_url').value = p.video_url || '';
   document.getElementById('f_category').value = p.category_id || '';
   populateSubcatSelect(p.category_id, p.subcategory_id);
+  document.getElementById('f_nivel').value = p.nivel || '';
   document.getElementById('f_active').checked = !!p.active;
   document.getElementById('f_featured').checked = !!p.featured;
   document.getElementById('f_is_new').checked = !!p.is_new;
@@ -365,6 +380,7 @@ async function saveProduct() {
     name, brand: document.getElementById('f_brand').value.trim(),
     model: document.getElementById('f_model').value.trim(),
     category_id: Number(categoryId), subcategory_id: Number(subcategoryId),
+    nivel: document.getElementById('f_nivel').value || null,
     short_description: document.getElementById('f_short_description').value.trim(),
     description: document.getElementById('f_description').value.trim(),
     price, old_price: parseFloat(document.getElementById('f_old_price').value) || null,
