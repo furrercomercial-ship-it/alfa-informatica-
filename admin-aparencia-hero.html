@@ -38,9 +38,32 @@
     <div class="field"><label>Imagem *</label><div id="uploadSlideImg"></div></div>
     <div class="field"><label>Título (opcional)</label><input id="f_titulo"></div>
     <div class="field"><label>Subtítulo (opcional)</label><input id="f_subtitulo"></div>
-    <div class="field-row">
-      <div class="field"><label>Texto do botão</label><input id="f_cta_label" placeholder="Ver ofertas"></div>
-      <div class="field"><label>Link do botão</label><input id="f_cta_url" placeholder="categoria.html?cat=promocoes"></div>
+    <div class="field"><label>Texto do botão</label><input id="f_cta_label" placeholder="Ver ofertas"></div>
+    <div class="field">
+      <label>Destino do banner (ao clicar)</label>
+      <select id="f_link_tipo" onchange="updateLinkFields()">
+        <option value="">Sem link</option>
+        <option value="nivel">Nível de PC (Home, Crazy, Insane…)</option>
+        <option value="vitrine">Vitrine (Destaque, Mais Vendidos…)</option>
+        <option value="categoria">Categoria</option>
+        <option value="manual">URL personalizada</option>
+      </select>
+    </div>
+    <div id="link_sub_wrap" style="display:none">
+      <select id="f_link_nivel" class="field" style="display:none;width:100%;margin-bottom:14px;">
+        <option value="home">🏠 Home — Entrada</option>
+        <option value="crazy">⚡ Crazy — Intermediário</option>
+        <option value="insane">🔥 Insane — Avançado</option>
+        <option value="lunatic">💀 Lunatic — Extremo</option>
+        <option value="mad">🚀 Mad — Topo de linha</option>
+      </select>
+      <select id="f_link_vitrine" class="field" style="display:none;width:100%;margin-bottom:14px;">
+        <option value="destaque">Produtos em Destaque</option>
+        <option value="mais_vendidos">Mais Vendidos</option>
+        <option value="lancamentos">Lançamentos</option>
+      </select>
+      <select id="f_link_categoria" class="field" style="display:none;width:100%;margin-bottom:14px;"></select>
+      <input id="f_cta_url_manual" class="field" placeholder="categoria.html?cat=promocoes" style="display:none;width:100%;margin-bottom:14px;">
     </div>
     <div class="field-row">
       <div class="field"><label class="chk-row" style="margin-top:8px;"><input type="checkbox" id="f_overlay_ativo"> Escurecer imagem (destacar texto)</label></div>
@@ -60,8 +83,46 @@
 <script src="admin-upload.js"></script>
 <script>
 let SLIDES = [];
+let CATS = [];
 let editingId = null;
 let currentImg = '';
+
+function updateLinkFields() {
+  const tipo = document.getElementById('f_link_tipo').value;
+  const wrap = document.getElementById('link_sub_wrap');
+  const ids = ['f_link_nivel','f_link_vitrine','f_link_categoria','f_cta_url_manual'];
+  const map = { nivel:'f_link_nivel', vitrine:'f_link_vitrine', categoria:'f_link_categoria', manual:'f_cta_url_manual' };
+  wrap.style.display = tipo ? '' : 'none';
+  ids.forEach(id => document.getElementById(id).style.display = (map[tipo] === id) ? '' : 'none');
+}
+
+function getLinkUrl() {
+  const tipo = document.getElementById('f_link_tipo').value;
+  if (!tipo) return null;
+  if (tipo === 'nivel')     return 'categoria.html?nivel=' + document.getElementById('f_link_nivel').value;
+  if (tipo === 'vitrine')   return 'categoria.html?vitrine=' + document.getElementById('f_link_vitrine').value;
+  if (tipo === 'categoria') return 'categoria.html?cat=' + document.getElementById('f_link_categoria').value;
+  return document.getElementById('f_cta_url_manual').value.trim() || null;
+}
+
+function setLinkFromUrl(url) {
+  const tipoEl = document.getElementById('f_link_tipo');
+  if (!url) { tipoEl.value = ''; updateLinkFields(); return; }
+  const mNivel   = url.match(/categoria\.html\?nivel=([\w-]+)/);
+  const mVitrine = url.match(/categoria\.html\?vitrine=([\w-]+)/);
+  const mCat     = url.match(/categoria\.html\?cat=([\w-]+)/);
+  if (mNivel)   { tipoEl.value = 'nivel';    updateLinkFields(); document.getElementById('f_link_nivel').value   = mNivel[1]; }
+  else if (mVitrine) { tipoEl.value = 'vitrine'; updateLinkFields(); document.getElementById('f_link_vitrine').value = mVitrine[1]; }
+  else if (mCat) { tipoEl.value = 'categoria'; updateLinkFields(); document.getElementById('f_link_categoria').value = mCat[1]; }
+  else           { tipoEl.value = 'manual';   updateLinkFields(); document.getElementById('f_cta_url_manual').value = url; }
+}
+
+async function loadCats() {
+  const { data } = await window.sb.from('categories').select('slug, name').order('name');
+  CATS = data || [];
+  const sel = document.getElementById('f_link_categoria');
+  sel.innerHTML = CATS.map(c => `<option value="${c.slug}">${c.name}</option>`).join('');
+}
 
 async function load() {
   const { data } = await window.sb.from('hero_slides').select('*').order('ordem');
@@ -96,7 +157,8 @@ function closeModal() { document.getElementById('slideModal').classList.remove('
 document.getElementById('newBtn').addEventListener('click', () => {
   editingId = null; currentImg = '';
   document.getElementById('modalTitle').textContent = 'Novo Slide';
-  ['titulo','subtitulo','cta_label','cta_url'].forEach(f => document.getElementById('f_' + f).value = '');
+  ['titulo','subtitulo','cta_label'].forEach(f => document.getElementById('f_' + f).value = '');
+  setLinkFromUrl(null);
   document.getElementById('f_overlay_ativo').checked = false;
   document.getElementById('f_overlay_opacidade').value = 0.35;
   document.getElementById('f_ativo').checked = true;
@@ -112,7 +174,7 @@ window.openEdit = function (id) {
   document.getElementById('f_titulo').value = s.titulo || '';
   document.getElementById('f_subtitulo').value = s.subtitulo || '';
   document.getElementById('f_cta_label').value = s.cta_label || '';
-  document.getElementById('f_cta_url').value = s.cta_url || '';
+  setLinkFromUrl(s.cta_url || null);
   document.getElementById('f_overlay_ativo').checked = !!s.overlay_ativo;
   document.getElementById('f_overlay_opacidade').value = s.overlay_opacidade;
   document.getElementById('f_ativo').checked = !!s.ativo;
@@ -127,7 +189,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     titulo: document.getElementById('f_titulo').value.trim() || null,
     subtitulo: document.getElementById('f_subtitulo').value.trim() || null,
     cta_label: document.getElementById('f_cta_label').value.trim() || null,
-    cta_url: document.getElementById('f_cta_url').value.trim() || null,
+    cta_url: getLinkUrl(),
     overlay_ativo: document.getElementById('f_overlay_ativo').checked,
     overlay_opacidade: parseFloat(document.getElementById('f_overlay_opacidade').value) || 0.35,
     ativo: document.getElementById('f_ativo').checked,
@@ -165,7 +227,7 @@ window.move = async function (id, dir) {
 (async function () {
   const session = await AdminShell.init('aparencia-hero');
   if (!session) return;
-  await load();
+  await Promise.all([load(), loadCats()]);
 })();
 </script>
 </body>
