@@ -188,9 +188,15 @@ function renderList() {
       </div>
       ${r.title ? `<div class="rv-title">${escapeHtml(r.title)}</div>` : ''}
       <div class="rv-comment">${escapeHtml(r.comment)}</div>
-      ${(r.media_urls && r.media_urls.length) ? `<div class="rv-media">${r.media_urls.map(m =>
-        (m.type||'').startsWith('video') ? `<video src="${m.url}" controls></video>` : `<img src="${m.url}" alt="">`
-      ).join('')}</div>` : ''}
+      ${(r.media_urls && r.media_urls.length) ? `<div class="rv-media">${r.media_urls.map(m => {
+        const ALLOWED_VID = ['video/mp4','video/webm'];
+        const ALLOWED_IMG = ['image/jpeg','image/png','image/gif','image/webp'];
+        const t = m.type || '';
+        const u = escapeHtml(m.url || '');
+        if (ALLOWED_VID.includes(t)) return `<video src="${u}" controls></video>`;
+        if (ALLOWED_IMG.includes(t)) return `<img src="${u}" alt="">`;
+        return '';
+      }).join('')}</div>` : ''}
       ${canModerate ? `<div class="rv-actions">
         ${r.status !== 'approved' ? `<button class="btn btn-success btn-sm" onclick="approveReview('${r.id}')">Aprovar</button>` : ''}
         ${r.status !== 'rejected' ? `<button class="btn btn-secondary btn-sm" onclick="rejectReview('${r.id}')">Rejeitar</button>` : ''}
