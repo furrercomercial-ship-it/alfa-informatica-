@@ -1041,7 +1041,8 @@ function escHtml(s) {
 function safeUrl(u) {
   if (!u) return null;
   var t = String(u).trim();
-  return /^https?:\/\//i.test(t) ? t : null;
+  if (/^(javascript|data|vbscript):/i.test(t)) return null;
+  return t;
 }
 </script>
 <script>
