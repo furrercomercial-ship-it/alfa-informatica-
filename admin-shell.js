@@ -303,12 +303,88 @@ window.AdminShell = (function () {
     } catch (e) { console.error('[admin-shell] falha ao gravar log de auditoria', e); }
   }
 
+  // Acessibilidade de modal — aplica em toda .modal-overlay do painel,
+  // automaticamente, sem precisar mudar o JS de abrir/fechar de cada página
+  // (todas elas já seguem o padrão overlay.classList.add/remove('open')).
+  // Cobre: role="dialog"/aria-modal, aria-label no botão ✕, fechar com Esc,
+  // fechar clicando no fundo, foco movido pra dentro do modal ao abrir e
+  // devolvido ao elemento que abriu quando fecha, e foco preso (Tab) dentro
+  // do modal enquanto está aberto.
+  function setupModalA11y() {
+    const overlays = document.querySelectorAll('.modal-overlay');
+    overlays.forEach(overlay => {
+      if (overlay.dataset.a11yInit) return;
+      overlay.dataset.a11yInit = '1';
+
+      const modal = overlay.querySelector('.modal');
+      if (modal) {
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        if (!modal.hasAttribute('tabindex')) modal.setAttribute('tabindex', '-1');
+        const titleEl = modal.querySelector('.modal-title');
+        if (titleEl) {
+          if (!titleEl.id) titleEl.id = 'modalTitle-' + Math.random().toString(36).slice(2, 8);
+          modal.setAttribute('aria-labelledby', titleEl.id);
+        }
+      }
+
+      const closeBtn = overlay.querySelector('.modal-close');
+      if (closeBtn && !closeBtn.getAttribute('aria-label')) closeBtn.setAttribute('aria-label', 'Fechar');
+
+      let lastFocused = null;
+      overlay._a11yClose = function () {
+        overlay.classList.remove('open');
+        if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+        lastFocused = null;
+      };
+
+      // Clique no fundo (fora do card .modal) fecha, igual clicar no ✕.
+      overlay.addEventListener('mousedown', (e) => {
+        if (e.target === overlay) overlay._a11yClose();
+      });
+
+      // A própria página abre o modal com classList.add('open'); observamos
+      // essa mudança pra mover o foco pra dentro assim que abrir.
+      const mo = new MutationObserver(() => {
+        if (overlay.classList.contains('open')) {
+          lastFocused = document.activeElement;
+          const focusable = overlay.querySelector(
+            '.modal button, .modal [href], .modal input, .modal select, .modal textarea, .modal [tabindex]'
+          );
+          (focusable || modal || overlay).focus({ preventScroll: true });
+        }
+      });
+      mo.observe(overlay, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const openOverlay = document.querySelector('.modal-overlay.open');
+      if (openOverlay) { if (openOverlay._a11yClose) openOverlay._a11yClose(); else openOverlay.classList.remove('open'); }
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const openOverlay = document.querySelector('.modal-overlay.open');
+    if (!openOverlay) return;
+    const modal = openOverlay.querySelector('.modal');
+    if (!modal) return;
+    const focusables = modal.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusables.length) return;
+    const first = focusables[0], last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
   async function init(activeKey) {
     const profile = await guard();
     if (!profile) return null;
     renderSidebar(activeKey);
     renderInsightBar();
     mountChat();
+    setupModalA11y();
     return { profile, can };
   }
 

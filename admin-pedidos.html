@@ -7,17 +7,22 @@
 <script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
 <link rel="stylesheet" href="admin.css">
 <style>
-.order-item-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);font-size:12.5px;}
+.order-item-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);font-size:13px;}
 .order-item-row:last-child{border-bottom:none;}
 .detail-section{margin-bottom:18px;}
 .detail-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:8px;}
 .detail-line{font-size:13px;color:var(--text-secondary);margin-bottom:3px;}
 .totals-box{margin-top:8px;padding-top:10px;border-top:1px solid var(--border-color);}
 .totals-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;}
-.totals-row.grand{font-weight:800;font-size:15px;color:var(--text-main);}
-.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;font-size:12.5px;color:var(--text-muted);}
+.totals-row.grand{font-weight:800;font-size:14px;color:var(--text-main);}
+.pagination-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 4px 4px;font-size:13px;color:var(--text-muted);}
 .pagination-bar .pg-controls{display:flex;align-items:center;gap:10px;}
 .pagination-bar .pg-page{color:var(--text-muted);}
+.th-sort{cursor:pointer;user-select:none;}
+.th-sort:hover{color:var(--text-main);}
+.sort-ind{margin-left:4px;opacity:.7;}
+.toolbar-select{background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-sm);color:var(--text-main);padding:9px 12px;font-size:13px;outline:none;transition:border-color .15s var(--ease),box-shadow .15s var(--ease);}
+.toolbar-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft);}
 </style>
 </head>
 <body>
@@ -32,7 +37,7 @@
       <div class="toolbar">
         <div class="toolbar-left">
           <input type="search" id="searchInp" class="search-box" placeholder="Buscar por nº do pedido...">
-          <select id="statusFilter" style="padding:9px 12px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-main);">
+          <select id="statusFilter" class="toolbar-select" aria-label="Filtrar por status">
             <option value="">Todos os status</option>
             <option value="aguardando_pagamento">Aguardando Pagamento</option>
             <option value="processando">Processando</option>
@@ -48,16 +53,32 @@
           </select>
           <button class="btn btn-secondary" id="exportCsvBtn">Exportar CSV</button>
         </div>
-        <div id="ordCount" style="font-size:12.5px;color:var(--text-muted);"></div>
+        <div id="ordCount" style="font-size:13px;color:var(--text-muted);"></div>
       </div>
 
       <div class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Total</th><th>Status</th><th></th></tr></thead>
+          <thead><tr>
+            <th id="selectAllTh" style="width:34px;display:none;"><input type="checkbox" id="selectAllChk" onchange="toggleSelectAll(this.checked)" aria-label="Selecionar todos os pedidos desta página"></th>
+            <th>Pedido</th><th>Cliente</th>
+            <th class="th-sort" onclick="toggleSort('created_at')">Data<span id="sortIndcreated_at" class="sort-ind"></span></th>
+            <th class="th-sort" onclick="toggleSort('total')">Total<span id="sortIndtotal" class="sort-ind"></span></th>
+            <th>Status</th><th></th>
+          </tr></thead>
           <tbody id="ordTbody"></tbody>
         </table>
       </div>
       <div class="pagination-bar" id="ordPagination"></div>
+      <div class="card" id="bulkBar" style="display:none;margin-top:14px;padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span id="bulkCount" style="font-size:13px;color:var(--text-secondary);font-weight:700;"></span>
+          <select id="bulkStatusSelect" class="toolbar-select" aria-label="Mudar status dos pedidos selecionados">
+            <option value="">Mudar status selecionado(s) para...</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="bulkApplyBtn" onclick="applyBulkStatus()">Aplicar</button>
+          <button class="btn btn-secondary btn-sm" onclick="clearSelection()">Limpar seleção</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -82,13 +103,17 @@ const STATUS_LABELS = {
   recusado:'Pagamento Recusado', estornado:'Estornado', estorno_parcial:'Estornado Parcialmente', expirado:'Expirado',
 };
 const STATUS_COLORS = {
-  aguardando_pagamento:'amber', processando:'amber', pago:'blue', preparando:'blue', enviado:'blue', entregue:'green',
+  // "pago" é verde (não azul) por regra do DESIGN.md: verde é reservado pra
+  // sucesso/confirmado — o estado que a equipe mais precisa confiar de relance.
+  aguardando_pagamento:'amber', processando:'amber', pago:'green', preparando:'blue', enviado:'blue', entregue:'green',
   cancelado:'red', recusado:'red', estornado:'red', estorno_parcial:'amber', expirado:'gray',
 };
 let ORDERS = [];
 let canEdit = false;
 let currentPage = 1;
 const PAGE_SIZE = 25;
+let sortKey = null, sortDir = 'asc';
+let selectedIds = new Set();
 
 function fmtBRL(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
 function fmtDate(iso) { return new Date(iso).toLocaleDateString('pt-BR') + ' ' + new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }
@@ -127,12 +152,33 @@ function renderPagination(containerId, totalItems, page, onChange) {
   document.getElementById(containerId + 'NextBtn').addEventListener('click', () => onChange(page + 1));
 }
 
+function renderSkeletonRows(n) {
+  const tbody = document.getElementById('ordTbody');
+  if (!tbody) return;
+  tbody.innerHTML = Array.from({ length: n }).map(() => `
+    <tr>
+      <td><div class="skeleton" style="width:16px;height:16px;">·</div></td>
+      <td><div class="skeleton" style="width:90px;height:14px;">·</div></td>
+      <td><div class="skeleton" style="width:140px;height:14px;">·</div></td>
+      <td><div class="skeleton" style="width:110px;height:14px;">·</div></td>
+      <td><div class="skeleton" style="width:80px;height:14px;">·</div></td>
+      <td><div class="skeleton" style="width:74px;height:20px;border-radius:999px;">·</div></td>
+      <td><div class="skeleton" style="width:96px;height:28px;">·</div></td>
+    </tr>`).join('');
+}
+
 async function loadOrders() {
+  renderSkeletonRows(6);
   const { data, error } = await window.sb
     .from('orders')
     .select('id,order_number,status,total,created_at,profiles(full_name)')
     .order('created_at', { ascending: false });
-  if (error) { console.error(error); return; }
+  if (error) {
+    console.error(error);
+    AdminShell.toast('Erro ao carregar pedidos: ' + error.message, 'error');
+    document.getElementById('ordTbody').innerHTML = '<tr><td colspan="7" class="table-empty">Não foi possível carregar os pedidos. Recarregue a página.</td></tr>';
+    return;
+  }
   ORDERS = data || [];
   renderTable();
 }
@@ -142,12 +188,48 @@ function getFilteredOrders() {
   // toda a tela, então é natural digitar/colar com o # junto.
   const q = document.getElementById('searchInp').value.trim().toLowerCase().replace(/^#/, '');
   const statusF = document.getElementById('statusFilter').value;
-  return ORDERS.filter(o => {
+  let list = ORDERS.filter(o => {
     if (q && !(o.order_number || '').toLowerCase().includes(q)) return false;
     if (statusF && o.status !== statusF) return false;
     return true;
   });
+  if (sortKey) {
+    list = [...list].sort((a, b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      if (sortKey === 'created_at') { av = new Date(av).getTime(); bv = new Date(bv).getTime(); }
+      else { av = Number(av); bv = Number(bv); }
+      const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }
+  return list;
 }
+
+// Clicar num cabeçalho ordenável alterna asc/desc; trocar de coluna reseta pra asc.
+window.toggleSort = function (key) {
+  if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortKey = key; sortDir = 'asc'; }
+  currentPage = 1;
+  renderTable();
+};
+
+window.toggleSelectAll = function (checked) {
+  const list = getFilteredOrders();
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  const pageItems = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  pageItems.forEach(o => { if (checked) selectedIds.add(o.id); else selectedIds.delete(o.id); });
+  renderTable();
+};
+
+window.toggleSelectRow = function (id, checked) {
+  if (checked) selectedIds.add(id); else selectedIds.delete(id);
+  renderTable();
+};
+
+window.clearSelection = function () {
+  selectedIds.clear();
+  renderTable();
+};
 
 function renderTable() {
   const list = getFilteredOrders();
@@ -157,14 +239,22 @@ function renderTable() {
   currentPage = Math.min(currentPage, totalPages);
   const pageItems = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
+  // Indicadores de ordenação nos cabeçalhos.
+  ['created_at', 'total'].forEach(key => {
+    const el = document.getElementById('sortInd' + key);
+    if (el) el.textContent = sortKey === key ? (sortDir === 'asc' ? '▲' : '▼') : '';
+  });
+
   const tbody = document.getElementById('ordTbody');
   if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="table-empty">Nenhum pedido encontrado.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Nenhum pedido encontrado.</td></tr>';
     renderPagination('ordPagination', 0, currentPage, p => { currentPage = p; renderTable(); });
+    updateBulkBar();
     return;
   }
   tbody.innerHTML = pageItems.map(o => `
     <tr>
+      ${canEdit ? `<td><input type="checkbox" ${selectedIds.has(o.id) ? 'checked' : ''} onchange="toggleSelectRow(${o.id},this.checked)" aria-label="Selecionar pedido #${o.order_number || o.id}"></td>` : ''}
       <td class="strong">#${o.order_number || o.id}</td>
       <td>${o.profiles ? o.profiles.full_name : 'Visitante'}</td>
       <td>${fmtDate(o.created_at)}</td>
@@ -172,6 +262,9 @@ function renderTable() {
       <td><span class="status-pill ${STATUS_COLORS[o.status] || 'gray'}">${STATUS_LABELS[o.status] || o.status}</span></td>
       <td><button class="btn btn-secondary btn-sm" onclick="openDetail(${o.id})">Ver detalhes</button></td>
     </tr>`).join('');
+  const selectAllChk = document.getElementById('selectAllChk');
+  if (selectAllChk) selectAllChk.checked = canEdit && pageItems.length > 0 && pageItems.every(o => selectedIds.has(o.id));
+  updateBulkBar();
   renderPagination('ordPagination', list.length, currentPage, p => { currentPage = p; renderTable(); });
 }
 
@@ -200,10 +293,20 @@ window.openDetail = async function (id) {
   document.getElementById('ordDetail').innerHTML = `
     <div class="detail-section">
       <div class="detail-section-title">Status</div>
-      <select id="statusSelect" ${canEdit ? '' : 'disabled'} style="width:100%;background:var(--bg-main);border:1px solid var(--border-color);color:var(--text-main);padding:10px 12px;">
-        ${Object.entries(STATUS_LABELS).map(([k,v]) => `<option value="${k}" ${k===order.status?'selected':''}>${v}</option>`).join('')}
-      </select>
-      ${canEdit ? '<button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="saveStatus(' + id + ')">Salvar Status</button>' : ''}
+      <div class="field" style="margin-bottom:10px;">
+        <select id="statusSelect" ${canEdit ? '' : 'disabled'} aria-label="Status do pedido">
+          <optgroup label="Em andamento">
+            ${['aguardando_pagamento','processando','pago','preparando','enviado'].map(k => `<option value="${k}" ${k===order.status?'selected':''}>${STATUS_LABELS[k]}</option>`).join('')}
+          </optgroup>
+          <optgroup label="Finalizado">
+            ${['entregue'].map(k => `<option value="${k}" ${k===order.status?'selected':''}>${STATUS_LABELS[k]}</option>`).join('')}
+          </optgroup>
+          <optgroup label="Cancelado / Problema">
+            ${['cancelado','recusado','estornado','estorno_parcial','expirado'].map(k => `<option value="${k}" ${k===order.status?'selected':''}>${STATUS_LABELS[k]}</option>`).join('')}
+          </optgroup>
+        </select>
+      </div>
+      ${canEdit ? '<button class="btn btn-primary btn-sm" id="saveStatusBtn" onclick="saveStatus(' + id + ')">Salvar Status</button>' : ''}
     </div>
 
     <div class="detail-section">
@@ -227,9 +330,9 @@ window.openDetail = async function (id) {
       ${order.tracking_code ? `<div class="detail-line">Rastreio: ${order.tracking_code}</div>` : ''}
       ${order.label_data ? `<div class="detail-line">Etiqueta gerada${order.label_data.labelUrl ? ` — <a href="${order.label_data.labelUrl}" target="_blank">abrir/imprimir</a>` : ''}</div>` : ''}
       ${canEdit && order.correios_servico_codigo && !order.label_data && ['pago','preparando'].includes(order.status)
-        ? `<button class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="gerarEtiqueta(${id})">Gerar etiqueta</button>` : ''}
+        ? `<button class="btn btn-secondary btn-sm" id="gerarEtiquetaBtn" style="margin-top:8px;" onclick="gerarEtiqueta(${id})">Gerar etiqueta</button>` : ''}
       ${canEdit && order.tracking_code
-        ? `<button class="btn btn-secondary btn-sm" style="margin-top:8px;margin-left:6px;" onclick="atualizarRastreio(${id})">Atualizar rastreio</button><div id="trackingEvents"></div>` : ''}
+        ? `<button class="btn btn-secondary btn-sm" id="atualizarRastreioBtn" style="margin-top:8px;margin-left:6px;" onclick="atualizarRastreio(${id})">Atualizar rastreio</button><div id="trackingEvents"></div>` : ''}
     </div>
 
     <div class="detail-section">
@@ -246,11 +349,28 @@ window.openDetail = async function (id) {
   document.getElementById('ordModal').classList.add('open');
 };
 
+// Transições pra estado terminal/negativo pedem confirmação explícita antes
+// de gravar — reembolso/cancelamento não tem "desfazer" automático depois.
+const RISKY_STATUSES = new Set(['cancelado', 'recusado', 'estornado', 'estorno_parcial', 'expirado']);
+
 window.saveStatus = async function (id) {
+  const btn = document.getElementById('saveStatusBtn');
   const status = document.getElementById('statusSelect').value;
   const before = ORDERS.find(o => o.id === id);
+
+  if (RISKY_STATUSES.has(status) && status !== (before && before.status)) {
+    const label = STATUS_LABELS[status] || status;
+    const numero = (before && before.order_number) || id;
+    if (!confirm(`Mudar o pedido #${numero} para "${label}"? Essa mudança não tem desfazer automático — confira antes de salvar.`)) return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Salvando...'; }
   const { error } = await window.sb.from('orders').update({ status }).eq('id', id);
-  if (error) { AdminShell.toast('Erro ao salvar: ' + error.message, 'error'); return; }
+  if (error) {
+    AdminShell.toast('Erro ao salvar: ' + error.message, 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Salvar Status'; }
+    return;
+  }
   AdminShell.logAction('alterar_status_pedido', 'pedido', id, { de: before && before.status, para: status });
   AdminShell.toast('Status atualizado!', 'success');
   closeModal();
@@ -258,9 +378,13 @@ window.saveStatus = async function (id) {
 };
 
 window.gerarEtiqueta = async function (id) {
+  if (!confirm('Gerar etiqueta de envio pra este pedido? Isso solicita a etiqueta de verdade nos Correios e não pode ser desfeito.')) return;
+  const btn = document.getElementById('gerarEtiquetaBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Gerando...'; }
   const resp = await window.sb.functions.invoke('correios-etiqueta', { body: { order_id: id } });
   if (!resp.data || resp.data.ok === false) {
     AdminShell.toast('Erro ao gerar etiqueta: ' + ((resp.data && resp.data.error) || 'tente novamente'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Gerar etiqueta'; }
     return;
   }
   AdminShell.toast('Etiqueta gerada!', 'success');
@@ -269,11 +393,15 @@ window.gerarEtiqueta = async function (id) {
 };
 
 window.atualizarRastreio = async function (id) {
+  const btn = document.getElementById('atualizarRastreioBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Atualizando...'; }
   const resp = await window.sb.functions.invoke('correios-rastreio', { body: { order_id: id } });
   if (!resp.data || resp.data.ok === false) {
     AdminShell.toast('Erro ao atualizar rastreio: ' + ((resp.data && resp.data.error) || 'tente novamente'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Atualizar rastreio'; }
     return;
   }
+  if (btn) { btn.disabled = false; btn.textContent = 'Atualizar rastreio'; }
   const box = document.getElementById('trackingEvents');
   if (box) {
     box.innerHTML = (resp.data.eventos || []).map(e =>
@@ -288,14 +416,56 @@ window.atualizarRastreio = async function (id) {
 
 function closeModal() { document.getElementById('ordModal').classList.remove('open'); }
 
+function updateBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  if (!bar) return;
+  if (!canEdit || selectedIds.size === 0) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  document.getElementById('bulkCount').textContent = selectedIds.size + ' pedido' + (selectedIds.size !== 1 ? 's' : '') + ' selecionado' + (selectedIds.size !== 1 ? 's' : '');
+}
+
+window.applyBulkStatus = async function () {
+  const status = document.getElementById('bulkStatusSelect').value;
+  const ids = [...selectedIds];
+  if (!status || !ids.length) return;
+  const label = STATUS_LABELS[status] || status;
+  const aviso = RISKY_STATUSES.has(status) ? ' Essa mudança não tem desfazer automático.' : '';
+  if (!confirm(`Mudar ${ids.length} pedido(s) selecionado(s) para "${label}"?${aviso}`)) return;
+
+  const btn = document.getElementById('bulkApplyBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Aplicando...'; }
+  let okCount = 0, errCount = 0;
+  for (const id of ids) {
+    const before = ORDERS.find(o => o.id === id);
+    const { error } = await window.sb.from('orders').update({ status }).eq('id', id);
+    if (error) { errCount++; continue; }
+    AdminShell.logAction('alterar_status_pedido', 'pedido', id, { de: before && before.status, para: status, lote: true });
+    okCount++;
+  }
+  if (btn) { btn.disabled = false; btn.textContent = 'Aplicar'; }
+  AdminShell.toast(okCount + ' pedido(s) atualizado(s)' + (errCount ? `, ${errCount} com erro` : '') + '.', errCount ? 'error' : 'success');
+  document.getElementById('bulkStatusSelect').value = '';
+  selectedIds.clear();
+  loadOrders();
+};
+
 document.getElementById('searchInp').addEventListener('input', () => { currentPage = 1; renderTable(); });
 document.getElementById('statusFilter').addEventListener('change', () => { currentPage = 1; renderTable(); });
 document.getElementById('exportCsvBtn').addEventListener('click', exportOrdersCsv);
+
+// Opções do select de mudança em lote — as mesmas do STATUS_LABELS, montadas
+// uma vez só (o valor não muda em tempo de execução).
+Object.entries(STATUS_LABELS).forEach(([k, v]) => {
+  const opt = document.createElement('option');
+  opt.value = k; opt.textContent = v;
+  document.getElementById('bulkStatusSelect').appendChild(opt);
+});
 
 (async function () {
   const session = await AdminShell.init('pedidos');
   if (!session) return;
   canEdit = AdminShell.can('pedidos.editar');
+  document.getElementById('selectAllTh').style.display = canEdit ? '' : 'none';
   await loadOrders();
 })();
 </script>
