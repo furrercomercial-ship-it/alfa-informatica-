@@ -477,6 +477,7 @@ function init() {
   nivelParam = NIVEL_LABELS[p.get('nivel')] ? p.get('nivel') : '';
   vitrineParam = VITRINE_LABELS[p.get('vitrine')] ? p.get('vitrine') : '';
   currentSlug = p.get('cat') || 'hardware';
+  if (p.get('q')) { searchQuery = p.get('q').toLowerCase(); }
   if (!CATS[currentSlug]) currentSlug = 'outros';
   activeSubcat = '';
   // ?promo=1 pré-marca o filtro "Em promoção" — usado pelos banners de

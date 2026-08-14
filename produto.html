@@ -575,14 +575,14 @@ function toggleFavCurrent() {
 function addCart() {
   const p = window._currentProduct;
   if (!p) return;
-  for (let i=0; i<qty; i++) Store.addToCart({...p, id:String(p.id)});
+  for (let i=0; i<qty; i++) Store.addToCart({...p});
   showToast(`Adicionado ao carrinho!`, 'rgba(0,168,45,.5)');
 }
 function buyNow() {
   const p = window._currentProduct;
   if (!p) return;
-  const item = {...p, id:String(p.id), qty, selected:true};
-  Store.addToCart({...p, id:String(p.id)});
+  const item = {...p, qty, selected:true};
+  Store.addToCart({...p});
   Store.setCheckoutItems([item]);
   location.href = 'checkout.html';
 }

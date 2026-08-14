@@ -65,7 +65,7 @@
   +'    <div class="cat-wrap">'
   +'      <button type="button" class="nav-ativo" id="catTrigger" aria-haspopup="true" aria-expanded="false" aria-controls="mobMenuOverlay" onclick="toggleMobileMenu(event)"><svg width="14" height="11" viewBox="0 0 14 11" fill="none"><rect width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="4.6" width="14" height="1.8" rx=".9" fill="currentColor"/><rect y="9.2" width="14" height="1.8" rx=".9" fill="currentColor"/></svg>Todas Categorias<svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
   +'    </div>'
-  +'    <a href="categoria.html?cat=promocoes" class="nav-promo">Promoções</a>'
+  +'    <a href="categoria.html?vitrine=destaque" class="nav-promo">Promoções</a>'
   +'    <a href="categoria.html?cat=pc-gamer">PC Gamer</a>'
   +'    <a href="categoria.html?cat=hardware">Hardware</a>'
   +'    <a href="categoria.html?cat=perifericos">Periféricos</a>'

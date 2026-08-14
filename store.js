@@ -52,29 +52,33 @@ const Store = {
   getCart:  () => JSON.parse(localStorage.getItem('alfa_cart') || '[]'),
   addToCart: (product) => {
     const cart = Store.getCart();
-    const ex = cart.find(i => i.id === product.id);
-    if (ex) ex.qty += 1; else cart.push({ ...product, qty: 1, selected: true });
+    const pid = Number(product.id);
+    const ex = cart.find(i => Number(i.id) === pid);
+    if (ex) ex.qty += 1; else cart.push({ ...product, id: pid, qty: 1, selected: true });
     localStorage.setItem('alfa_cart', JSON.stringify(cart));
     Store.emit('cart');
-    if (window.AlfaEvents) window.AlfaEvents.track('add_to_cart', { value: product.price, items: [{ id: product.id, name: product.name, category: product.category, price: product.price, qty: 1 }] });
+    if (window.AlfaEvents) window.AlfaEvents.track('add_to_cart', { value: product.price, items: [{ id: pid, name: product.name, category: product.category, price: product.price, qty: 1 }] });
   },
   removeFromCart: (id) => {
-    const removed = Store.getCart().find(i => i.id === id);
-    localStorage.setItem('alfa_cart', JSON.stringify(Store.getCart().filter(i => i.id !== id)));
+    const pid = Number(id);
+    const removed = Store.getCart().find(i => Number(i.id) === pid);
+    localStorage.setItem('alfa_cart', JSON.stringify(Store.getCart().filter(i => Number(i.id) !== pid)));
     Store.emit('cart');
-    if (window.AlfaEvents && removed) window.AlfaEvents.track('remove_from_cart', { value: removed.price, items: [{ id: removed.id, name: removed.name, price: removed.price, qty: removed.qty }] });
+    if (window.AlfaEvents && removed) window.AlfaEvents.track('remove_from_cart', { value: removed.price, items: [{ id: pid, name: removed.name, price: removed.price, qty: removed.qty }] });
   },
   updateQty: (id, qty) => {
-    if (qty <= 0) { Store.removeFromCart(id); return; }
+    const pid = Number(id);
+    if (qty <= 0) { Store.removeFromCart(pid); return; }
     const cart = Store.getCart();
-    const item = cart.find(i => i.id === id);
+    const item = cart.find(i => Number(i.id) === pid);
     if (item) item.qty = qty;
     localStorage.setItem('alfa_cart', JSON.stringify(cart));
     Store.emit('cart');
   },
   toggleSelected: (id) => {
+    const pid = Number(id);
     const cart = Store.getCart();
-    const item = cart.find(i => i.id === id);
+    const item = cart.find(i => Number(i.id) === pid);
     if (item) item.selected = !item.selected;
     localStorage.setItem('alfa_cart', JSON.stringify(cart));
     Store.emit('cart');
