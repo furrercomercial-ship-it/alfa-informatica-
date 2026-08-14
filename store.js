@@ -220,8 +220,7 @@ const Store = {
       title: data.title,
       comment: data.comment,
       media_urls: data.media_urls || [],
-      // Usuário com conta logada: publica direto. Visitante sem login: fica pendente até aprovação no painel admin.
-      status: session ? 'approved' : 'pending',
+      status: 'pending',
     };
     const { data: created, error } = await window.sb.from('reviews').insert(payload).select().single();
     if (error) { console.error(error); return null; }

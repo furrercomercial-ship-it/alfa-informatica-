@@ -912,7 +912,7 @@ button{font-family:inherit;cursor:pointer;}
     if (bannerRows && bannerRows.length) {
       document.querySelectorAll('#ofertaTrack .oferta-card').forEach(function (a, i) {
         var b = bannerRows[(i % 4) % bannerRows.length];
-        a.href = b.link_url || '#';
+        a.href = safeUrl(b.link_url) || '#';
         var img = a.querySelector('img');
         if (img) { img.src = b.imagem_url; img.alt = b.titulo || ''; }
         var cta = a.querySelector('.oferta-cta');
@@ -1033,6 +1033,18 @@ function showToast(msg, color) {
 }
 </script>
 <script>
+function escHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, function(c) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function safeUrl(u) {
+  if (!u) return null;
+  var t = String(u).trim();
+  return /^https?:\/\//i.test(t) ? t : null;
+}
+</script>
+<script>
 (async function(){
   var track=document.getElementById('heroTrack');
   if(!track)return;
@@ -1047,13 +1059,15 @@ function showToast(msg, color) {
         var overlay = s.overlay_ativo ? '<div class="hero-overlay" style="background:rgba(0,0,0,' + (s.overlay_opacidade != null ? s.overlay_opacidade : 0.35) + ')"></div>' : '';
         var caption = (s.titulo || s.subtitulo || s.cta_label) ? (
           '<div class="hero-caption">' +
-          (s.titulo ? '<h2>' + s.titulo + '</h2>' : '') +
-          (s.subtitulo ? '<p>' + s.subtitulo + '</p>' : '') +
-          (s.cta_label ? '<span class="hero-cta">' + s.cta_label + '</span>' : '') +
+          (s.titulo ? '<h2>' + escHtml(s.titulo) + '</h2>' : '') +
+          (s.subtitulo ? '<p>' + escHtml(s.subtitulo) + '</p>' : '') +
+          (s.cta_label ? '<span class="hero-cta">' + escHtml(s.cta_label) + '</span>' : '') +
           '</div>'
         ) : '';
-        var link = s.cta_url ? '<a href="' + s.cta_url + '"></a>' : '';
-        return '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img src="' + s.imagem_url + '" alt="' + (s.titulo || 'Alfa Informática') + '">' + overlay + caption + link + '</div>';
+        var ctaUrl = safeUrl(s.cta_url);
+        var link = ctaUrl ? '<a href="' + escHtml(ctaUrl) + '"></a>' : '';
+        var imgSrc = escHtml(safeUrl(s.imagem_url) || '');
+        return '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img src="' + imgSrc + '" alt="' + escHtml(s.titulo || 'Alfa Informática') + '">' + overlay + caption + link + '</div>';
       }).join('');
     }
   } catch (e) { console.error('hero_slides', e); }

@@ -388,7 +388,7 @@ function renderProduct(p) {
   const specsHTML = (p.specs || []).map(item => {
     const label = Array.isArray(item) ? item[0] : (item.key || item.label || item.nome || '');
     const val   = Array.isArray(item) ? item[1] : (item.value || item.valor || '');
-    return (label || val) ? `<tr><td>${label}</td><td>${val}</td></tr>` : '';
+    return (label || val) ? `<tr><td>${escapeHtml(label)}</td><td>${escapeHtml(val)}</td></tr>` : '';
   }).filter(Boolean).join('');
 
   const html = `
@@ -511,7 +511,7 @@ function renderProduct(p) {
         <button class="tab-btn" onclick="switchTab(this,'tabSpecs')">Especificações Técnicas</button>
       </div>
       <div class="tab-body active" id="tabDesc">
-        <div class="desc-text">${(p.description || 'Sem descrição disponível.').replace(/\n/g, '<br>')}</div>
+        <div class="desc-text">${sanitizeDesc(p.description || 'Sem descrição disponível.').replace(/\n/g, '<br>')}</div>
       </div>
       <div class="tab-body" id="tabSpecs">
         ${specsHTML
@@ -590,6 +590,16 @@ function buyNow() {
 // ── AVALIAÇÕES ───────────────────────────────────────────────────────────────
 function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function sanitizeDesc(raw) {
+  const SAFE = new Set(['strong','em','b','i','br','p','ul','ol','li','span']);
+  let s = escapeHtml(raw);
+  SAFE.forEach(tag => {
+    s = s.replace(new RegExp('&lt;' + tag + '&gt;', 'gi'), '<' + tag + '>');
+    s = s.replace(new RegExp('&lt;\\/' + tag + '&gt;', 'gi'), '</' + tag + '>');
+  });
+  s = s.replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+  return s;
 }
 function fmtReviewDate(iso) {
   return new Date(iso).toLocaleDateString('pt-BR');
@@ -729,9 +739,15 @@ function renderReviewsList() {
       </div>
       ${r.title ? `<div class="rev-card-title">${escapeHtml(r.title)}</div>` : ''}
       <div class="rev-card-comment">${escapeHtml(r.comment)}</div>
-      ${(r.media_urls && r.media_urls.length) ? `<div class="rev-card-media">${r.media_urls.map(m =>
-        (m.type||'').startsWith('video') ? `<video src="${m.url}" controls></video>` : `<img src="${m.url}" alt="">`
-      ).join('')}</div>` : ''}
+      ${(r.media_urls && r.media_urls.length) ? `<div class="rev-card-media">${r.media_urls.map(m => {
+        const ALLOWED_IMG = ['image/jpeg','image/png','image/gif','image/webp'];
+        const ALLOWED_VID = ['video/mp4','video/webm'];
+        const t = m.type || '';
+        const u = escapeHtml(m.url || '');
+        if (ALLOWED_VID.includes(t)) return `<video src="${u}" controls></video>`;
+        if (ALLOWED_IMG.includes(t) || !t.startsWith('video')) return `<img src="${u}" alt="">`;
+        return '';
+      }).join('')}</div>` : ''}
     </div>`).join('') + '</div>';
 }
 
