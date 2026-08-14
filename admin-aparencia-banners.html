@@ -43,9 +43,32 @@
     <div class="modal-head"><div class="modal-title" id="modalTitle">Novo Banner</div><button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="field"><label>Imagem *</label><div id="uploadBannerImg"></div></div>
     <div class="field"><label>Título (interno, opcional)</label><input id="f_titulo"></div>
-    <div class="field-row">
-      <div class="field"><label>Link de destino</label><input id="f_link_url" placeholder="produto.html?id=6"></div>
-      <div class="field"><label>Texto do botão</label><input id="f_cta_label" placeholder="Conferir"></div>
+    <div class="field"><label>Texto do botão</label><input id="f_cta_label" placeholder="Conferir"></div>
+    <div class="field">
+      <label>Destino do banner (ao clicar)</label>
+      <select id="f_link_tipo" onchange="updateLinkFields()">
+        <option value="">Sem link</option>
+        <option value="nivel">Nível de PC (Home, Crazy, Insane…)</option>
+        <option value="vitrine">Vitrine (Destaque, Mais Vendidos…)</option>
+        <option value="categoria">Categoria</option>
+        <option value="manual">URL personalizada</option>
+      </select>
+    </div>
+    <div id="link_sub_wrap" style="display:none">
+      <select id="f_link_nivel" class="field" style="display:none;width:100%;margin-bottom:14px;">
+        <option value="home">🏠 Home — Entrada</option>
+        <option value="crazy">⚡ Crazy — Intermediário</option>
+        <option value="insane">🔥 Insane — Avançado</option>
+        <option value="lunatic">💀 Lunatic — Extremo</option>
+        <option value="mad">🚀 Mad — Topo de linha</option>
+      </select>
+      <select id="f_link_vitrine" class="field" style="display:none;width:100%;margin-bottom:14px;">
+        <option value="destaque">Produtos em Destaque</option>
+        <option value="mais_vendidos">Mais Vendidos</option>
+        <option value="lancamentos">Lançamentos</option>
+      </select>
+      <select id="f_link_categoria" class="field" style="display:none;width:100%;margin-bottom:14px;"></select>
+      <input id="f_link_url_manual" class="field" placeholder="produto.html?id=6" style="display:none;width:100%;margin-bottom:14px;">
     </div>
     <label class="chk-row"><input type="checkbox" id="f_ativo" checked> Ativo</label>
     <div class="modal-foot">
@@ -61,8 +84,41 @@
 <script src="admin-upload.js"></script>
 <script>
 let BANNERS = [];
+let CATS = [];
 let editingId = null;
 let currentImg = '';
+
+function updateLinkFields() {
+  const tipo = document.getElementById('f_link_tipo').value;
+  const wrap = document.getElementById('link_sub_wrap');
+  const map = { nivel:'f_link_nivel', vitrine:'f_link_vitrine', categoria:'f_link_categoria', manual:'f_link_url_manual' };
+  wrap.style.display = tipo ? '' : 'none';
+  Object.values(map).forEach(id => document.getElementById(id).style.display = (map[tipo] === id) ? '' : 'none');
+}
+function getLinkUrl() {
+  const tipo = document.getElementById('f_link_tipo').value;
+  if (!tipo) return null;
+  if (tipo === 'nivel')     return 'categoria.html?nivel=' + document.getElementById('f_link_nivel').value;
+  if (tipo === 'vitrine')   return 'categoria.html?vitrine=' + document.getElementById('f_link_vitrine').value;
+  if (tipo === 'categoria') return 'categoria.html?cat=' + document.getElementById('f_link_categoria').value;
+  return document.getElementById('f_link_url_manual').value.trim() || null;
+}
+function setLinkFromUrl(url) {
+  const tipoEl = document.getElementById('f_link_tipo');
+  if (!url) { tipoEl.value = ''; updateLinkFields(); return; }
+  const mN = url.match(/categoria\.html\?nivel=([\w-]+)/);
+  const mV = url.match(/categoria\.html\?vitrine=([\w-]+)/);
+  const mC = url.match(/categoria\.html\?cat=([\w-]+)/);
+  if (mN)      { tipoEl.value = 'nivel';    updateLinkFields(); document.getElementById('f_link_nivel').value   = mN[1]; }
+  else if (mV) { tipoEl.value = 'vitrine';  updateLinkFields(); document.getElementById('f_link_vitrine').value = mV[1]; }
+  else if (mC) { tipoEl.value = 'categoria';updateLinkFields(); document.getElementById('f_link_categoria').value = mC[1]; }
+  else         { tipoEl.value = 'manual';   updateLinkFields(); document.getElementById('f_link_url_manual').value = url; }
+}
+async function loadCats() {
+  const { data } = await window.sb.from('categories').select('slug, name').order('name');
+  CATS = data || [];
+  document.getElementById('f_link_categoria').innerHTML = CATS.map(c => `<option value="${c.slug}">${c.name}</option>`).join('');
+}
 
 async function load() {
   const placement = document.getElementById('placementFilter').value;
@@ -98,7 +154,8 @@ function closeModal() { document.getElementById('bannerModal').classList.remove(
 document.getElementById('newBtn').addEventListener('click', () => {
   editingId = null; currentImg = '';
   document.getElementById('modalTitle').textContent = 'Novo Banner';
-  ['titulo','link_url','cta_label'].forEach(f => document.getElementById('f_' + f).value = '');
+  ['titulo','cta_label'].forEach(f => document.getElementById('f_' + f).value = '');
+  setLinkFromUrl(null);
   document.getElementById('f_ativo').checked = true;
   AdminUpload.mountField(document.getElementById('uploadBannerImg'), 'banners', '', url => currentImg = url);
   openModal();
@@ -110,8 +167,8 @@ window.openEdit = function (id) {
   editingId = id; currentImg = b.imagem_url;
   document.getElementById('modalTitle').textContent = 'Editar Banner';
   document.getElementById('f_titulo').value = b.titulo || '';
-  document.getElementById('f_link_url').value = b.link_url || '';
   document.getElementById('f_cta_label').value = b.cta_label || '';
+  setLinkFromUrl(b.link_url || null);
   document.getElementById('f_ativo').checked = !!b.ativo;
   AdminUpload.mountField(document.getElementById('uploadBannerImg'), 'banners', b.imagem_url, url => currentImg = url);
   openModal();
@@ -123,7 +180,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     placement: document.getElementById('placementFilter').value,
     imagem_url: currentImg,
     titulo: document.getElementById('f_titulo').value.trim() || null,
-    link_url: document.getElementById('f_link_url').value.trim() || null,
+    link_url: getLinkUrl(),
     cta_label: document.getElementById('f_cta_label').value.trim() || null,
     ativo: document.getElementById('f_ativo').checked,
   };
@@ -162,7 +219,7 @@ document.getElementById('placementFilter').addEventListener('change', load);
 (async function () {
   const session = await AdminShell.init('aparencia-banners');
   if (!session) return;
-  await load();
+  await Promise.all([load(), loadCats()]);
 })();
 </script>
 </body>
