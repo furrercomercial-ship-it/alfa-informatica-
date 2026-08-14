@@ -9,7 +9,12 @@
 <style>
 .prod-thumb{width:42px;height:42px;object-fit:cover;background:#CFCFCF;flex-shrink:0;}
 .specs-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;}
-.img-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;}
+.img-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;margin-bottom:8px;align-items:center;}
+.img-preview{width:38px;height:38px;object-fit:cover;border:1px solid var(--border-color);background:#303030;flex-shrink:0;display:none;}
+.img-preview.visible{display:block;}
+.img-upload-btn{white-space:nowrap;background:transparent;border:1px solid var(--border-color);color:var(--text-muted);cursor:pointer;padding:0 12px;height:38px;font-size:12px;}
+.img-upload-btn:hover{border-color:var(--primary);color:var(--primary);}
+.img-uploading{font-size:11px;color:var(--text-muted);white-space:nowrap;display:none;}
 .remove-row-btn{background:transparent;border:1px solid var(--border-color);color:var(--text-muted);cursor:pointer;padding:0 12px;}
 .remove-row-btn:hover{color:var(--danger);border-color:var(--danger);}
 .checks-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:14px;}
@@ -167,6 +172,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="supabase-client.js"></script>
+<script src="admin-upload.js"></script>
 <script src="admin-shell.js"></script>
 <script>
 let CATS = [];
@@ -339,8 +345,42 @@ function addImgRow(url) {
   const wrap = document.getElementById('imagesWrap');
   const row = document.createElement('div');
   row.className = 'img-row';
-  row.innerHTML = `<input placeholder="https://..." class="img-url" value="${url ? url.replace(/"/g,'&quot;') : ''}">
+  row.innerHTML = `
+    <input placeholder="https://... (cole URL ou use o botão ao lado)" class="img-url" value="${url ? url.replace(/"/g,'&quot;') : ''}">
+    <img class="img-preview ${url ? 'visible' : ''}" src="${url || ''}" alt="">
+    <label class="img-upload-btn" title="Carregar arquivo do computador">
+      📁 Carregar
+      <input type="file" accept="image/*" style="display:none">
+    </label>
     <button type="button" class="remove-row-btn" onclick="this.parentElement.remove()">✕</button>`;
+
+  const urlInput = row.querySelector('.img-url');
+  const preview  = row.querySelector('.img-preview');
+  const fileInput = row.querySelector('input[type=file]');
+
+  urlInput.addEventListener('input', () => {
+    const v = urlInput.value.trim();
+    preview.src = v;
+    preview.classList.toggle('visible', !!v);
+  });
+
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const label = row.querySelector('.img-upload-btn');
+    const orig = label.innerHTML;
+    label.innerHTML = '⏳ Enviando...';
+    label.style.pointerEvents = 'none';
+    const publicUrl = await window.AdminUpload.uploadImage(file, 'produtos');
+    label.innerHTML = orig;
+    label.style.pointerEvents = '';
+    if (publicUrl) {
+      urlInput.value = publicUrl;
+      preview.src = publicUrl;
+      preview.classList.add('visible');
+    }
+  });
+
   wrap.appendChild(row);
 }
 function getImages() {
