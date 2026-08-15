@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "admin-pedidos.html"
+        ],
+        "createdAt": "2026-08-09T16:29:22.013Z",
+        "reason": "Usuário confirmou: degrau body(13px)->title(14px) é a escala documentada em DESIGN.md, intencional"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "10px",
+        "files": [
+          "admin-importar-produtos.html"
+        ],
+        "createdAt": "2026-08-15T20:33:04.114Z",
+        "reason": "Matches .status-pill system convention in admin.css"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "12px",
+        "files": [
+          "admin-importar-produtos.html"
+        ],
+        "createdAt": "2026-08-15T20:35:01.367Z",
+        "reason": "Sub-body text size used throughout admin.css for supporting text"
+      }
+    ]
+  }
+}
