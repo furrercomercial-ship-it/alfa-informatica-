@@ -33,6 +33,7 @@ window.AdminShell = (function () {
     despesas: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8h20"/><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 16h4"/></svg>',
     estoque: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>',
     notas_fiscais: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>',
+    importar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
   };
 
   const NAV = [
@@ -40,7 +41,8 @@ window.AdminShell = (function () {
 
     { key: 'produtos',   label: 'Produtos',   href: 'admin-produtos.html',   perm: 'produtos.editar', group: 'Catálogo', icon: ICONS.produtos },
     { key: 'categorias', label: 'Categorias', href: 'admin-categorias.html', perm: 'categorias.editar', group: 'Catálogo', icon: ICONS.categorias },
-    { key: 'estoque',    label: 'Estoque',    href: 'admin-estoque.html',    perm: 'estoque.visualizar', group: 'Catálogo', icon: ICONS.estoque },
+    { key: 'estoque',           label: 'Estoque',           href: 'admin-estoque.html',           perm: 'estoque.visualizar', group: 'Catálogo', icon: ICONS.estoque },
+    { key: 'importar-produtos', label: 'Importar do ERP',   href: 'admin-importar-produtos.html', perm: 'produtos.editar',    group: 'Catálogo', icon: ICONS.importar },
 
     { key: 'pedidos',    label: 'Pedidos',    href: 'admin-pedidos.html',    perm: 'pedidos.visualizar', group: 'Vendas', icon: ICONS.pedidos },
     { key: 'clientes',   label: 'Clientes',   href: 'admin-clientes.html',   perm: 'clientes.visualizar', group: 'Vendas', icon: ICONS.clientes },

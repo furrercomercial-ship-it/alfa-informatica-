@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Importar Produtos — Painel Admin</title>
+<script>document.documentElement.dataset.theme=localStorage.getItem('alfa_theme')||'dark';</script>
+<link rel="stylesheet" href="admin.css">
+<style>
+.import-warning{background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.35);color:#FBBF24;padding:14px 18px;font-size:13px;margin-bottom:24px;line-height:1.6;}
+.import-box{background:var(--bg-card);border:1px solid var(--border-color);padding:24px;margin-bottom:24px;}
+.import-box h3{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin:0 0 20px;padding-bottom:12px;border-bottom:1px solid var(--border-color);}
+.progress-bar-bg{background:var(--bg-main);border:1px solid var(--border-color);height:8px;overflow:hidden;margin:12px 0 8px;}
+.progress-bar-fill{background:var(--primary);height:100%;width:0%;transition:width .15s;}
+.progress-label{font-size:12.5px;color:var(--text-muted);}
+.result-cards{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+.result-card{background:var(--bg-main);border:1px solid var(--border-color);padding:16px 24px;min-width:130px;text-align:center;}
+.result-card-num{font-size:30px;font-weight:800;line-height:1;margin-bottom:4px;}
+.result-card-num.green{color:var(--success,#22c55e);}
+.result-card-num.blue{color:var(--primary);}
+.result-card-num.red{color:var(--danger);}
+.result-card-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;}
+.error-table-wrap{max-height:280px;overflow-y:auto;border:1px solid var(--border-color);}
+.error-table-wrap table{width:100%;border-collapse:collapse;}
+.error-table-wrap th{background:var(--bg-main);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);padding:8px 12px;text-align:left;position:sticky;top:0;z-index:1;}
+.error-table-wrap td{padding:8px 12px;font-size:12.5px;border-top:1px solid var(--border-color);}
+.cat-warn{font-size:12.5px;color:#FBBF24;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.25);padding:10px 14px;margin-bottom:16px;line-height:1.5;}
+.history-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color);font-size:12.5px;}
+.history-row:last-child{border-bottom:none;}
+.history-date{color:var(--text-muted);min-width:150px;flex-shrink:0;}
+.history-file{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.history-pills{display:flex;gap:6px;flex-shrink:0;}
+.hist-pill{padding:2px 9px;font-size:11px;border-radius:999px;font-weight:700;}
+.hist-pill.c{background:rgba(34,197,94,.15);color:#22c55e;}
+.hist-pill.u{background:rgba(59,130,246,.15);color:#3b82f6;}
+.hist-pill.e{background:rgba(239,68,68,.15);color:#ef4444;}
+.file-info{font-size:12px;color:var(--text-muted);margin-top:6px;min-height:18px;}
+.file-info.err{color:var(--danger);}
+.section-note{font-size:11.5px;color:var(--text-muted);margin-top:4px;line-height:1.4;}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <div id="admin-sidebar-mount"></div>
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">Importar Produtos — ERP Tiny</div>
+    </div>
+    <div class="admin-content">
+
+      <div class="admin-insight-bar" id="admin-insight-bar" style="display:none"></div>
+
+      <div class="import-warning">
+        ⚠ <strong>Atenção:</strong> esta importação <strong>sobrescreve</strong> nome, marca, preço, estoque, descrição, imagens, peso, dimensões, garantia, fornecedor e status dos produtos existentes cujo SKU esteja na planilha.<br>
+        <strong style="color:inherit">Não são sobrescritos:</strong> slug · nível · destaque · best seller · lançamento · frete grátis · desconto PIX · subcategoria · especificações técnicas — esses campos ficam sob controle exclusivo do painel admin e não são afetados pela importação.
+      </div>
+
+      <!-- ── STEP 1: SETUP ── -->
+      <div id="stepSetup">
+        <div class="import-box" style="max-width:640px">
+          <h3>Configuração da importação</h3>
+
+          <div class="field">
+            <label>Arquivo exportado do Tiny (.xls) *</label>
+            <input type="file" id="fileInput" accept=".xls" onchange="onFileChange()">
+            <div class="file-info" id="fileInfo"></div>
+          </div>
+
+          <div class="field">
+            <label>Nível padrão para produtos novos <span style="font-weight:400;color:var(--text-muted)">(opcional)</span></label>
+            <select id="f_nivel">
+              <option value="">— sem nível definido —</option>
+              <option value="home">🏠 Home — Entrada</option>
+              <option value="crazy">⚡ Crazy — Intermediário</option>
+              <option value="insane">🔥 Insane — Avançado</option>
+              <option value="lunatic">💀 Lunatic — Extremo</option>
+              <option value="mad">🚀 Mad — Topo de linha</option>
+            </select>
+            <div class="section-note">Aplica este nível apenas a produtos <em>novos</em>. Produtos já existentes mantêm o nível atual.</div>
+          </div>
+
+          <button class="btn btn-primary" id="btnImport" disabled onclick="startImport()">
+            Importar Planilha
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: PROGRESSO ── -->
+      <div id="stepProgress" style="display:none">
+        <div class="import-box" style="max-width:640px">
+          <h3>Processando importação…</h3>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+          <div class="progress-label" id="progressLabel">Iniciando…</div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: RELATÓRIO ── -->
+      <div id="stepReport" style="display:none">
+        <div class="import-box">
+          <h3>Resultado da importação</h3>
+
+          <div class="result-cards" id="resultCards"></div>
+
+          <div id="catWarnings"></div>
+
+          <div id="errorSection" style="display:none;margin-top:8px">
+            <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Linhas com erro</div>
+            <div class="error-table-wrap">
+              <table>
+                <thead><tr><th>Linha</th><th>SKU</th><th>Problema</th></tr></thead>
+                <tbody id="errorBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <button class="btn btn-secondary" style="margin-top:20px" onclick="resetImport()">
+            Nova Importação
+          </button>
+        </div>
+      </div>
+
+      <!-- ── HISTÓRICO ── -->
+      <div class="import-box">
+        <h3>Histórico de importações (sessão local)</h3>
+        <div id="historyList"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script src="supabase-client.js"></script>
+<script src="admin-shell.js"></script>
+<script>
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+
+// Busca valor de coluna com tolerância a encoding/acentuação (case+acento insensível)
+function col(row, key) {
+  if (row[key] != null) return row[key];
+  const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const lk = norm(key);
+  for (const k of Object.keys(row)) {
+    if (norm(k) === lk) return row[k];
+  }
+  return null;
+}
+
+function str(v) {
+  const s = String(v == null ? '' : v).trim();
+  return s || null;
+}
+
+function numOrNull(v) {
+  if (v == null || v === '') return null;
+  const n = Number(v);
+  return (!isNaN(n) && n > 0) ? n : null;
+}
+
+function intOrZero(v) {
+  const n = parseInt(v, 10);
+  return isNaN(n) ? 0 : Math.max(0, n);
+}
+
+function slugify(s) {
+  return String(s || '').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function extractImages(row) {
+  const urls = [];
+  for (let i = 1; i <= 6; i++) {
+    const u = str(col(row, `URL imagem ${i}`));
+    if (u) urls.push(u);
+  }
+  for (let i = 1; i <= 10; i++) {
+    const u = str(col(row, `URL imagem externa ${i}`));
+    if (u) urls.push(u);
+  }
+  return urls;
+}
+
+function matchCategory(name, categories, subcategories) {
+  if (!name) return { category_id: null, subcategory_id: null, warn: null };
+  const norm = s => s.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const n = norm(name);
+
+  // Prioridade 1: categoria principal
+  const cat = (categories || []).find(c =>
+    norm(c.nome || '') === n || norm(c.slug || '') === n
+  );
+  if (cat) return { category_id: cat.id, subcategory_id: null, warn: null };
+
+  // Prioridade 2: subcategoria — deriva a categoria principal pelo campo categoria_id
+  const sub = (subcategories || []).find(s =>
+    norm(s.nome || '') === n || norm(s.slug || '') === n
+  );
+  if (sub) return { category_id: sub.categoria_id, subcategory_id: sub.id, warn: null };
+
+  return { category_id: null, subcategory_id: null, warn: name.trim() };
+}
+
+// ── LOG LOCAL ────────────────────────────────────────────────────────────────
+
+const LOG_KEY = 'alfa_import_log';
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch { return []; }
+}
+
+function saveHistory(entry) {
+  const h = getHistory();
+  h.unshift(entry);
+  localStorage.setItem(LOG_KEY, JSON.stringify(h.slice(0, 15)));
+}
+
+function fmtDate(iso) {
+  try { return new Date(iso).toLocaleString('pt-BR'); } catch { return iso; }
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────────
+
+function setStep(name) {
+  ['stepSetup', 'stepProgress', 'stepReport'].forEach(id => {
+    document.getElementById(id).style.display = (id === 'step' + name) ? '' : 'none';
+  });
+}
+
+function onFileChange() {
+  const f = document.getElementById('fileInput').files[0];
+  const btn = document.getElementById('btnImport');
+  const info = document.getElementById('fileInfo');
+  if (!f) { btn.disabled = true; info.textContent = ''; info.className = 'file-info'; return; }
+
+  const valid = f.name.toLowerCase().endsWith('.xls');
+  btn.disabled = !valid;
+  if (valid) {
+    info.textContent = `${f.name} — ${(f.size / 1024).toFixed(0)} KB`;
+    info.className = 'file-info';
+  } else {
+    info.textContent = '⚠ Arquivo inválido. Selecione um arquivo .xls exportado do Tiny (não .xlsx).';
+    info.className = 'file-info err';
+  }
+}
+
+function setProgress(done, total) {
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent =
+    `${done} de ${total} linhas processadas (${pct}%)`;
+}
+
+function showReport(created, updated, errors, catWarns, filename, user) {
+  setStep('Report');
+
+  document.getElementById('resultCards').innerHTML = `
+    <div class="result-card"><div class="result-card-num green">${created}</div><div class="result-card-lbl">Criados</div></div>
+    <div class="result-card"><div class="result-card-num blue">${updated}</div><div class="result-card-lbl">Atualizados</div></div>
+    <div class="result-card"><div class="result-card-num red">${errors.length}</div><div class="result-card-lbl">Erros</div></div>
+  `;
+
+  const cwEl = document.getElementById('catWarnings');
+  if (catWarns.size) {
+    const nomes = [...catWarns].join(', ');
+    cwEl.innerHTML = `<div class="cat-warn">⚠ Categorias não encontradas no painel — produtos importados ficaram sem categoria: <strong>${nomes}</strong>.<br>Crie-as em <a href="admin-categorias.html" style="color:inherit;text-decoration:underline">Catálogo → Categorias</a> e reimporte, ou edite os produtos manualmente.</div>`;
+  } else { cwEl.innerHTML = ''; }
+
+  const errSec = document.getElementById('errorSection');
+  if (errors.length) {
+    errSec.style.display = '';
+    document.getElementById('errorBody').innerHTML = errors.map(e =>
+      `<tr><td>${e.line}</td><td>${e.sku || '—'}</td><td>${e.msg}</td></tr>`
+    ).join('');
+  } else { errSec.style.display = 'none'; }
+
+  saveHistory({ date: new Date().toISOString(), user: user || '—', filename, created, updated, errors: errors.length });
+  renderHistory();
+}
+
+function renderHistory() {
+  const h = getHistory();
+  const el = document.getElementById('historyList');
+  if (!h.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--text-muted)">Nenhuma importação realizada ainda neste navegador.</div>';
+    return;
+  }
+  el.innerHTML = h.map(e => `
+    <div class="history-row">
+      <div class="history-date">${fmtDate(e.date)}</div>
+      <div class="history-file" title="${e.filename || ''}">${e.filename || '—'}
+        ${e.user && e.user !== '—' ? `<span style="color:var(--text-muted)"> · ${e.user}</span>` : ''}
+      </div>
+      <div class="history-pills">
+        <span class="hist-pill c">${e.created} criados</span>
+        <span class="hist-pill u">${e.updated} atualizados</span>
+        ${e.errors ? `<span class="hist-pill e">${e.errors} erros</span>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function resetImport() {
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileInfo').textContent = '';
+  document.getElementById('fileInfo').className = 'file-info';
+  document.getElementById('btnImport').disabled = true;
+  setStep('Setup');
+}
+
+// ── IMPORTAÇÃO ────────────────────────────────────────────────────────────────
+
+async function startImport() {
+  const file = document.getElementById('fileInput').files[0];
+  if (!file) return;
+
+  setStep('Progress');
+  setProgress(0, 1);
+
+  try {
+    // 1. Parse XLS no browser
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+
+    const sheetName = wb.SheetNames.includes('Produtos') ? 'Produtos' : wb.SheetNames[0];
+    const ws = wb.Sheets[sheetName];
+    if (!ws) throw new Error('Aba "Produtos" não encontrada no arquivo.');
+
+    const rows = XLSX.utils.sheet_to_json(ws, { defval: null });
+    if (!rows.length) throw new Error('Arquivo vazio — nenhuma linha de produto encontrada.');
+
+    // 2. Carregar SKUs existentes
+    const { data: existingProds, error: eErr } = await window.sb
+      .from('products').select('id, sku, slug, nivel');
+    if (eErr) throw new Error('Erro ao carregar produtos do banco: ' + eErr.message);
+
+    const skuMap = {};
+    const slugMap = {};
+    (existingProds || []).forEach(p => {
+      if (p.sku) skuMap[p.sku.trim()] = p;
+      if (p.slug) slugMap[p.slug] = p;
+    });
+
+    // 3. Carregar categorias e subcategorias
+    const { data: categories } = await window.sb
+      .from('categories').select('id, nome, slug');
+    const { data: subcategories } = await window.sb
+      .from('subcategories').select('id, nome, slug, categoria_id');
+
+    // 4. Parâmetros da tela
+    const defaultNivel = document.getElementById('f_nivel').value || null;
+    const { data: { session: authSession } } = await window.sb.auth.getSession();
+    const userEmail = authSession?.user?.email || null;
+
+    // 5. Processar em chunks de 10 linhas em paralelo.
+    //    Cada linha tem seu próprio try/catch — 1 falha não aborta as outras 9.
+    //    seenSkus é verificado/adicionado antes do primeiro await de cada task,
+    //    então é seguro para uso paralelo (JS é single-threaded até o próximo await).
+    let created = 0, updated = 0;
+    const errors = [];
+    const catWarns = new Set();
+    const seenSkus = new Set();
+    const CHUNK = 10;
+
+    async function processRow(row, lineNum) {
+      const sku = str(col(row, 'Código (SKU)') ?? col(row, 'Código'));
+
+      try {
+        // Validação dos campos obrigatórios
+        if (!sku) throw new Error('SKU ausente — linha ignorada');
+        if (seenSkus.has(sku)) throw new Error('SKU duplicado na planilha — só a 1ª ocorrência foi importada');
+        seenSkus.add(sku); // antes do 1º await → seguro em paralelo
+
+        const name = str(col(row, 'Descrição'));
+        if (!name) throw new Error('Nome do produto (Descrição) ausente');
+
+        const precoRaw = Number(col(row, 'Preço'))             || 0;
+        const promoRaw = Number(col(row, 'Preço promocional')) || 0;
+        const custoRaw = Number(col(row, 'Preço de custo'))    || 0;
+        if (precoRaw <= 0 && promoRaw <= 0) throw new Error('Preço inválido ou zero');
+
+        // Lógica de preço/promoção
+        let price, old_price;
+        if (promoRaw > 0 && promoRaw < precoRaw) {
+          price = promoRaw;     // preço atual = promocional
+          old_price = precoRaw; // riscado = preço normal
+        } else {
+          price = precoRaw;
+          old_price = null;
+        }
+
+        // Sanitização da descrição em HTML
+        const descRaw = col(row, 'Descrição complementar');
+        const description = descRaw
+          ? DOMPurify.sanitize(String(descRaw), { USE_PROFILES: { html: true } })
+          : null;
+
+        // Imagens: consolida 16 colunas de URL
+        const images = extractImages(row);
+
+        // Categoria: busca em categorias principais e, se não achar, em subcategorias
+        const catMatch = matchCategory(str(col(row, 'Categoria')), categories, subcategories);
+        if (catMatch.warn) catWarns.add(catMatch.warn);
+
+        // Situação → ativo
+        const situacao = String(col(row, 'Situação') || '').trim().toLowerCase();
+        const active = situacao === 'ativo';
+
+        // Payload com todos os campos que vêm do ERP
+        const payload = {
+          sku,
+          name,
+          brand:              str(col(row, 'Marca')),
+          price,
+          old_price,
+          cost_price:         custoRaw > 0 ? custoRaw : null,
+          stock:              intOrZero(col(row, 'Estoque')),
+          min_stock:          intOrZero(col(row, 'Estoque mínimo')),
+          weight:             numOrNull(col(row, 'Peso bruto (Kg)')) ?? numOrNull(col(row, 'Peso líquido (Kg)')),
+          largura_cm:         numOrNull(col(row, 'Largura embalagem')),
+          altura_cm:          numOrNull(col(row, 'Altura embalagem')),
+          comprimento_cm:     numOrNull(col(row, 'Comprimento embalagem')),
+          warranty:           str(col(row, 'Garantia')),
+          supplier:           str(col(row, 'Fornecedor')),
+          description,
+          short_description:  str(col(row, 'Título SEO')),
+          ean:                str(col(row, 'GTIN/EAN')),
+          ncm:                str(col(row, 'Classificação fiscal')),
+          video_url:          str(col(row, 'Link do vídeo')),
+          active,
+          images,
+          category_id:        catMatch.category_id,
+          updated_at:         new Date().toISOString(),
+        };
+
+        const existing = skuMap[sku];
+
+        if (existing) {
+          // UPDATE — o payload contém apenas os campos exportados pelo ERP Tiny.
+          // Os campos abaixo NÃO são alterados propositalmente; cada um tem motivo:
+          //   slug              → mudar quebraria URLs indexadas e bookmarks de clientes
+          //   nivel             → curadoria editorial (home/crazy/insane/lunatic/mad); não existe no Tiny
+          //   featured          → "produto em destaque": definido manualmente pelo admin
+          //   best_seller       → flag editorial; não existe no Tiny
+          //   is_new            → flag editorial; não existe no Tiny
+          //   free_shipping     → decisão comercial da loja; não existe no Tiny
+          //   pix_discount_percent → estratégia de pagamento; não existe no Tiny
+          //   subcategory_id    → Tiny só exporta categoria nível 1; subcategoria é manual
+          //   specs             → especificações curadas manualmente; Tiny não exporta estruturado
+          //   model, codigo_interno → não existem no export do Tiny
+          //   rating, reviews_count → gerados pelo sistema de avaliações; nunca sobrescrever
+          const { error } = await window.sb.from('products')
+            .update(payload).eq('id', existing.id);
+          if (error) throw new Error(error.message);
+          updated++;
+        } else {
+          // INSERT — gera slug, aplica nivel padrão se escolhido
+          const rawSlug = str(col(row, 'Slug'));
+          const generatedSlug = rawSlug || `${slugify(name)}-${slugify(sku)}`;
+
+          // Se o slug já existe mas não havia SKU no produto (importação anterior
+          // com bug), trata como UPDATE para corrigir o registro em vez de falhar
+          // na constraint de unicidade.
+          const slugOrphan = slugMap[generatedSlug];
+          if (slugOrphan) {
+            const { error } = await window.sb.from('products')
+              .update(payload).eq('id', slugOrphan.id);
+            if (error) throw new Error(error.message);
+            skuMap[sku] = slugOrphan;
+            updated++;
+          } else {
+            payload.slug                 = generatedSlug;
+            payload.subcategory_id       = catMatch.subcategory_id; // só no INSERT; protegido no UPDATE
+            payload.nivel                = defaultNivel;
+            payload.pix_discount_percent = 5;
+            payload.featured             = false;
+            payload.best_seller          = false;
+            payload.is_new               = false;
+            payload.free_shipping        = false;
+            payload.rating               = 0;
+            payload.reviews_count        = 0;
+            payload.created_at           = new Date().toISOString();
+
+            const { error } = await window.sb.from('products').insert(payload);
+            if (error) throw new Error(error.message);
+
+            skuMap[sku] = { id: null }; // evita insert duplo se SKU repetir na planilha
+            created++;
+          }
+        }
+
+      } catch (e) {
+        errors.push({ line: lineNum, sku: sku || '—', msg: e.message });
+      }
+    }
+
+    for (let i = 0; i < rows.length; i += CHUNK) {
+      const chunk = rows.slice(i, i + CHUNK);
+      // Promise.all: 10 linhas em paralelo, cada uma com try/catch próprio
+      // → falha individual não interrompe as demais do mesmo chunk
+      await Promise.all(chunk.map((row, j) => processRow(row, i + j + 2)));
+      setProgress(Math.min(i + CHUNK, rows.length), rows.length);
+    }
+
+    showReport(created, updated, errors, catWarns, file.name, userEmail);
+
+  } catch (e) {
+    AdminShell.toast('Erro na importação: ' + e.message, 'error');
+    setStep('Setup');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(async function () {
+  const session = await AdminShell.init('importar-produtos');
+  if (!session) return;
+  renderHistory();
+})();
+</script>
+</body>
+</html>
