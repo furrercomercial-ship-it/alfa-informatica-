@@ -11,6 +11,7 @@ window.PRODUCTS_DB = [];
     .from('products')
     .select('id,name,brand,price,old_price,pix_discount_percent,stock,rating,reviews_count,images,description,specs,featured,best_seller,is_new,nivel,weight,comprimento_cm,largura_cm,altura_cm,subcategories(slug)')
     .eq('active', true)
+    .is('deleted_at', null)
     .order('id', { ascending: true });
 
   if (error) {
