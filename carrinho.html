@@ -414,7 +414,7 @@ function render(){
   const discount=cupomDiscountValueCart(appliedCupom,subtotal);
   const freteNum=fretePrice;
   const total=subtotal-discount+(freteNum||0);
-  const pixDiscountPct=subtotal?cart.reduce((s,i)=>s+i.price*i.qty*(i.pixDiscountPercent!=null?i.pixDiscountPercent:5),0)/subtotal:5;
+  const pixDiscountPct=subtotal?cart.reduce((s,i)=>s+i.price*i.qty*(i.pixDiscountPercent||0),0)/subtotal:0;
   const pixDiscountVal=subtotal*(pixDiscountPct/100);
   const pixTotal=total-pixDiscountVal;
   const install=(total/12).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -481,11 +481,12 @@ function render(){
       <div class="sum-plain-row"><span>Frete</span><span id="freteVal">${fretePrice===null?'A calcular':fretePrice===0?'Grátis':fmt(fretePrice)}</span></div>
       <div class="sum-total-row"><span>Total</span><span class="total-r">${fmt(total)}</span></div>
 
+      ${pixDiscountPct > 0 ? `
       <div class="pix-block">
         <div class="pix-price">${fmt(pixTotal)}</div>
         <div class="pix-cap">No PIX com ${Math.round(pixDiscountPct * 10) / 10}% de desconto</div>
       </div>
-      <div class="or-div"><div class="or-circ">Ou</div></div>
+      <div class="or-div"><div class="or-circ">Ou</div></div>` : ''}
       <div class="card-block">
         <div class="card-price">${fmt(total)}</div>
         <div class="card-cap">Em até 12x de R$ ${install} sem juros no cartão</div>

@@ -26,7 +26,7 @@ window.PRODUCTS_DB = [];
     brand: row.brand,
     price: Number(row.price),
     old: row.old_price != null ? Number(row.old_price) : undefined,
-    pixDiscountPercent: row.pix_discount_percent != null ? Number(row.pix_discount_percent) : 5,
+    pixDiscountPercent: row.pix_discount_percent != null ? Number(row.pix_discount_percent) : null,
     featured: !!row.featured,
     bestSeller: !!row.best_seller,
     isNew: !!row.is_new,

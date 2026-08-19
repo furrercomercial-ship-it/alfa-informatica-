@@ -365,7 +365,7 @@ function renderAll(){
   var ship = state.shipOpts.find(function(s){ return s.id === state.shipId; });
 
   var subtotal = items.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
-  var pixDiscountPct = subtotal ? items.reduce(function(s,i){ return s + i.price * i.qty * (i.pixDiscountPercent != null ? i.pixDiscountPercent : 5); }, 0) / subtotal : 5;
+  var pixDiscountPct = subtotal ? items.reduce(function(s,i){ return s + i.price * i.qty * (i.pixDiscountPercent || 0); }, 0) / subtotal : 0;
   var pixDiscount = state.payId === 'pix' ? subtotal * (pixDiscountPct / 100) : 0;
 
   // Sem o wrapper <div class="form-card ck-card" data-block="contato"> aqui
@@ -445,8 +445,8 @@ function renderAll(){
     var pixPctLabel = (Math.round(pixDiscountPct * 10) / 10) + '%';
     pagListHtml = '<div class="pay-list">' + payOpts.map(function(p){
       var sel = p.id === state.payId;
-      var desc = p.id === 'pix' ? ('Aprovação imediata — ' + pixPctLabel + ' de desconto') : p.desc;
-      var badge = p.id === 'pix' ? (pixPctLabel + ' OFF') : p.badge;
+      var desc = p.id === 'pix' ? (pixDiscountPct > 0 ? 'Aprovação imediata — ' + pixPctLabel + ' de desconto' : 'Aprovação imediata') : p.desc;
+      var badge = p.id === 'pix' ? (pixDiscountPct > 0 ? pixPctLabel + ' OFF' : '') : p.badge;
       return '<div class="pay-opt' + (sel?' active':'') + '" onclick="selectPay(\'' + p.id + '\')">' +
         '<label>' +
           '<div class="ck-radio" style="border-radius:50%;"></div>' +
