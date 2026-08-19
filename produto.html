@@ -438,14 +438,14 @@ function renderProduct(p) {
         <div class="pricing-block">
           <div class="price-col">
             ${p.old ? `<span class="p-old-price">de <s>R$ ${fmt(p.old)}</s> por:</span>` : ''}
-            <span class="p-avista-lbl">à vista</span>
             <div class="p-main-val">R$ ${fmt(pixPrice)}</div>
-            ${pixPct ? `<span class="p-pix-note">no PIX com ${Math.round(pixPct * 10) / 10}% desconto</span>` : ''}
+            <span class="p-avista-lbl">à vista${pixPct ? ' no PIX' : ''}</span>
+            ${pixPct ? `<span class="p-pix-note">${Math.round(pixPct * 10) / 10}% de desconto no PIX</span>` : ''}
           </div>
           <div class="price-col-sep"></div>
           <div class="price-col">
             <div class="p-card-val">R$ ${fmt(cardPrice)}</div>
-            <div class="p-inst-info">em até 12x de R$ ${fmt(instPrice)}<br>sem juros no cartão</div>
+            <div class="p-inst-info">em até 12x de R$ ${fmt(instPrice)} no cartão</div>
           </div>
         </div>
 
