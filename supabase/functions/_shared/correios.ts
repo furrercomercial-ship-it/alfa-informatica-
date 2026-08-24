@@ -59,10 +59,12 @@ export function calcularPacoteAgregado(
 ): PacoteInfo {
   let pesoKg = 0, comprimentoCm = 0, larguraCm = 0, alturaCm = 0;
   for (const item of itens) {
-    const peso = item.pesoKg || PACOTE_PADRAO.pesoKg;
-    const comp = item.comprimentoCm || PACOTE_PADRAO.comprimentoCm;
-    const larg = item.larguraCm || PACOTE_PADRAO.larguraCm;
-    const alt = item.alturaCm || PACOTE_PADRAO.alturaCm;
+    // ?? em vez de || — fallback só pra null/undefined, não pra 0
+    // (improvável ter peso=0, mas a semântica é mais correta).
+    const peso = item.pesoKg ?? PACOTE_PADRAO.pesoKg;
+    const comp = item.comprimentoCm ?? PACOTE_PADRAO.comprimentoCm;
+    const larg = item.larguraCm ?? PACOTE_PADRAO.larguraCm;
+    const alt = item.alturaCm ?? PACOTE_PADRAO.alturaCm;
     pesoKg += peso * item.qty;
     comprimentoCm = Math.max(comprimentoCm, comp);
     larguraCm = Math.max(larguraCm, larg);
@@ -147,15 +149,32 @@ async function getToken(): Promise<string> {
     body: JSON.stringify({ numero: NUMERO_CONTRATO }),
   });
   const data = await res.json().catch(() => ({}));
-  console.log('[correios] resposta crua da autenticação', res.status, JSON.stringify(data));
+  // Token mascarado — nunca gravar o valor real em log (o painel do Supabase
+  // fica visível a qualquer membro da equipe com acesso de leitura).
+  console.log('[correios] resposta da autenticação', res.status, JSON.stringify({
+    ...data,
+    token: data.token ? `[presente, ${String(data.token).length} chars]` : undefined,
+  }));
   if (!res.ok || !data.token) {
     throw new Error(`Falha ao autenticar com os Correios (status ${res.status}).`);
   }
 
-  // TODO CORREIOS (#1): campo de expiração não confirmado — assumido
-  // "expiraEm" como ISO string; se vier diferente (ex: segundos de TTL),
-  // ajustar aqui. Fallback conservador de 1h caso o campo não venha.
-  const expiresAt = data.expiraEm ? new Date(data.expiraEm).getTime() : Date.now() + 60 * 60 * 1000;
+  // Suporta os três formatos possíveis de expiração que a API pode devolver:
+  // "expiraEm" (ISO string), "expires_in" (segundos — padrão OAuth 2.0) e
+  // "expiracao" (ISO string alternativo). Margem de 30s já aplicada no
+  // cachedToken.expiresAt > Date.now() + 30_000 do início da função.
+  // Fallback conservador de 1h com warning se nenhum campo vier.
+  let expiresAt: number;
+  if (data.expiraEm) {
+    expiresAt = new Date(data.expiraEm).getTime();
+  } else if (data.expires_in && Number.isFinite(Number(data.expires_in))) {
+    expiresAt = Date.now() + Number(data.expires_in) * 1000;
+  } else if (data.expiracao) {
+    expiresAt = new Date(data.expiracao).getTime();
+  } else {
+    console.warn('[correios] campo de expiração não reconhecido — fallback de 1h. Campos recebidos (sem token):', Object.keys(data).filter(k => k !== 'token').join(', '));
+    expiresAt = Date.now() + 60 * 60 * 1000;
+  }
   cachedToken = { token: data.token, expiresAt };
   return data.token;
 }
@@ -195,15 +214,37 @@ export async function calcularFrete(params: { cepDestino: string; pacote?: Pacot
       // já mostra "—" nesse caso).
       const qs = new URLSearchParams({
         cepOrigem, cepDestino,
-        psObjeto: String(pesoKg * 1000), // gramas
-        comprimento: String(comprimentoCm), largura: String(larguraCm), altura: String(alturaCm),
+        psObjeto: String(Math.round(pesoKg * 1000)), // gramas, inteiro
+        // Correios espera inteiros em cm — Math.round garante que valores
+        // como "10.3" (numeric(6,1) do banco) não causem rejeição 4xx.
+        comprimento: String(Math.round(comprimentoCm)),
+        largura: String(Math.round(larguraCm)),
+        altura: String(Math.round(alturaCm)),
       });
       const res = await correiosFetch(`/preco/v1/nacional/${servico.codigo}?${qs.toString()}`);
       const data = await res.json().catch(() => ({}));
       console.log('[correios] resposta crua de preço', servico.codigo, res.status, JSON.stringify(data));
       if (!res.ok) throw new Error(`Correios recusou cálculo para ${servico.codigo} (status ${res.status}).`);
-      const valor = parseNumeroBR(data.pcFinal ?? data.valor ?? data.preco);
-      if (!Number.isFinite(valor)) throw new Error(`Resposta de preço inesperada para ${servico.codigo}.`);
+      // Loga qual campo foi usado — essencial pra diagnosticar se a API
+      // mudar o nome do campo silenciosamente.
+      let campoPreco: string;
+      let valorBruto: unknown;
+      if (data.pcFinal != null) {
+        campoPreco = 'pcFinal'; valorBruto = data.pcFinal;
+      } else if (data.valor != null) {
+        campoPreco = 'valor'; valorBruto = data.valor;
+        console.warn('[correios] pcFinal ausente, usando campo "valor" como fallback', servico.codigo);
+      } else if (data.preco != null) {
+        campoPreco = 'preco'; valorBruto = data.preco;
+        console.warn('[correios] pcFinal/valor ausentes, usando campo "preco" como fallback', servico.codigo);
+      } else {
+        throw new Error(`Campo de preço ausente na resposta dos Correios para ${servico.codigo}. Campos disponíveis: ${Object.keys(data).join(', ')}`);
+      }
+      const valor = parseNumeroBR(valorBruto);
+      if (!Number.isFinite(valor) || valor < 0) {
+        throw new Error(`Preço inválido (${String(valorBruto)}, campo "${campoPreco}") para ${servico.codigo}.`);
+      }
+      console.log('[correios] preço calculado', servico.codigo, `campo="${campoPreco}"`, `valor=R$${valor.toFixed(2)}`);
 
       // TODO CORREIOS: endpoint/campo do prazo ainda não confirmados por
       // resposta real (só o de preço foi confirmado até agora) — assumido
@@ -313,6 +354,19 @@ export async function consultarRastreio(trackingCode: string): Promise<{ eventos
     local: e.unidade?.nome || e.local || null,
   }));
   return { eventos, raw: data };
+}
+
+// Chave de cache do frete — determinística a partir dos parâmetros físicos
+// do pacote e dos CEPs. Usada por correios-frete (escrever) e
+// mp-create-payment (ler como fallback). Inclui CEP de origem para que
+// uma mudança no endereço da loja invalide caches antigos.
+export function buildFreightCacheKey(cepDestino: string, pacote: PacoteInfo): string {
+  const cepD = cepDestino.replace(/\D/g, '');
+  const pesoG = Math.round(pacote.pesoKg * 1000);
+  const comp = Math.round(pacote.comprimentoCm);
+  const larg = Math.round(pacote.larguraCm);
+  const alt = Math.round(pacote.alturaCm);
+  return `${CEP_ORIGEM}:${cepD}:${pesoG}g:${comp}x${larg}x${alt}cm`;
 }
 
 export type EnderecoCep = { cep: string; logradouro: string; bairro: string; cidade: string; uf: string };

@@ -18,7 +18,7 @@
 //   (secrets CORREIOS_* já devem estar configuradas — ver supabase/.env.example)
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { calcularFrete, calcularPacoteAgregado } from '../_shared/correios.ts';
+import { calcularFrete, calcularPacoteAgregado, buildFreightCacheKey, PACOTE_PADRAO } from '../_shared/correios.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -66,9 +66,11 @@ Deno.serve(async (req) => {
       .filter((i: any) => Number.isInteger(i.product_id) && Number.isInteger(i.qty) && i.qty > 0)
       .slice(0, 50);
 
+    // admin sempre inicializado — necessário tanto pra buscar produtos quanto
+    // pra salvar o cache da cotação (fallback do mp-create-payment).
+    const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
     let pacote;
     if (items.length) {
-      const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
       const { data: produtos } = await admin
         .from('products').select('id,weight,comprimento_cm,largura_cm,altura_cm')
         .in('id', items.map((i: any) => i.product_id));
@@ -80,6 +82,24 @@ Deno.serve(async (req) => {
     }
 
     const opcoes = await calcularFrete({ cepDestino, pacote });
+
+    // Persiste a cotação no banco (TTL 10 min) para que mp-create-payment
+    // possa usar como fallback se os Correios ficarem temporariamente
+    // indisponíveis entre a cotação e a finalização do pedido.
+    if (items.length > 0) {
+      try {
+        const effectivePacote = pacote ?? PACOTE_PADRAO;
+        const cacheKey = buildFreightCacheKey(cepDestino, effectivePacote);
+        await admin.from('correios_frete_cache').upsert({
+          cache_key: cacheKey,
+          opcoes,
+          expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+        });
+      } catch (cacheErr) {
+        console.warn('[correios-frete] falha ao salvar cache (não crítico)', String(cacheErr));
+      }
+    }
+
     return new Response(JSON.stringify({ ok: true, opcoes }), { headers: corsHeaders() });
   } catch (e: any) {
     console.error('[correios-frete] erro', String(e), e?.stack || null);

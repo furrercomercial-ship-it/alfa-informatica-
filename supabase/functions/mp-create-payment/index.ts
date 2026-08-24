@@ -32,7 +32,7 @@
 // à mão logo no início da função (ver RATE_LIMIT_* abaixo).
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { calcularFrete, calcularPacoteAgregado } from '../_shared/correios.ts';
+import { calcularFrete, calcularPacoteAgregado, buildFreightCacheKey } from '../_shared/correios.ts';
 import { enviarEmailPedidoConfirmado } from '../_shared/email.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -57,7 +57,10 @@ const MP_TEST_BUYER_EMAIL = Deno.env.get('MP_TEST_BUYER_EMAIL') || '';
 const CIDADES_ENTREGA_LOCAL = ['cuiaba', 'cuiabá', 'varzea grande', 'várzea grande'];
 const ENTREGA_LOCAL_VALOR_MINIMO_GRATIS = 200;
 
-const DEFAULT_PIX_DISCOUNT_PERCENT = 5; // fallback pra produto sem o campo preenchido
+// 0 como padrão: produto sem pix_discount_percent cadastrado não recebe
+// desconto — alinhado com o frontend (checkout.html usa `|| 0` também).
+// Evita que o backend aplique 5% silenciosamente enquanto o frontend mostra 0%.
+const DEFAULT_PIX_DISCOUNT_PERCENT = 0;
 
 // Como a função roda sem verificação de JWT do Supabase (precisa aceitar
 // visitante sem login), estas duas defesas substituem o que o Supabase
@@ -324,8 +327,25 @@ Deno.serve(async (req) => {
       try {
         opcoesFrete = await calcularFrete({ cepDestino: address.cep, pacote });
       } catch (e) {
-        console.error('[mp-create-payment] falha ao consultar frete nos Correios', String(e));
-        return fail(502, 'Não foi possível confirmar o frete no momento. Tente novamente.');
+        console.error('[mp-create-payment] falha ao consultar frete nos Correios — tentando cache', String(e));
+        // Fallback: usa a cotação que correios-frete salvou no banco (TTL 10
+        // min). A chave é determinística — só aceita cache do mesmo CEP e
+        // mesmo pacote, nunca de outro carrinho ou outro CEP.
+        const cacheKey = buildFreightCacheKey(address.cep, pacote);
+        const { data: cacheEntry } = await admin
+          .from('correios_frete_cache')
+          .select('opcoes, expires_at')
+          .eq('cache_key', cacheKey)
+          .gt('expires_at', new Date().toISOString())
+          .maybeSingle();
+        if (cacheEntry?.opcoes) {
+          console.warn('[mp-create-payment] usando cotação em cache como fallback — Correios temporariamente indisponíveis', cacheKey);
+          opcoesFrete = Array.isArray(cacheEntry.opcoes)
+            ? cacheEntry.opcoes
+            : JSON.parse(String(cacheEntry.opcoes));
+        } else {
+          return fail(502, 'Não foi possível confirmar o frete no momento. Tente novamente em alguns minutos.');
+        }
       }
       const escolhida = opcoesFrete.find((o) => o.codigo === shippingMethodId);
       if (!escolhida) return fail(400, 'Selecione uma forma de envio válida.');
