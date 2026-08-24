@@ -23,8 +23,9 @@ window.AlfaContactForm = (function () {
       return '<div class="ct-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + r.icon + '</svg>' +
         '<div><div class="ct-info-lbl">' + r.lbl + '</div><div class="ct-info-val">' + (r.href ? '<a href="' + r.href + '" target="_blank" rel="noopener">' + r.val + '</a>' : r.val) + '</div></div></div>';
     }).join('') || '<p style="color:var(--text-muted);font-size:13px;">Configure WhatsApp/e-mail/horário em Aparência → Páginas.</p>';
-    if (config.mapa_url) {
-      container.insertAdjacentHTML('beforeend', '<iframe class="ct-map" src="' + config.mapa_url + '" loading="lazy"></iframe>');
+    const safeMapUrl = config.mapa_url && config.mapa_url.startsWith('https://') ? config.mapa_url : '';
+    if (safeMapUrl) {
+      container.insertAdjacentHTML('beforeend', '<iframe class="ct-map" src="' + safeMapUrl + '" loading="lazy"></iframe>');
     }
   }
 

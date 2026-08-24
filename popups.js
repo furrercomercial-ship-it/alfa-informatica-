@@ -3,6 +3,11 @@
    a frequência escolhida (sempre / uma vez por visita / uma vez por
    dispositivo). Requer supabase-client.js carregado antes. */
 (function () {
+  function esc(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
   function seenKey(id) { return 'alfa_popup_seen_' + id; }
 
   function alreadySeen(p) {
@@ -26,18 +31,19 @@
   var ICON_LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
   function render(p) {
+    var safeUrl = (p.cta_url && (p.cta_url.startsWith('https://') || p.cta_url.startsWith('/'))) ? p.cta_url : '#';
     var overlay = document.createElement('div');
     overlay.className = 'alfa-popup-overlay';
     overlay.innerHTML =
-      '<div class="alfa-popup-card' + (p.imagem_url ? '' : ' no-media') + '" data-tipo="' + (p.tipo || 'cupom') + '">' +
+      '<div class="alfa-popup-card' + (p.imagem_url ? '' : ' no-media') + '" data-tipo="' + esc(p.tipo || 'cupom') + '">' +
         '<button class="alfa-popup-close" aria-label="Fechar">&times;</button>' +
-        (p.imagem_url ? '<div class="alfa-popup-media"><img src="' + p.imagem_url + '" alt=""></div>' : '') +
+        (p.imagem_url ? '<div class="alfa-popup-media"><img src="' + esc(p.imagem_url) + '" alt=""></div>' : '') +
         '<div class="alfa-popup-content">' +
           '<span class="alfa-popup-badge">' + (BADGE_ICON[p.tipo] || ICON_TAG) + (BADGE_LABEL[p.tipo] || 'Oferta') + '</span>' +
-          (p.titulo ? '<h3 class="alfa-popup-title">' + p.titulo + '</h3>' : '') +
-          (p.mensagem ? '<p class="alfa-popup-msg">' + p.mensagem + '</p>' : '') +
-          (p.cupom_codigo ? '<div class="alfa-popup-cupom">' + ICON_SCISSORS + '<span>' + p.cupom_codigo + '</span></div>' : '') +
-          (p.cta_label ? '<a class="alfa-popup-cta" href="' + (p.cta_url || '#') + '"><span>' + p.cta_label + '</span>' + ICON_ARROW + '</a>' : '') +
+          (p.titulo ? '<h3 class="alfa-popup-title">' + esc(p.titulo) + '</h3>' : '') +
+          (p.mensagem ? '<p class="alfa-popup-msg">' + esc(p.mensagem) + '</p>' : '') +
+          (p.cupom_codigo ? '<div class="alfa-popup-cupom">' + ICON_SCISSORS + '<span>' + esc(p.cupom_codigo) + '</span></div>' : '') +
+          (p.cta_label ? '<a class="alfa-popup-cta" href="' + esc(safeUrl) + '"><span>' + esc(p.cta_label) + '</span>' + ICON_ARROW + '</a>' : '') +
           '<div class="alfa-popup-foot">' + ICON_LOCK + 'Oferta por tempo limitado</div>' +
         '</div>' +
       '</div>';

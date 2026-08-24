@@ -190,7 +190,9 @@ const Store = {
     await Store.loadAddresses();
   },
   removeAddress: async (id) => {
-    await window.sb.from('addresses').delete().eq('id', id);
+    const { data: { session } } = await window.sb.auth.getSession();
+    if (!session) return;
+    await window.sb.from('addresses').delete().eq('id', id).eq('user_id', session.user.id);
     await Store.loadAddresses();
   },
 
