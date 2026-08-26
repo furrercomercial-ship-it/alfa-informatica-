@@ -247,7 +247,8 @@ Deno.serve(async (req) => {
 
     const { data: products, error: prodErr } = await admin
       .from('products').select('id,name,price,stock,active,images,cost_price,pix_discount_percent,weight,comprimento_cm,largura_cm,altura_cm')
-      .in('id', productIds);
+      .in('id', productIds)
+      .is('deleted_at', null);
     if (prodErr) return fail(500, 'Não foi possível validar os produtos. Tente novamente.');
 
     const productMap = new Map((products || []).map((p: any) => [p.id, p]));
