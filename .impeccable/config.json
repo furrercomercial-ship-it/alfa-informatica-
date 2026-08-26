@@ -29,6 +29,186 @@
         ],
         "createdAt": "2026-08-15T20:35:01.367Z",
         "reason": "Sub-body text size used throughout admin.css for supporting text"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "22px",
+        "createdAt": "2026-08-19T20:46:37.843Z"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "12px",
+        "createdAt": "2026-08-19T20:46:37.912Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(128,128,128,.08)",
+        "createdAt": "2026-08-19T20:46:37.985Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgba(0,0,0,.4)",
+        "createdAt": "2026-08-19T20:46:38.056Z"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "3px",
+        "createdAt": "2026-08-19T20:46:38.125Z"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "30px",
+        "createdAt": "2026-08-19T20:49:57.041Z"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "10px",
+        "createdAt": "2026-08-19T20:49:57.107Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#cfcfcf",
+        "createdAt": "2026-08-19T20:49:57.174Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#1a56db",
+        "createdAt": "2026-08-26T18:01:58.823Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#057a55",
+        "createdAt": "2026-08-26T18:01:58.908Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#b45309",
+        "createdAt": "2026-08-26T18:01:58.995Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#c81e1e",
+        "createdAt": "2026-08-26T18:01:59.071Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#0369a1",
+        "createdAt": "2026-08-26T18:01:59.148Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#0c4a6e",
+        "createdAt": "2026-08-26T18:01:59.226Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#92400e",
+        "createdAt": "2026-08-26T18:01:59.301Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#78350f",
+        "createdAt": "2026-08-26T18:01:59.383Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#991b1b",
+        "createdAt": "2026-08-26T18:01:59.459Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#7f1d1d",
+        "createdAt": "2026-08-26T18:01:59.537Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#9ca3af",
+        "createdAt": "2026-08-26T18:01:59.610Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#374151",
+        "createdAt": "2026-08-26T18:01:59.680Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#6b7280",
+        "createdAt": "2026-08-26T18:01:59.767Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#eef2ff",
+        "createdAt": "2026-08-26T18:01:59.838Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#dde3f0",
+        "createdAt": "2026-08-26T18:01:59.918Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#f0f9ff",
+        "createdAt": "2026-08-26T18:01:59.994Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#bae6fd",
+        "createdAt": "2026-08-26T18:02:00.057Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#fcd34d",
+        "createdAt": "2026-08-26T18:02:00.147Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#fffbeb",
+        "createdAt": "2026-08-26T18:02:00.210Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#fef2f2",
+        "createdAt": "2026-08-26T18:02:00.290Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#fecaca",
+        "createdAt": "2026-08-26T18:02:00.376Z"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "20px",
+        "createdAt": "2026-08-26T18:02:00.446Z"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "6px",
+        "createdAt": "2026-08-26T18:02:00.529Z"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "17px",
+        "createdAt": "2026-08-26T18:02:00.610Z"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "11px",
+        "createdAt": "2026-08-26T18:02:00.686Z"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "13px",
+        "createdAt": "2026-08-26T18:02:00.758Z"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "26px",
+        "createdAt": "2026-08-26T18:02:00.840Z"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "19px",
+        "createdAt": "2026-08-26T18:02:00.920Z"
       }
     ]
   }

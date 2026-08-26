@@ -33,7 +33,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { calcularFrete, calcularPacoteAgregado, buildFreightCacheKey } from '../_shared/correios.ts';
-import { enviarEmailPedidoConfirmado } from '../_shared/email.ts';
+import { enviarEmailPixGerado, enviarEmailPedidoConfirmado, enviarEmailPagamentoEmAnalise, enviarEmailPagamentoNaoAprovado } from '../_shared/email.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -551,48 +551,102 @@ Deno.serve(async (req) => {
       },
     }).eq('id', pagamento.id);
 
-    // Cartão aprovado sincronamente no modo automático: já reflete no pedido
-    // sem esperar o webhook (ele confirma de novo, é idempotente).
+    // Destinatário/nome vêm SEMPRE do cadastro (profiles), nunca do `payer`
+    // que o body da requisição manda — aquele é controlado pelo chamador e
+    // poderia ser qualquer e-mail de terceiro. Usar profiles garante que o
+    // e-mail vai só pro dono da conta logada.
+    let perfilEmail: { email: string; full_name: string | null } | null = null;
+    try {
+      const { data: perfil } = await admin.from('profiles').select('email,full_name').eq('id', userId).single();
+      perfilEmail = perfil;
+    } catch (_) { /* não impede o fluxo de pagamento */ }
+
+    // Aprovado sincronamente (cartão): atualiza pedido e envia e-mail de confirmação.
+    // Se falhar (ex: estoque bateu negativo pelo trigger) — pedido fica em
+    // "aguardando_pagamento", visível pro admin; a resposta ao cliente não trava.
     if (normalizedStatus === 'aprovado') {
-      // Se isso falhar (ex: baixa de estoque do trigger bateria negativo —
-      // ver "products_stock_nao_negativo" em schema-auditoria-fixes.sql),
-      // o pedido fica preso em "aguardando_pagamento" mesmo já pago de
-      // verdade no Mercado Pago — de propósito: é a trava contra vender
-      // 2x a última unidade em checkouts simultâneos. Isso NÃO pode travar
-      // a resposta do pagamento (o cliente já pagou), só fica visível pro
-      // admin resolver manualmente em Pedidos (o pedido nunca vira "pago"
-      // sozinho quando isso acontece, então chama atenção lá).
       const { error: statusErr } = await admin.from('orders').update({ status: 'pago' }).eq('id', order.id);
       if (statusErr) {
         console.error('[mp-create-payment] pedido pago no MP mas não pôde ser marcado como pago (provável estoque insuficiente)', orderNumber, statusErr.message);
       }
-
-      // E-mail só sai quando o pagamento já está confirmado (nunca no Pix
-      // pendente — esse caso é tratado depois pelo mp-webhook, quando o
-      // pagamento compensar). Nunca deve travar a resposta, por isso fica
-      // isolado num try/catch próprio, só logando se falhar.
-      //
-      // Destinatário/nome vêm do cadastro (profiles), NUNCA do `payer` que
-      // o corpo da requisição manda — esse é só o que vai pro Mercado Pago
-      // como dado do pagador, e é controlado pelo próprio chamador (poderia
-      // ser qualquer e-mail/nome, inclusive de terceiros). Usar profiles
-      // garante que o e-mail só vai pro dono de verdade da conta logada.
-      try {
-        const { data: perfil } = await admin.from('profiles').select('email,full_name').eq('id', userId).single();
-        if (perfil?.email) await enviarEmailPedidoConfirmado({
-          destinatario: perfil.email,
-          nomeCliente: perfil.full_name || perfil.email,
-          orderNumber,
-          itens: orderItemsPayload.map((i: any) => ({ nome: i.product_name_snapshot, qty: i.qty, preco: i.unit_price })),
-          subtotal, discount, freight, total,
-          shippingMethod: shippingName,
-          paymentMethod: paymentMethod === 'pix' ? 'Pix' : 'Cartão de crédito',
-        });
-      } catch (e) {
-        console.error('[mp-create-payment] falha ao enviar e-mail de confirmação', String(e));
+      if (!statusErr && perfilEmail?.email) {
+        try {
+          // UPDATE condicional garante idempotência — só marca/envia se ainda não foi enviado.
+          const { data: marcado } = await admin
+            .from('orders').update({ email_confirmacao_at: new Date().toISOString() })
+            .eq('id', order.id).is('email_confirmacao_at', null).select('id');
+          if (marcado?.length) {
+            await enviarEmailPedidoConfirmado({
+              destinatario: perfilEmail.email,
+              nomeCliente: perfilEmail.full_name || perfilEmail.email,
+              orderNumber,
+              itens: orderItemsPayload.map((i: any) => ({ nome: i.product_name_snapshot, qty: i.qty, preco: i.unit_price })),
+              subtotal, discount, freight, total,
+              shippingMethod: shippingName,
+              paymentMethod: 'Cartão de crédito',
+            });
+          }
+        } catch (e) {
+          console.error('[mp-create-payment] falha ao enviar e-mail de confirmação', String(e));
+        }
       }
-    } else if (normalizedStatus === 'recusado') {
-      await admin.from('orders').update({ status: 'recusado' }).eq('id', order.id);
+    } else if (normalizedStatus === 'recusado' || normalizedStatus === 'cancelado') {
+      await admin.from('orders').update({ status: normalizedStatus }).eq('id', order.id);
+      if (perfilEmail?.email) {
+        try {
+          const { data: marcado } = await admin
+            .from('orders').update({ email_recusado_at: new Date().toISOString() })
+            .eq('id', order.id).is('email_recusado_at', null).select('id');
+          if (marcado?.length) {
+            await enviarEmailPagamentoNaoAprovado({
+              destinatario: perfilEmail.email,
+              nomeCliente: perfilEmail.full_name || perfilEmail.email,
+              orderNumber,
+            });
+          }
+        } catch (e) {
+          console.error('[mp-create-payment] falha ao enviar e-mail de pagamento não aprovado', String(e));
+        }
+      }
+    } else if (paymentMethod === 'pix') {
+      // PIX pendente: envia e-mail com código copia-e-cola imediatamente.
+      // A confirmação final sai pelo mp-webhook quando o pagamento compensar.
+      if (perfilEmail?.email && pixInfo?.qr_code) {
+        try {
+          const { data: marcado } = await admin
+            .from('orders').update({ email_pix_gerado_at: new Date().toISOString() })
+            .eq('id', order.id).is('email_pix_gerado_at', null).select('id');
+          if (marcado?.length) {
+            await enviarEmailPixGerado({
+              destinatario: perfilEmail.email,
+              nomeCliente: perfilEmail.full_name || perfilEmail.email,
+              orderNumber, total,
+              pixQrCode: pixInfo.qr_code,
+              pixTicketUrl: pixInfo.ticket_url || null,
+            });
+          }
+        } catch (e) {
+          console.error('[mp-create-payment] falha ao enviar e-mail de PIX', String(e));
+        }
+      }
+    } else {
+      // Cartão pendente / em processamento — informa o cliente sem confirmar o pedido.
+      if (perfilEmail?.email) {
+        try {
+          const { data: marcado } = await admin
+            .from('orders').update({ email_analise_at: new Date().toISOString() })
+            .eq('id', order.id).is('email_analise_at', null).select('id');
+          if (marcado?.length) {
+            await enviarEmailPagamentoEmAnalise({
+              destinatario: perfilEmail.email,
+              nomeCliente: perfilEmail.full_name || perfilEmail.email,
+              orderNumber, total,
+            });
+          }
+        } catch (e) {
+          console.error('[mp-create-payment] falha ao enviar e-mail de análise', String(e));
+        }
+      }
     }
 
     return new Response(JSON.stringify({

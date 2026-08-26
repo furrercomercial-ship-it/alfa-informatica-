@@ -228,15 +228,15 @@ Deno.serve(async (req) => {
           console.error('[mp-webhook] pedido pago no MP mas não pôde mudar de status (provável estoque insuficiente)', pagamento.pedido_id, statusErr.message);
         }
 
-        // Pix confirmado assincronamente (o e-mail não saiu na criação do
-        // pedido, só quando o pagamento realmente compensa — ver
-        // mp-create-payment). Nunca deve travar a resposta do webhook, por
-        // isso fica isolado num try/catch próprio, só logando se falhar.
+        // E-mail de confirmação quando o pagamento é aprovado (principal caso: PIX compensado).
+        // O UPDATE condicional garante idempotência — se mp-create-payment já enviou
+        // (cartão aprovado na hora), email_confirmacao_at já está preenchido e o UPDATE
+        // não retorna linhas, pulando o envio sem duplicar.
         if (!statusErr && newOrderStatus === 'pago') {
           try {
             const { data: pedidoCompleto } = await admin
               .from('orders')
-              .select('order_number,subtotal,discount,freight,total,shipping_method,payment_method,profiles(email,full_name)')
+              .select('order_number,subtotal,discount,freight,total,shipping_method,payment_method,tracking_code,profiles(email,full_name)')
               .eq('id', pagamento.pedido_id)
               .single();
             const { data: itensPedido } = await admin
@@ -245,16 +245,22 @@ Deno.serve(async (req) => {
               .eq('order_id', pagamento.pedido_id);
             const cliente = pedidoCompleto?.profiles as { email?: string; full_name?: string } | null;
             if (pedidoCompleto && cliente?.email) {
-              await enviarEmailPedidoConfirmado({
-                destinatario: cliente.email,
-                nomeCliente: cliente.full_name || cliente.email,
-                orderNumber: pedidoCompleto.order_number,
-                itens: (itensPedido || []).map((i: any) => ({ nome: i.product_name_snapshot, qty: i.qty, preco: i.unit_price })),
-                subtotal: pedidoCompleto.subtotal, discount: pedidoCompleto.discount,
-                freight: pedidoCompleto.freight, total: pedidoCompleto.total,
-                shippingMethod: pedidoCompleto.shipping_method,
-                paymentMethod: pedidoCompleto.payment_method,
-              });
+              const { data: marcado } = await admin
+                .from('orders').update({ email_confirmacao_at: new Date().toISOString() })
+                .eq('id', pagamento.pedido_id).is('email_confirmacao_at', null).select('id');
+              if (marcado?.length) {
+                await enviarEmailPedidoConfirmado({
+                  destinatario: cliente.email,
+                  nomeCliente: cliente.full_name || cliente.email,
+                  orderNumber: pedidoCompleto.order_number,
+                  itens: (itensPedido || []).map((i: any) => ({ nome: i.product_name_snapshot, qty: i.qty, preco: i.unit_price })),
+                  subtotal: pedidoCompleto.subtotal, discount: pedidoCompleto.discount,
+                  freight: pedidoCompleto.freight, total: pedidoCompleto.total,
+                  shippingMethod: pedidoCompleto.shipping_method,
+                  paymentMethod: pedidoCompleto.payment_method,
+                  trackingCode: pedidoCompleto.tracking_code || null,
+                });
+              }
             }
           } catch (e) {
             console.error('[mp-webhook] falha ao enviar e-mail de confirmação', String(e));
