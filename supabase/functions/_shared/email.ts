@@ -211,10 +211,11 @@ export async function enviarEmailPixGerado(params: {
   total: number;
   pixQrCode: string | null;
   pixTicketUrl: string | null;
+  accessToken: string;
 }): Promise<{ ok: boolean }> {
-  const { destinatario, nomeCliente, orderNumber, total, pixQrCode, pixTicketUrl } = params;
+  const { destinatario, nomeCliente, orderNumber, total, pixQrCode, pixTicketUrl, accessToken } = params;
   const primeiroNome = esc((nomeCliente || '').split(' ')[0] || 'cliente');
-  const linkPedido = `${SITE_BASE_URL}/pedido-concluido.html?pedido=${encodeURIComponent(orderNumber)}`;
+  const linkPedido = `${SITE_BASE_URL}/pedido-concluido.html?pedido=${encodeURIComponent(orderNumber)}&token=${accessToken}`;
 
   const blocoCodigoPix = pixQrCode
     ? `${_divider()}
@@ -285,10 +286,11 @@ export async function enviarEmailPedidoConfirmado(params: {
   shippingMethod: string;
   paymentMethod: string;
   trackingCode?: string | null;
+  accessToken: string;
 }): Promise<{ ok: boolean }> {
-  const { destinatario, nomeCliente, orderNumber, itens, subtotal, discount, freight, total, shippingMethod, paymentMethod, trackingCode } = params;
+  const { destinatario, nomeCliente, orderNumber, itens, subtotal, discount, freight, total, shippingMethod, paymentMethod, trackingCode, accessToken } = params;
   const primeiroNome = esc((nomeCliente || '').split(' ')[0] || 'cliente');
-  const linkPedido = `${SITE_BASE_URL}/pedido-concluido.html?pedido=${encodeURIComponent(orderNumber)}`;
+  const linkPedido = `${SITE_BASE_URL}/pedido-concluido.html?pedido=${encodeURIComponent(orderNumber)}&token=${accessToken}`;
 
   const blocoRastreio = trackingCode
     ? `${_divider()}
@@ -327,10 +329,11 @@ export async function enviarEmailPagamentoEmAnalise(params: {
   nomeCliente: string;
   orderNumber: string;
   total: number;
+  accessToken: string;
 }): Promise<{ ok: boolean }> {
-  const { destinatario, nomeCliente, orderNumber, total } = params;
+  const { destinatario, nomeCliente, orderNumber, total, accessToken } = params;
   const primeiroNome = esc((nomeCliente || '').split(' ')[0] || 'cliente');
-  const linkPedido = `${SITE_BASE_URL}/pedido-concluido.html?pedido=${encodeURIComponent(orderNumber)}`;
+  const linkPedido = `${SITE_BASE_URL}/pedido-concluido.html?pedido=${encodeURIComponent(orderNumber)}&token=${accessToken}`;
 
   const corpo = `
     ${_badge('🔍 Pagamento em análise', '#b45309')}
@@ -366,10 +369,11 @@ export async function enviarEmailPagamentoNaoAprovado(params: {
   destinatario: string;
   nomeCliente: string;
   orderNumber: string;
+  accessToken: string;
 }): Promise<{ ok: boolean }> {
-  const { destinatario, nomeCliente, orderNumber } = params;
+  const { destinatario, nomeCliente, orderNumber, accessToken } = params;
   const primeiroNome = esc((nomeCliente || '').split(' ')[0] || 'cliente');
-  const linkPedido = `${SITE_BASE_URL}/pedido-concluido.html?pedido=${encodeURIComponent(orderNumber)}`;
+  const linkPedido = `${SITE_BASE_URL}/pedido-concluido.html?pedido=${encodeURIComponent(orderNumber)}&token=${accessToken}`;
 
   const corpo = `
     ${_badge('✕ Pagamento não aprovado', '#c81e1e')}

@@ -234,9 +234,10 @@ Deno.serve(async (req) => {
         // não retorna linhas, pulando o envio sem duplicar.
         if (!statusErr && newOrderStatus === 'pago') {
           try {
+            // access_token: necessário para o link do e-mail — nunca logado.
             const { data: pedidoCompleto } = await admin
               .from('orders')
-              .select('order_number,subtotal,discount,freight,total,shipping_method,payment_method,tracking_code,profiles(email,full_name)')
+              .select('order_number,subtotal,discount,freight,total,shipping_method,payment_method,tracking_code,access_token,profiles(email,full_name)')
               .eq('id', pagamento.pedido_id)
               .single();
             const { data: itensPedido } = await admin
@@ -244,7 +245,7 @@ Deno.serve(async (req) => {
               .select('product_name_snapshot,qty,unit_price')
               .eq('order_id', pagamento.pedido_id);
             const cliente = pedidoCompleto?.profiles as { email?: string; full_name?: string } | null;
-            if (pedidoCompleto && cliente?.email) {
+            if (pedidoCompleto && cliente?.email && pedidoCompleto.access_token) {
               const { data: marcado } = await admin
                 .from('orders').update({ email_confirmacao_at: new Date().toISOString() })
                 .eq('id', pagamento.pedido_id).is('email_confirmacao_at', null).select('id');
@@ -259,6 +260,7 @@ Deno.serve(async (req) => {
                   shippingMethod: pedidoCompleto.shipping_method,
                   paymentMethod: pedidoCompleto.payment_method,
                   trackingCode: pedidoCompleto.tracking_code || null,
+                  accessToken: pedidoCompleto.access_token,
                 });
               }
             }

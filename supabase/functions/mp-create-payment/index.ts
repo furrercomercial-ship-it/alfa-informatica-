@@ -361,6 +361,14 @@ Deno.serve(async (req) => {
     const total = Math.max(0, subtotal - discount + freight);
     if (total <= 0) return fail(400, 'Valor do pedido inválido.');
 
+    // ── gera token de acesso criptográfico para o pedido ─────────────────────
+    // 32 bytes via CSPRNG = 256 bits de entropia = impossível de adivinhar.
+    // O token protege a URL de acompanhamento do pedido: sem ele, o order_number
+    // (timestamp base36) seria enumerável. NUNCA aparece em logs.
+    const _tokenBytes = new Uint8Array(32);
+    crypto.getRandomValues(_tokenBytes);
+    const accessToken = Array.from(_tokenBytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+
     // ── cria o pedido interno como aguardando pagamento
     const orderNumber = 'ALFA-' + Date.now().toString(36).toUpperCase();
     const { data: order, error: orderErr } = await admin.from('orders').insert({
@@ -372,6 +380,7 @@ Deno.serve(async (req) => {
       correios_servico_codigo: servicoCodigo,
       payment_method: paymentMethod === 'pix' ? 'Pix' : 'Cartão de crédito',
       address_snapshot: address || null,
+      access_token: accessToken,
     }).select().single();
     if (orderErr || !order) return fail(500, 'Não foi possível criar o pedido. Tente novamente.');
 
@@ -584,6 +593,7 @@ Deno.serve(async (req) => {
               subtotal, discount, freight, total,
               shippingMethod: shippingName,
               paymentMethod: 'Cartão de crédito',
+              accessToken,
             });
           }
         } catch (e) {
@@ -602,6 +612,7 @@ Deno.serve(async (req) => {
               destinatario: perfilEmail.email,
               nomeCliente: perfilEmail.full_name || perfilEmail.email,
               orderNumber,
+              accessToken,
             });
           }
         } catch (e) {
@@ -623,6 +634,7 @@ Deno.serve(async (req) => {
               orderNumber, total,
               pixQrCode: pixInfo.qr_code,
               pixTicketUrl: pixInfo.ticket_url || null,
+              accessToken,
             });
           }
         } catch (e) {
@@ -641,6 +653,7 @@ Deno.serve(async (req) => {
               destinatario: perfilEmail.email,
               nomeCliente: perfilEmail.full_name || perfilEmail.email,
               orderNumber, total,
+              accessToken,
             });
           }
         } catch (e) {

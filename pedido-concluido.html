@@ -115,8 +115,10 @@ function statusGroup(status) {
 }
 
 async function fetchPedido(numero) {
-  const { data, error } = await window.sb.rpc('buscar_pedido_por_numero', { p_numero: numero });
-  if (error) { console.error(error); return null; }
+  var params = new URLSearchParams(location.search);
+  var token = params.get('token') || '';
+  var { data, error } = await window.sb.rpc('buscar_pedido_por_numero', { p_numero: numero, p_token: token });
+  if (error) { console.error('[pedido-concluido] erro ao buscar pedido'); return null; }
   return data;
 }
 
@@ -165,8 +167,8 @@ function renderPedido(order) {
     cancelado:'Cancelado', expirado:'Expirado', estornado:'Estornado', estorno_parcial:'Estornado Parcialmente' }[order.status] || order.status;
 
   let pixHtml = '';
-  if (group === 'pendente' && pagamento.metodo === 'pix' && pagamento.resposta_resumida && pagamento.resposta_resumida.pix) {
-    const pix = pagamento.resposta_resumida.pix;
+  if (group === 'pendente' && pagamento.metodo === 'pix' && pagamento.pix) {
+    const pix = pagamento.pix;
     pixHtml = '<div class="oc-pix-box">' +
       (pix.qr_code_base64 ? `<img src="data:image/png;base64,${pix.qr_code_base64}" alt="QR Code Pix">` : '') +
       '<div style="font-size:12.5px;color:var(--text-secondary);">Escaneie no app do seu banco ou copie o código Pix abaixo.</div>' +
