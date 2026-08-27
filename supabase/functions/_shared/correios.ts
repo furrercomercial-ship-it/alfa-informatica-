@@ -208,10 +208,7 @@ export async function calcularFrete(params: { cepDestino: string; pacote?: Pacot
     Object.values(SERVICOS).map(async (servico) => {
       // CONFIRMADO com resposta real: GET /preco/v1/nacional/{coProduto},
       // campo de preço final é "pcFinal" — mas vem como STRING no formato
-      // brasileiro ("12,71", vírgula decimal), não number com ponto. Essa
-      // resposta não traz prazo de entrega (é uma API "Prazo v3" separada,
-      // ainda não integrada — prazoDias fica null por enquanto, o frontend
-      // já mostra "—" nesse caso).
+      // brasileiro ("12,71", vírgula decimal), não number com ponto.
       const qs = new URLSearchParams({
         cepOrigem, cepDestino,
         psObjeto: String(Math.round(pesoKg * 1000)), // gramas, inteiro
@@ -246,13 +243,15 @@ export async function calcularFrete(params: { cepDestino: string; pacote?: Pacot
       }
       console.log('[correios] preço calculado', servico.codigo, `campo="${campoPreco}"`, `valor=R$${valor.toFixed(2)}`);
 
-      // TODO CORREIOS: endpoint/campo do prazo ainda não confirmados por
-      // resposta real (só o de preço foi confirmado até agora) — assumido
-      // mesmo padrão de /preco (mesmo path base, "/prazo/"), campo
-      // "prazoEntrega". Não derruba o preço se falhar — só fica sem prazo.
+      // CONFIRMADO: GET /prazo/v1/nacional/{coProduto} — só aceita cepOrigem
+      // e cepDestino (documentação oficial CWS). Peso/dimensões não fazem
+      // parte do cálculo de prazo — são ignorados ou podem causar rejeição
+      // se a API mudar validação. Retorna "prazoEntrega" (int, dias corridos).
+      // Não derruba o preço se falhar — só fica sem prazo.
+      const qsPrazo = new URLSearchParams({ cepOrigem, cepDestino });
       let prazoDias: number | null = null;
       try {
-        const resPrazo = await correiosFetch(`/prazo/v1/nacional/${servico.codigo}?${qs.toString()}`);
+        const resPrazo = await correiosFetch(`/prazo/v1/nacional/${servico.codigo}?${qsPrazo.toString()}`);
         const dataPrazo = await resPrazo.json().catch(() => ({}));
         console.log('[correios] resposta crua de prazo', servico.codigo, resPrazo.status, JSON.stringify(dataPrazo));
         if (resPrazo.ok) {
