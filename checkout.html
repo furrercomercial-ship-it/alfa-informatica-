@@ -267,7 +267,7 @@ async function refreshShipping(){
     var opcoes = (resp.data && resp.data.ok) ? resp.data.opcoes : [];
     if (!opcoes.length) throw new Error('sem opções');
     state.shipOpts = opcoes.map(function(o){
-      return { id:o.codigo, name:o.nome, price:o.valor, days: o.prazoDias ? (o.prazoDias+' dias úteis') : '—' };
+      return { id:o.codigo, name:o.nome, price:o.valor, days: o.prazoDias ? (o.prazoDias === 1 ? '1 dia útil' : o.prazoDias+' dias úteis') : '—' };
     }).concat([RETIRADA_OPT]);
   } catch (e) {
     state.shipError = 'Não foi possível calcular o frete agora.';
