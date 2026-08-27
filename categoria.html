@@ -376,6 +376,23 @@ function buildCatsMap() {
 
 // PRODUCTS agora vem direto de window.PRODUCTS_DB (mesma fonte usada em toda a loja)
 
+// ─── BUSCA: normalização e correspondência por palavras ─────────────────────
+// Remove acentos, normaliza maiúsculas, colapsa espaços extras.
+function normTxt(s){
+  return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+}
+// Todas as palavras da query devem aparecer nos campos (qualquer ordem).
+// Versão compacta (sem espaços) captura "rtx4060" → "rtx 4060".
+function matchSearch(fields, query){
+  var hay = normTxt(fields.join(' '));
+  var q   = normTxt(query);
+  var words = q.split(' ').filter(function(w){ return w.length>0; });
+  if (!words.length) return false;
+  if (words.every(function(w){ return hay.indexOf(w)>-1; })) return true;
+  var cQ = q.replace(/ /g,''), cH = hay.replace(/ /g,'');
+  return cQ.length>0 && cH.indexOf(cQ)>-1;
+}
+
 // ─── STATE ──────────────────────────────────────────────────────────────────
 const RANGE_MAX = 15000;
 let currentSlug = '';
@@ -477,7 +494,7 @@ function init() {
   nivelParam = NIVEL_LABELS[p.get('nivel')] ? p.get('nivel') : '';
   vitrineParam = VITRINE_LABELS[p.get('vitrine')] ? p.get('vitrine') : '';
   currentSlug = p.get('cat') || 'hardware';
-  if (p.get('q')) { searchQuery = p.get('q').toLowerCase(); }
+  if (p.get('q')) { searchQuery = p.get('q'); }
   if (!CATS[currentSlug]) currentSlug = 'outros';
   activeSubcat = '';
   // ?promo=1 pré-marca o filtro "Em promoção" — usado pelos banners de
@@ -490,7 +507,7 @@ function init() {
   initRange();
 
   document.getElementById('sfSearch').addEventListener('input', function() {
-    searchQuery = this.value.trim().toLowerCase();
+    searchQuery = this.value.trim();
     applyFilters();
   });
 
@@ -624,7 +641,7 @@ function getFilteredProducts() {
   if (filters.brands.length)    prods = prods.filter(p => filters.brands.includes(p.brand));
   if (filters.onSale)           prods = prods.filter(p => p.old && p.old > p.price);
   if (searchQuery)              prods = prods.filter(p =>
-    p.name.toLowerCase().includes(searchQuery) || p.brand.toLowerCase().includes(searchQuery)
+    matchSearch([p.name, p.brand], searchQuery)
   );
 
   const sort = document.getElementById('sortSelect').value;

@@ -97,17 +97,34 @@
     var drop = document.getElementById('searchDrop');
     var wrap = document.getElementById('searchWrap');
     if (!inp || !drop) return;
+
+    // Remove acentos, normaliza maiúsculas, colapsa espaços extras.
+    function normTxt(s){
+      return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+    }
+    // Todas as palavras da query devem aparecer em qualquer um dos campos.
+    // Também testa versão compacta (sem espaços) para capturar "rtx4060" → "rtx 4060".
+    function matchSearch(fields, query){
+      var hay = normTxt(fields.join(' '));
+      var q   = normTxt(query);
+      var words = q.split(' ').filter(function(w){ return w.length>0; });
+      if (!words.length) return false;
+      if (words.every(function(w){ return hay.indexOf(w)>-1; })) return true;
+      var cQ = q.replace(/ /g,''), cH = hay.replace(/ /g,'');
+      return cQ.length>0 && cH.indexOf(cQ)>-1;
+    }
+
     function getProducts(){
       return (window.PRODUCTS_DB || []).map(function(p){
-        return {name:p.name, brand:p.brand, price:'R$ '+p.price.toLocaleString('pt-BR',{minimumFractionDigits:2}), img:p.images&&p.images[0]?p.images[0]:''};
+        return {name:p.name, brand:p.brand, model:p.model||'', sku:p.sku||'', price:'R$ '+p.price.toLocaleString('pt-BR',{minimumFractionDigits:2}), img:p.images&&p.images[0]?p.images[0]:''};
       });
     }
     var selIdx = -1;
     function renderDrop(q){
-      q = q.trim().toLowerCase();
+      q = q.trim();
       if (!q){ drop.classList.remove('open'); return; }
       var res = getProducts().filter(function(p){
-        return p.name.toLowerCase().indexOf(q)>-1 || p.brand.toLowerCase().indexOf(q)>-1;
+        return matchSearch([p.name, p.brand, p.model, p.sku], q);
       }).slice(0,8);
       selIdx = -1;
       if (!res.length){

@@ -9,7 +9,7 @@ window.PRODUCTS_DB = [];
 (async function loadProducts() {
   const { data, error } = await window.sb
     .from('products')
-    .select('id,name,brand,price,old_price,pix_discount_percent,stock,rating,reviews_count,images,description,specs,featured,best_seller,is_new,nivel,weight,comprimento_cm,largura_cm,altura_cm,subcategories(slug)')
+    .select('id,name,brand,model,sku,price,old_price,pix_discount_percent,stock,rating,reviews_count,images,description,specs,featured,best_seller,is_new,nivel,weight,comprimento_cm,largura_cm,altura_cm,subcategories(slug)')
     .eq('active', true)
     .is('deleted_at', null)
     .order('id', { ascending: true });
@@ -24,6 +24,8 @@ window.PRODUCTS_DB = [];
     id: row.id,
     name: row.name,
     brand: row.brand,
+    model: row.model || '',
+    sku: row.sku || '',
     price: Number(row.price),
     old: row.old_price != null ? Number(row.old_price) : undefined,
     pixDiscountPercent: row.pix_discount_percent != null ? Number(row.pix_discount_percent) : null,
